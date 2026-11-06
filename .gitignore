@@ -1,0 +1,57 @@
+# Virtual Environments
+venv311/
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+._*
+
+# VS Code
+.vscode/
+
+# Runtime Data
+uploads/*.csv
+backend/app/services/audit_log.json
+data/sor_watch_manifest.json
+data/daily_vessel_position/*.pdf
+
+# Streamlit
+# Allow theme config to be committed, ignore other local session/telemetry files
+.streamlit/*
+!.streamlit/config.toml
+
+# Environment Variables
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+# Raw NMPA source PDFs
+nmpa_public_data/**/*.pdf
+
+# Generated Excel reports
+output/*.xlsx
+
+# Temporary experiments
+scratch_aug2026_test/
+
+nmpa_public_data/
+
+# Temporary backup files
+*.before_pdf
+
+# Raw NMPA source folder
+nmpa_public_data/
+
+# Temporary experiments
+scratch_aug2026_test/
+
+data/daily_vessel_position_parsed/

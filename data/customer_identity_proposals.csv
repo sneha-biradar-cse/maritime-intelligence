@@ -1,0 +1,6 @@
+label_in_daily_reports,proposed_identity,evidence,status,applied_in_dashboard
+ADANI,AWL Agri Business Ltd (formerly Adani Wilmar),Every ADANI ship carried edible oil; company renamed 17 Mar 2025 (nmpa_public_data/company_notices/...AWL...pdf),Unresolved - awaiting NMPA confirmation,no
+MCF / MCFL,Paradeep Phosphates Ltd (PPL) from 16 Oct 2025,Merger effective 16 Oct 2025 (nmpa_public_data/company_notices/...Paradeep...pdf),Unresolved - awaiting NMPA confirmation (and whether entries before 16 Oct 2025 should stay MCF),no
+PPL(MCF),Paradeep Phosphates Ltd,Label names both,Unresolved - awaiting NMPA confirmation,no
+AW,AWL Agri Business Ltd,Appears in 'MK/RAMA/AW',Unresolved - awaiting NMPA confirmation,no
+APL,"Adani Power Ltd (formerly Udupi Power Corporation Ltd, UPCL), Berth 15 concessionaire",NMPA PPP disclosure 3.1.3: concessionaire renamed from UPCL to Adani Power Ltd,Reconciled with NMPA's own document; label kept as APL,label unchanged

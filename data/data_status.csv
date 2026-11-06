@@ -1,0 +1,32 @@
+dataset,status,evidence,used_in
+"NMPA monthly commodity statements, Jan 2023 - Sep 2026",Extraction checked; Reconciled,All 45 originals held; every line matches the data; 2022 rebuilt from the 2023 statements' prior-year column (shaded),"Trade Intelligence: cargo, trends, mix, seasonality; Incentive Engine: tonnes"
+"Ministry monthly reports (major ports), Feb 2024 - Sep 2026",Extraction checked; Reconciled,Ports and commodities add up to printed totals; months without their own report derived from cumulative columns,"Market share, major-port comparison, overseas/coastal"
+"Ministry annual report (port x commodity), 2021-22 to 2024-25",Extraction checked; Reconciled,Ports add up to All Ports; 2024-25 total equals the monthly reports' full-year figure,Which ports gained each cargo
+LPG/LNG for March (Ministry),Unresolved,"Annual LPG/LNG (20.2 MMT, 2024-25) does not reconcile with monthly reports (15.3 MMT Apr-Feb); March left empty",Share by month (individual cargos)
+"NMPA container statements, Jan 2025 - Sep 2026",Extraction checked,Commodities plus tare add up to printed totals,Container trade; container royalty estimate
+"NMPA Traffic & Performance reports, Apr 2025 - Sep 2026",Original obtained,Target and totals read from the originals,Target tracker; official container ship count
+NMPA daily vessel reports (323 days),Extraction checked; Original obtained,"All 323 original PDFs held (226 downloaded from NMPA's archive on 6 Nov 2026). 277 days: two independent readings identical; 11 days: PDF reading used where the earlier data differed (3 in ships/cargo/quantity, 8 in dates or movements; checked by hand against the PDF text); 35 days: read once from the PDF held","Customers, waiting, foreign/coastal split, crude SPM/berth split, container lines, wharfage by customer"
+Customer names (spelling merges),Estimated,Spelling variants of the same name merged (data/customer_aliases.csv),Customers
+"Customer identities (ADANI, MCF, PPL(MCF), AW)",Unresolved,Kept as written; proposed identities in data/customer_identity_proposals.csv await NMPA confirmation,Customers
+APL = Adani Power Ltd (UPCL),Reconciled,NMPA PPP disclosure 3.1.3 names Adani Power Ltd as the Berth 15 concessionaire (formerly UPCL),Customers; Incentive Engine exclusions
+NMPA Scale of Rates (indexed 1 May 2026 - 30 Apr 2027),Extraction checked,Every rate used is tested against the PDF; page recorded,Incentive Engine: wharfage
+Wharfage estimates (Incentive Engine),Estimated,"Tonnes x tariff, with foreign/coastal and SPM/berth splits from daily reports; checked against NMPA's accounts (within about 15%)",Incentive Engine
+NMPA income by cargo line (budget document),Extraction checked,All 17 lines match the PDF,Check against NMPA's accounts
+"PPP terms: Berth 14 (JSW), Berth 15 (Adani Power), Berth 16 (MCTPL, 31% royalty)",Original obtained,NMPA PPP disclosure 3.1.3,Incentive Engine: PPP berths
+Container royalty per TEU,Estimated; current rate Unresolved,"Rs 951 per TEU in the concession (JSW / CARE filing, 2025); NMPA booked Rs 1,015 per TEU in 2023-24. Current indexed rate not confirmed; NMPA royalty income Rs 102.11 cr in 2024-25 (all PPP and stevedoring royalties, Administration Report)",Incentive Engine: container royalty
+"TEU handled, FY 2026-27",Unresolved,NMPA statements give laden TEU only (Apr-Sep 2026 year to date); total TEU incl. empties not available,Incentive Engine: container royalty
+March 2026 crude/LPG waiver,Original obtained,NMPA Trade Circular NMPA/TM/2025-26/Gen.2 (scanned; read),Incentive Engine: past incentives
+"Non-major ports, Apr - Jul 2026",Extraction checked,All 11 states match the Ministry PDF,Trade Intelligence: nearby non-major ports
+NMPA Scale of Rates 1-6 May 2026 (old format),Extraction checked,All 8 wharfage lines used match the version from 7 May 2026 (columns foreign then coastal),Incentive Engine: tariff by date
+NMPA Administration Report 2024-25 (Table F-I),Extraction checked; Reconciled,Read from page images; Income + Royalty = Total Operating Income stated by Finance (Rs 921.36 cr); Total income = 1+4+5 for both years,Incentive Engine: actual income by activity
+NMPA Berth Capacity (31-3-2025),Extraction checked,All 17 berths match data/berth_capacity.csv (rated); usable capacity added,Capacity context
+Cochin Scale of Rates w.e.f. 01-05-2026 + corrigendum,Extraction checked,Each compared rate located in the PDF (page recorded); corrigendum changes only wharf-entry permit fees,Incentive Engine: tariff comparison
+"Cochin trade notices 06/2026, 11/2026, 13/2026, 04/2025",Original obtained,Scanned; notice number and date inside each match the file,Incentive Engine: scheme examples
+"Port charge comparison beyond wharfage (vessel charges, handling, transport)",Unresolved,Needs typical vessel sizes and service scope; LPG and container lines not comparable from documents held,Incentive Engine
+"NMPA statements, October 2026",Extraction checked,Added through the monthly update; every line matched the PDF,All modules
+"NMPA incentive notices: iron ore export rebate (23.09.2026), container vessel rebate (02.11.2026)",Original obtained,Scanned; terms read from the notices; recorded in data/nmpa_incentive_notices.csv,Eligibility rules; NMPA's own incentive schemes
+NMPA Scale of Rates 2025-26,Extraction checked,"Rates used tested against the PDF (crude SPM and berth, LPG, iron ore)",March 2026 waiver cost; VOC comparison
+March 2026 waiver cost,Estimated,"Upper estimate: wharfage only, every ship berthed in the window, 2025-26 rates",Past incentives
+VOC (Tuticorin) Scale of Rates 2025-26,Extraction checked,Each compared rate located in the PDF; volume-based lines not compared,Tariff comparison
+Iron ore rebate: exporters' 2025-26 base,Unresolved,"Daily reports start Sep 2025; Apr-Aug 2025 missing, so the base per exporter cannot be built",Iron ore rebate monitor
+"Ministry report, October 2026",Unresolved,Not held: market comparisons stay at September 2026,"Market share, cargo lost, market context"

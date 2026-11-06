@@ -1,0 +1,29 @@
+HOW TO RUN (no git needed)
+
+1. Install Python 3.10+ from python.org
+2. Open a terminal in this folder and run:
+     python -m venv venv
+     venv\Scripts\activate          (Windows)   |   source venv/bin/activate   (Mac/Linux)
+     pip install -r requirements.txt
+3. Start the backend (terminal 1):
+     uvicorn backend.app.main:app --port 8000
+   Check it: open http://localhost:8000/docs  and try /trade/summary
+4. Start the dashboard (terminal 2, same venv):
+     streamlit run frontend/app.py
+   Open the Trade tab (tab 4) - the top part is the new real module.
+5. Run the tests (optional):
+     pip install -r requirements-dev.txt
+     pytest
+
+If pip fails on numpy 2.0.2 with a newer Python, use: pip install numpy pandas scikit-learn fastapi uvicorn streamlit plotly requests
+
+CHECK THE DATA AGAINST NMPA'S OFFICIAL PDF (needs poppler's pdftotext)
+   python scripts/verify_trade_against_nmpa.py "nmpa_public_data/Commodity wise traffic statement August 2026.pdf"
+   Add --append to also add a new month to data/port_cargo_monthly.csv (only if every check passes).
+
+UPDATING TRADE INTELLIGENCE DATA (each day / each month)
+---------------------------------------------------------
+1. Put the new PDFs in the folder  incoming\   (daily vessel position reports, NMPA commodity-wise / container /
+   Traffic & Performance statements, Ministry "Cargo handled at Major Ports" reports). File names as on the websites.
+2. With the environment active:   python scripts\update_trade_data.py
+3. Restart the backend window. The Trade Intelligence header shows how current each source is.
