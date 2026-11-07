@@ -1,6 +1,6 @@
-﻿# 20 â€” System Limitations, Future Scope & Transformation Summary
+# 20 — System Limitations, Future Scope & Transformation Summary
 
-## ðŸ›‘ 1. Current System Limitations
+## 🛑 1. Current System Limitations
 
 While the Maritime Port Intelligence Platform (MPIP) represents a robust proof-of-concept, an honest evaluation reveals the following current limitations:
 
@@ -16,7 +16,7 @@ While the Maritime Port Intelligence Platform (MPIP) represents a robust proof-o
 
 ---
 
-## ðŸ”® 2. Realistic Future Scope & Enhancement Roadmap
+## 🔮 2. Realistic Future Scope & Enhancement Roadmap
 
 1. **PostgreSQL & TimescaleDB Database Migration**: Replace local CSV files with a relational time-series database for multi-tenant scalability.
 2. **Live External API Integrations**: Integrate live AIS satellite coordinates (Spire / MarineTraffic APIs) and real commodity market feeds (Refinitiv / Bloomberg).
@@ -26,7 +26,7 @@ While the Maritime Port Intelligence Platform (MPIP) represents a robust proof-o
 
 ---
 
-# ðŸ”„ WHAT CHANGED FROM THE PREVIOUS PROJECT?
+# 🔄 WHAT CHANGED FROM THE PREVIOUS PROJECT?
 
 Below is the definitive 12-point summary of the transformation from the **Previous Project Version** to the **Current Enhanced Project Version**.
 
@@ -35,7 +35,7 @@ Below is the definitive 12-point summary of the transformation from the **Previo
 ### 12 Key Points of Transformation
 
 1. **OLD PROJECT**: Generic vessel ETA tracker displaying ship coordinates.
-   * **CURRENT PROJECT**: â­ **Predictive Cargo Analytics Platform** predicting monthly cargo tonnage by commodity.
+   * **CURRENT PROJECT**: ⭐ **Predictive Cargo Analytics Platform** predicting monthly cargo tonnage by commodity.
    * **KEY IMPROVEMENT**: Shifts focus from passive ship tracking to active cargo decision support.
 
 2. **OLD PROJECT**: Static linear trend extrapolation.
@@ -59,11 +59,11 @@ Below is the definitive 12-point summary of the transformation from the **Previo
    * **KEY IMPROVEMENT**: Connects global trade routes directly to specific port commodity demand.
 
 7. **OLD PROJECT**: Unclassified alert logs.
-   * **CURRENT PROJECT**: `Cargo Anomaly & Risk Intelligence` with a 4-tier Severity Progression Scale (`Normal â†’ Critical`).
+   * **CURRENT PROJECT**: `Cargo Anomaly & Risk Intelligence` with a 4-tier Severity Progression Scale (`Normal → Critical`).
    * **KEY IMPROVEMENT**: Clear risk visual indicators for operational staff.
 
 8. **OLD PROJECT**: Generic mock values.
-   * **CURRENT PROJECT**: Actual New Mangalore Port Authority (NMPA) dataset (1,354 records across 2021â€“2026).
+   * **CURRENT PROJECT**: Actual New Mangalore Port Authority (NMPA) dataset (1,354 records across 2021–2026).
    * **KEY IMPROVEMENT**: Grounded in authentic Indian maritime port traffic data.
 
 9. **OLD PROJECT**: No terminal facility mapping.
@@ -84,6 +84,6 @@ Below is the definitive 12-point summary of the transformation from the **Previo
 
 ---
 
-## ðŸŽ“ Final Mentor-Ready Summary Statement
+## 🎓 Final Mentor-Ready Summary Statement
 
 > *"Earlier, our project was mainly focused on generic vessel tracking and passive ship ETA counts. In the current version, we changed the core axis to **Predictive Cargo Analytics**. The biggest improvement is the implementation of a mathematically backtested Holt-Winters + Ridge ML forecasting engine with 95% dynamic prediction bounds and WAPE error validation. We specifically strengthened the cargo-focused functionality by mapping 16+ commodities to New Mangalore Port Authority (NMPA) berths, draft depths, and hinterland industrial consumers like MRPL and UPCL. Technically, we moved from a monolithic script to a modular FastAPI backend and Streamlit frontend architecture with interactive What-If scenario simulation. The current system now provides proactive decision support for real-world port logistics."*

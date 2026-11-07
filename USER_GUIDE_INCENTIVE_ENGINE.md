@@ -91,10 +91,49 @@ python scripts\export_daily_reports_excel.py                (one workbook: outpu
 the archive, or failed and why). The workbook has one row per ship per report day (berthed, waiting, expected), each with its
 date, source PDF and whether that day is checked against its original.
 
-## Windows note: Poppler is needed only for new statements
+## The PDF text tools (Poppler): installed automatically
 
-The dashboard, the daily-report downloader, the daily-report update and the Excel export work on Windows as they are.
-Adding new **NMPA or Ministry statements** (commodity, container, Traffic & Performance, Ministry reports) also needs the free
-**Poppler** tools (`pdftotext`). If they are missing, the update stops, changes nothing, and says so. To install on Windows:
-download the latest `Release-...zip` from https://github.com/oschwartz10612/poppler-windows/releases, unzip it to `C:\poppler`,
-add the folder containing `pdftotext.exe` (for example `C:\poppler\Library\bin`) to the PATH, and open a new terminal.
+The checks on NMPA and Ministry statements read the PDFs with Poppler, a free and widely used set of PDF text tools
+(pdftotext, pdfinfo, pdftoppm). Windows does not include it, so `scripts\refresh_all.py` installs it the first time a new
+statement arrives, into the project's own folder (`tools\poppler`): a pinned version from its official release page, with
+its SHA-256 fingerprint checked before use (a file that does not match is refused and deleted). Nothing outside the project
+folder is changed. To install it by hand instead: `python scripts\setup_poppler.py`.
+
+### What the harvester does with older or unclear statements
+
+- Statements for months already in the data (for example container statements from 2019 to September 2026) are downloaded
+  to `nmpa_public_data\harvested\older_statements\` and kept for history. They are never fed to the update automatically,
+  because older layouts can differ; they can be added deliberately after checking.
+- A statement whose title does not say the month is downloaded and its month is read from inside the PDF. If it is newer
+  than the data held, it goes to the update; otherwise to the archive. A month is never guessed.
+
+## Keeping the data current with one command
+
+With NMPA's permission for automated download:
+
+```
+python scripts\refresh_all.py --dry-run      (shows what would be downloaded; changes nothing)
+python scripts\refresh_all.py                (does everything below, in order)
+```
+
+1. **NMPA documents** (`scripts\harvest_nmpa_documents.py`): reads NMPA's public pages (statistics, reports, trade notices
+   and circulars, port tariff, downloads, office memorandums), lists every PDF in `data\harvest_catalog.csv`, and downloads
+   only documents not held yet. Monthly statements go to `incoming\` for the update; notices, tariffs and reports go to
+   `nmpa_public_data\harvested\` for a person to read. Notices whose title mentions a rebate, incentive, concession,
+   discount or waiver are listed at the end as "read these". It also reads the Ministry of Ports' publication page
+   (shipmin.gov.in, TRW publication): Major Ports monthly reports for months not held go to `incoming\` for the update.
+2. **Daily vessel reports** since the last one held.
+3. **The update**: checks every new file and refreshes all figures (all-or-nothing).
+4. **The Excel workbook** of daily reports.
+
+Then restart the backend so the dashboard shows the new data.
+
+### Run it automatically every Monday at 7:00 (Windows Task Scheduler)
+
+In PowerShell (once):
+
+```
+schtasks /Create /SC WEEKLY /D MON /ST 07:00 /TN "NMPA data refresh" /TR "C:\nmpa\maritime\venv\Scripts\python.exe C:\nmpa\maritime\scripts\refresh_all.py"
+```
+
+To remove it: `schtasks /Delete /TN "NMPA data refresh" /F`. The computer must be on at that time.

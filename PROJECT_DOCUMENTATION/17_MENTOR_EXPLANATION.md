@@ -1,14 +1,14 @@
-﻿# 17 â€” Comprehensive Mentor Presentation Script
+# 17 — Comprehensive Mentor Presentation Script
 
-## ðŸŽ¤ Ready-to-Speak Script for Project Defense & Oral Evaluation
+## 🎤 Ready-to-Speak Script for Project Defense & Oral Evaluation
 
 This document contains a structured presentation script written specifically for a student presenting the **Maritime Port Intelligence Platform (MPIP)** to an academic or technical mentor.
 
 ---
 
 ### 1. Opening
-> *"Good morning/afternoon, Respected Mentor. Today I am presenting our project: the **Maritime Port Intelligence Platform** (MPIP).
->
+> *"Good morning/afternoon, Respected Mentor. Today I am presenting our project: the **Maritime Port Intelligence Platform** (MPIP). 
+> 
 > At a high level, this is an AI-powered, data-grounded decision support system designed for maritime port authorities, terminal operators, and customs agencies. It transforms historical port traffic records into forward-looking predictive insights."*
 
 ---
@@ -24,12 +24,12 @@ This document contains a structured presentation script written specifically for
 ---
 
 ### 4. Cargo Focus
-> *"How is cargo central to our project? Our project's primary axis is **Predictive Cargo Analytics**. Rather than just counting generic ship arrivals, every chart, forecast, and calculation is measured in **Cargo Tonnes** broken down across 16+ specific commoditiesâ€”such as Crude Oil, Thermal Coal, Iron Ore, Containers, and Fertilizers. Furthermore, every commodity is mapped directly to actual port terminal infrastructure, berth draft depths, and hinterland industrial consumers like the MRPL Refinery and UPCL Power Plant."*
+> *"How is cargo central to our project? Our project's primary axis is **Predictive Cargo Analytics**. Rather than just counting generic ship arrivals, every chart, forecast, and calculation is measured in **Cargo Tonnes** broken down across 16+ specific commodities—such as Crude Oil, Thermal Coal, Iron Ore, Containers, and Fertilizers. Furthermore, every commodity is mapped directly to actual port terminal infrastructure, berth draft depths, and hinterland industrial consumers like the MRPL Refinery and UPCL Power Plant."*
 
 ---
 
 ### 5. Technical Architecture
-> *"How does the system work technically?
+> *"How does the system work technically? 
 > * **Backend Layer**: Built using **FastAPI** running on Uvicorn. It organizes business logic across 12 feature routers (`/cargo`, `/vessels`, `/trade`, `/anomaly`, `/incentive`, etc.).
 > * **Frontend Layer**: Built using **Streamlit** and **Plotly**. It features a custom Warm Amber / Cream design system with 9 horizontal navigation tabs.
 > * **API Integration**: The frontend communicates asynchronously with backend REST endpoints via HTTP GET and POST requests."*
@@ -50,13 +50,13 @@ This document contains a structured presentation script written specifically for
 > *"Where is AI/ML being used?
 > 1. **Forecasting Model**: We built a dual time-series model combining Holt-Winters Exponential Smoothing (for seasonality) and Multi-Feature Ridge Regression with L2 regularization. It projects volume up to 12 months ahead with 95% dynamic confidence interval bands.
 > 2. **Model Validation**: We perform chronological out-of-sample backtesting against a Seasonal Naive baseline model, measuring Weighted Absolute Percentage Error (**WAPE**), MAPE, MAE, and RMSE.
-> 3. **Explainability**: The system quantifies forecast driver weightsâ€”showing exactly how much monsoon swells, hinterland demand, or trade velocity contribute to a forecast.
+> 3. **Explainability**: The system quantifies forecast driver weights—showing exactly how much monsoon swells, hinterland demand, or trade velocity contribute to a forecast.
 > 4. **AI Copilot**: We implemented a 3-tier cognitive query dispatcher supporting natural language interaction across 5 specialized agent roles."*
 
 ---
 
 ### 9. System Improvements vs Previous Version
-> *"What did we change from the previous version of the project?
+> *"What did we change from the previous version of the project? 
 > * Previously, our project was a generic vessel ETA counter with static mock location dots.
 > * In the current version, we made **Predictive Cargo Analytics** our clearly visible core capability.
 > * We replaced simple linear estimates with a mathematically backtested Holt-Winters + Ridge ML pipeline.

@@ -1,19 +1,19 @@
-﻿# 11 â€” API Documentation & Endpoint Reference
+# 11 — API Documentation & Endpoint Reference
 
-## ðŸ“¡ REST API Architecture Overview
+## 📡 REST API Architecture Overview
 
 The backend service hosts fully documented REST API endpoints running on `http://127.0.0.1:8000`. Interactive Swagger UI documentation is available at `http://127.0.0.1:8000/docs`.
 
 ---
 
-## ðŸ“‹ Complete REST Endpoint Reference Table
+## 📋 Complete REST Endpoint Reference Table
 
 | Method | Endpoint | Purpose / Function | Input Parameters | Output Payload | Frontend Usage |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `GET` | `/` | Root status check | None | `{"message": "...", "modules": 8}` | Server verification |
 | `GET` | `/health` | Liveness check | None | `{"status": "healthy"}` | Container health |
 | `GET` | `/cargo/commodities` | List available commodities | None | `{"commodities": [...], "sections": [...]}` | Tab 3 Dropdown |
-| `GET` | `/cargo/forecast` | Data-grounded ML cargo forecast | `horizon`, `commodity`, `section` | Forecast series, 95% bounds, drivers, NMPA meta | â­ Tab 3 Main Chart |
+| `GET` | `/cargo/forecast` | Data-grounded ML cargo forecast | `horizon`, `commodity`, `section` | Forecast series, 95% bounds, drivers, NMPA meta | ⭐ Tab 3 Main Chart |
 | `GET` | `/cargo/accuracy` | Backtesting WAPE comparison | `commodity`, `section` | Test actuals, baseline vs ML model, metrics table | Tab 3 Backtesting |
 | `GET` | `/cargo/explainability` | Driver weights & explanations | `commodity`, `section` | Drivers list with weights and directions | Tab 3 Drivers |
 | `GET` | `/cargo/data-quality` | Lineage & completeness stats | None | Completeness %, record count, date span | Tab 3 Lineage Card |
@@ -29,7 +29,7 @@ The backend service hosts fully documented REST API endpoints running on `http:/
 | `GET` | `/trade/cargo-split` | ESTIMATE of foreign vs coastal ships per cargo (and main customers) from NMPA daily vessel reports, checked against the Ministry's whole-port coastal share | None | `families[]`, `validation_against_ministry`, `limits` | Tab 4 foreign vs coastal section |
 | `GET` | `/trade/lanes` | Trade lane volume & growth % | None | List of trade routes with growth rates | Tab 4 Trade Lanes |
 | `GET` | `/trade/commodity-prices` | 30-day commodity price trends | None | Price USD series, 30d delta | Tab 4 Price Ticker |
-| `GET` | `/trade/opportunities` | AI-ranked trade opportunities | None | Ranked list with revenue potential in â‚¹ Cr | Tab 4 Opportunities |
+| `GET` | `/trade/opportunities` | AI-ranked trade opportunities | None | Ranked list with revenue potential in ₹ Cr | Tab 4 Opportunities |
 | `GET` | `/anomaly/events` | Active anomaly event logs | None | Anomalies classified by severity (Surge, Decline) | Tab 5 Anomaly Cards |
 | `GET` | `/anomaly/history` | 30-day anomaly histogram data | None | Historical count by severity tier | Tab 5 Histogram |
 | `GET` | `/incentive/recommendations`| Trade incentive policy recs | None | Priority-ranked policy recommendations | Tab 6 Incentives |
@@ -41,13 +41,13 @@ The backend service hosts fully documented REST API endpoints running on `http:/
 | `GET` | `/pipeline/status` | Ingestion pipeline health | None | Kafka msg/sec, Spark rows/sec, storage GB | Tab 9 System Metrics |
 | `GET` | `/pipeline/log` | Live ingestion event log | None | List of timestamped ingestion log rows | Tab 9 Event Log |
 | `GET` | `/executive/kpis` | Executive KPI summary | None | Berth util, throughput, revenue, congestion | Tab 1 Top Metrics |
-| `GET` | `/executive/revenue-trend` | 30-day revenue & throughput | None | Dates, revenue â‚¹ Cr, throughput MT arrays | Tab 1 Trend Line |
+| `GET` | `/executive/revenue-trend` | 30-day revenue & throughput | None | Dates, revenue ₹ Cr, throughput MT arrays | Tab 1 Trend Line |
 | `GET` | `/executive/events` | Port event stream | None | Recent arrival/departure/forecast events | Tab 1 Event Log |
 | `POST`| `/upload/` | Multipart CSV file upload | `file` (Multipart Form) | File path, row count, column headers | Data Integration |
 
 ---
 
-## ðŸ’¡ Detailed Explanation of Primary Core Endpoints
+## 💡 Detailed Explanation of Primary Core Endpoints
 
 ### 1. `GET /cargo/forecast`
 * **Query Parameters**:

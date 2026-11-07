@@ -43,7 +43,7 @@ def _num(tok: str) -> float | None:
 
 def parse_pdf(path: Path) -> tuple[pd.DataFrame, int, int]:
     """Top-level commodity rows (+ totals) from the statement. Returns (rows, year, month)."""
-    text = subprocess.run(["pdftotext", "-layout", str(path), "-"], capture_output=True, text=True, check=True).stdout
+    text = subprocess.run(["pdftotext", "-layout", str(path), "-"], capture_output=True, encoding="utf-8", errors="replace", check=True).stdout
     head = re.search(r"MONTH OF\s+([A-Z]+),?\s+(\d{4})", text)
     if not head:
         raise SystemExit("Could not find the month/year in the PDF header")
@@ -100,7 +100,7 @@ CATEGORY_ROWS = {"a) Dry Bulk (Total)": "a) Dry Bulk (Total)", "b) Break Bulk": 
 
 def category_rows(pdf: Path) -> list[dict]:
     """The six category/grand-total rows at the bottom of the statement (same rows the CSV keeps)."""
-    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True, check=True).stdout
+    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, encoding="utf-8", errors="replace", check=True).stdout
     block = text.split("CATEGORY-WISE", 1)[1]
     found = {}
     for line in block.splitlines():

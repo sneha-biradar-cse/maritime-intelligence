@@ -20,8 +20,8 @@ def _sor_text() -> str:
     """Text of the tariff PDF: Poppler's pdftotext if installed, otherwise pdfplumber (pure Python, works on Windows)."""
     f = str(ie.tmk.ROOT / ie.SOR_FILE)
     try:
-        out = subprocess.run(["pdftotext", "-layout", f, "-"], capture_output=True, text=True).stdout
-        if out.strip():
+        out = subprocess.run(["pdftotext", "-layout", f, "-"], capture_output=True, encoding="utf-8", errors="replace").stdout
+        if out and out.strip():                 # None or empty output: fall back to pdfplumber below
             return out
     except (OSError, subprocess.SubprocessError):
         pass

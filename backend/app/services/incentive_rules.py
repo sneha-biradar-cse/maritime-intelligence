@@ -47,6 +47,12 @@ KNOWN_BENEFIT_PERIODS = [  # benefits granted by NMPA, from its notices held (da
      "name": "20% rebate on wharfage for incremental iron ore fines/lumps exports (NMPA Trade Notice NMPA/TM/IOF-Exp-Rebate/26-27)"},
     {"cargos": ["Containers"], "from": "2026-11-03", "to": "2027-03-31",
      "name": "35% / 50% rebate on vessel-related charges for feeder / mainline container vessels (NMPA Trade Notice Comrc/DTM(C)/2026-27/01)"},
+    {"cargos": ["New bulk / break-bulk export cargo"], "from": "2026-07-29", "to": "2027-07-28",
+     "name": "25% wharfage concession for new export cargo not handled at NMPA in the preceding 5 years (NMPA Trade Notice NMPA/TM/SM/2026)"},
+    {"cargos": ["Green fuel exports"], "from": "2025-07-01", "to": "2030-06-30",
+     "name": "40% / 75% wharfage concession for certified green fuel exports (NMPA Harit Cargo Concession Policy 2025)"},
+    {"cargos": ["Cape-size vessels at Berth 16"], "from": "2025-04-03", "to": "2027-04-02",
+     "name": "30% rebate on port dues and pilotage for Cape-size vessels at Berth 16 (NMPA Trade Notice 12/1/2021-22/ATM Gr.I (Com)/JSW)"},
 ]
 BASELINE_METHODS = {
     "same_months_last_year": "Same months last year",

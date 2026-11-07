@@ -1,77 +1,77 @@
-﻿# 05 â€” Complete Project Execution Flow
+# 05 — Complete Project Execution Flow
 
 This document details the exact sequence of events that occurs from the moment a user launches the browser application to when machine learning predictions and interactive charts update on screen.
 
 ---
 
-## ðŸ”„ End-to-End User Interaction Flow Diagram
+## 🔄 End-to-End User Interaction Flow Diagram
 
 ```text
  User Opens Browser (http://localhost:8501)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Streamlit App Execution (`frontend/app.py`)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Renders Header & Top Hero Objective Banner
-                    â”‚
-                    â–¼
- Tab 3 Activated ("â­ Cargo Forecasting")
-                    â”‚
-                    â–¼
+                    │
+                    ▼
+ Tab 3 Activated ("⭐ Cargo Forecasting")
+                    │
+                    ▼
  API Call: `api_get("/cargo/commodities")`
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  FastAPI Router (`backend/app/routes/cargo.py:get_commodities()`)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Service Call (`backend/app/services/forecasting.py:get_available_commodities()`)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Returns List of 16+ Commodities to Frontend Dropdown
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  User Selects Commodity: "TOTAL COAL", Horizon: "6 Months"
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  API Call: `api_get("/cargo/forecast", {"horizon": 6, "commodity": "TOTAL COAL", "section": "ALL"})`
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  FastAPI Router (`backend/app/routes/cargo.py:get_forecast()`)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Service Call (`backend/app/services/forecasting.py:get_enhanced_cargo_forecast()`)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Data Ingestion & Preprocessing (`_load_and_prep_cargo_data()`)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Holt-Winters & Ridge ML Regression Execution
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Computes 95% Prediction Interval Bands & WAPE Metrics
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Calculates Driver Weights (Monsoon, Hinterland demand, UPCL Power)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  API Returns JSON Response Payload (HTTP 200 OK)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  Frontend Receives Response (`frontend/app.py`)
-                    â”‚
-                    â–¼
+                    │
+                    ▼
  UI Updates Dynamically:
-   â€¢ Selected Commodity Metrics Banner
-   â€¢ NMPA Facility Mapping (Berths 15 & 16 UPCL)
-   â€¢ Plotly Line Chart (Historical Cargo vs Predicted Cargo vs 95% Band)
-   â€¢ Explainable Forecast Drivers Cards
-   â€¢ Model Validation Backtesting Table (WAPE vs Baseline)
+   • Selected Commodity Metrics Banner
+   • NMPA Facility Mapping (Berths 15 & 16 UPCL)
+   • Plotly Line Chart (Historical Cargo vs Predicted Cargo vs 95% Band)
+   • Explainable Forecast Drivers Cards
+   • Model Validation Backtesting Table (WAPE vs Baseline)
 ```
 
 ---
 
-## ðŸ› ï¸ Step-by-Step Code Execution Trace
+## 🛠️ Step-by-Step Code Execution Trace
 
 ### Step 1: User Launches Application
 * **Action**: User opens browser to `http://localhost:8501`.
@@ -80,12 +80,12 @@ This document details the exact sequence of events that occurs from the moment a
   * Configures wide layout (`st.set_page_config`).
   * Injects CSS design system (`st.markdown("""<style>...</style>""")`).
   * Renders logo, timestamp, and header card (`ys-header`).
-  * Renders top hero positioning banner (`Predictive Cargo Analytics â€” See What's Coming. Plan Ahead.`).
+  * Renders top hero positioning banner (`Predictive Cargo Analytics — See What's Coming. Plan Ahead.`).
 
 ---
 
 ### Step 2: Tab Navigation & Filter Initialization
-* **Action**: User views the horizontal tab bar. `tabs[2]` (`â­ Cargo Forecasting`) is selected.
+* **Action**: User views the horizontal tab bar. `tabs[2]` (`⭐ Cargo Forecasting`) is selected.
 * **Code Execution**:
   * `app.py` line 610 triggers `with tabs[2]:`.
   * Calls `api_get("/cargo/commodities")`.

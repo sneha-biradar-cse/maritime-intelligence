@@ -28,7 +28,7 @@ def _n(t: str) -> float:
 
 
 def parse(pdf: Path) -> tuple[pd.DataFrame, list[dict]]:
-    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True, check=True).stdout
+    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, encoding="utf-8", errors="replace", check=True).stdout
     m = re.search(r'HANDLED DURING\s+"([A-Z]+),\s*(\d{4})"', text)
     month = f"{m.group(2)}-{MONTHS[m.group(1)]:02d}"
     rows, checks, direction = [], [], None

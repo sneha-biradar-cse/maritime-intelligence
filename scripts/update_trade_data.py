@@ -70,6 +70,9 @@ class UpdateFailed(Exception):
 
 def main() -> int:
     """Run the update inside a snapshot: on any failure, restore the data folder and return the new files to incoming/."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from _poppler import ensure_on_path
+    ensure_on_path()                       # the project's own Poppler (tools/poppler), if installed
     INBOX.mkdir(exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     snap = ROOT / f".update_snapshot_{stamp}"
@@ -88,7 +91,7 @@ def main() -> int:
         shutil.rmtree(snap, ignore_errors=True)
         fail = {"failed": datetime.now().isoformat(timespec="seconds"), "error": str(e)[:500],
                 "result": "Nothing changed: the data folder was restored and the new files are back in incoming/."}
-        (ROOT / "data" / "last_update_failed.json").write_text(json.dumps(fail, indent=2))
+        (ROOT / "data" / "last_update_failed.json").write_text(json.dumps(fail, indent=2), encoding="utf-8")
         print(json.dumps(fail, indent=2))
         return 2
 
@@ -136,7 +139,7 @@ def _update(moved: list) -> int:
                      "original PDF DIFFERS in ships, cargo or quantities; ") + "old copy kept as .json.before_pdf; PDF reading now used"))
                 if same:
                     verified_days.append(d)
-            jp.write_text(json.dumps(parsed, indent=2))
+            jp.write_text(json.dumps(parsed, indent=2), encoding="utf-8")
             log["added"].append(f"daily report {d}: {len(parsed['berthed'])} berths, {len(parsed['unparsed_rows'])} unread rows")
         elif k == "unknown":
             log["rejected"].append(f"{p.name}: not recognised - rename it like the files in nmpa_public_data/ (left in incoming/)")
@@ -152,9 +155,8 @@ def _update(moved: list) -> int:
     if statements_added and shutil.which("pdftotext") is None:
         raise UpdateFailed(
             "New NMPA / Ministry statements need the free Poppler tools (pdftotext), which are not installed on this computer. "
-            "Windows: download the latest 'Release-...zip' from https://github.com/oschwartz10612/poppler-windows/releases, "
-            "unzip it to C:\\poppler, add the folder that contains pdftotext.exe (e.g. C:\\poppler\\Library\\bin) to the PATH, "
-            "open a new terminal and run the update again. Daily vessel reports do not need Poppler.")
+            "Run:  python scripts\\setup_poppler.py  (installs it into the project's own folder, fingerprint-checked), "
+            "then run the update again; scripts\\refresh_all.py does this automatically. Daily vessel reports do not need Poppler.")
     if not statements_added:
         log["checks"]["statements"] = "no new statements: NMPA and Ministry figures left as they are"
     for pdf in todo["commodity"]:
@@ -181,7 +183,7 @@ def _update(moved: list) -> int:
     except Exception as e:                                   # the update itself succeeded; report, do not roll back
         log["data_current"] = f"could not be read: {e}"
     log["finished"] = datetime.now().isoformat(timespec="seconds")
-    (ROOT / "data" / "last_update.json").write_text(json.dumps(log, indent=2))
+    (ROOT / "data" / "last_update.json").write_text(json.dumps(log, indent=2), encoding="utf-8")
     print(json.dumps(log, indent=2))
     print("\nDone. Restart the backend so the dashboard reads the new data." if not (log["problems"] or log["rejected"])
           else "\nDone. Some files were not used (see 'rejected'); the rest is updated. Restart the backend.")

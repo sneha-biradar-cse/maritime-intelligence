@@ -1,18 +1,18 @@
-﻿# 12 â€” Dataset Specification & Data Engineering Analysis
+# 12 — Dataset Specification & Data Engineering Analysis
 
-## ðŸ“Š Overview of Project Datasets
+## 📊 Overview of Project Datasets
 
 The Maritime Port Intelligence Platform is powered by real-world, multi-year historical port traffic datasets stored in the `data/` directory.
 
 ```text
 data/
-â”œâ”€â”€ port_cargo_monthly.csv       # Primary NMPA Monthly Cargo Dataset (1,354 records, 2021â€“2026)
-â””â”€â”€ sample_cargo_data.csv        # Multi-Port Weekly Benchmark Dataset (62 records, 2024)
+├── port_cargo_monthly.csv       # Primary NMPA Monthly Cargo Dataset (1,354 records, 2021–2026)
+└── sample_cargo_data.csv        # Multi-Port Weekly Benchmark Dataset (62 records, 2024)
 ```
 
 ---
 
-## ðŸ—ƒï¸ 1. Primary Dataset: `data/port_cargo_monthly.csv`
+## 🗃️ 1. Primary Dataset: `data/port_cargo_monthly.csv`
 
 ### General Metadata
 * **File Location**: `data/port_cargo_monthly.csv` (83.6 KB).
@@ -63,7 +63,7 @@ data/
 
 ---
 
-## ðŸ“… Multi-Year Combination & Comparison Methodology
+## 📅 Multi-Year Combination & Comparison Methodology
 
 How does the system combine and compare **2024, 2025, and 2026** commodity datasets?
 
@@ -81,11 +81,11 @@ How does the system combine and compare **2024, 2025, and 2026** commodity datas
 
 4. **Multi-Year Feature Engineering for ML**:
    * **Lag 1 Feature ($y_{t-1}$)**: Volume in the immediately preceding month.
-   * **Lag 12 Feature ($y_{t-12}$)**: Volume in the exact same month of the prior calendar year (captures annual seasonal cycles such as monsoon delays during Juneâ€“August).
+   * **Lag 12 Feature ($y_{t-12}$)**: Volume in the exact same month of the prior calendar year (captures annual seasonal cycles such as monsoon delays during June–August).
 
 ---
 
-## ðŸ—ƒï¸ 2. Secondary Benchmark Dataset: `data/sample_cargo_data.csv`
+## 🗃️ 2. Secondary Benchmark Dataset: `data/sample_cargo_data.csv`
 
 * **File Location**: `data/sample_cargo_data.csv` (2.6 KB).
 * **Total Record Count**: 62 weekly records.

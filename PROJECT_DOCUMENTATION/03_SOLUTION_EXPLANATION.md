@@ -1,53 +1,53 @@
-﻿# 03 â€” Solution Explanation & End-to-End Technical Pipeline
+# 03 — Solution Explanation & End-to-End Technical Pipeline
 
-## ðŸ—ï¸ End-to-End Data & Execution Flow Architecture
+## 🏗️ End-to-End Data & Execution Flow Architecture
 
-The Maritime Port Intelligence Platform (MPIP) processes data through an 8-stage transformation pipelineâ€”from raw CSV records to interactive dashboard insights.
+The Maritime Port Intelligence Platform (MPIP) processes data through an 8-stage transformation pipeline—from raw CSV records to interactive dashboard insights.
 
 ```text
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ 1. Data Sources â”‚  Actual historical monthly port records (`data/port_cargo_monthly.csv`)
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-           â”‚
-           â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ 2. Data Ingest  â”‚  Pandas ingestion engine & custom upload route (`backend/app/routes/upload.py`)
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-           â”‚
-           â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ 3. Processing   â”‚  Feature engineering, commodity grouping & NMPA mapping (`forecasting.py`)
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-           â”‚
-           â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ 4. Backend      â”‚  FastAPI microservice application & route dispatcher (`backend/app/main.py`)
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-           â”‚
-           â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ 5. AI / ML      â”‚  Holt-Winters + Ridge Regression, Backtesting WAPE & Simulator (`forecasting.py`)
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-           â”‚
-           â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ 6. API Layer    â”‚  JSON REST Endpoints (`/cargo/forecast`, `/trade/lanes`, `/anomaly/events`, etc.)
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-           â”‚
-           â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ 7. Dashboard    â”‚  Streamlit UI layout, custom CSS cards & Plotly charts (`frontend/app.py`)
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-           â”‚
-           â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ 8. Port Insightsâ”‚  Proactive berth allocation, risk mitigation & cargo decision support
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  ┌─────────────────┐
+  │ 1. Data Sources │  Actual historical monthly port records (`data/port_cargo_monthly.csv`)
+  └────────┬────────┘
+           │
+           ▼
+  ┌─────────────────┐
+  │ 2. Data Ingest  │  Pandas ingestion engine & custom upload route (`backend/app/routes/upload.py`)
+  └────────┬────────┘
+           │
+           ▼
+  ┌─────────────────┐
+  │ 3. Processing   │  Feature engineering, commodity grouping & NMPA mapping (`forecasting.py`)
+  └────────┬────────┘
+           │
+           ▼
+  ┌─────────────────┐
+  │ 4. Backend      │  FastAPI microservice application & route dispatcher (`backend/app/main.py`)
+  └────────┬────────┘
+           │
+           ▼
+  ┌─────────────────┐
+  │ 5. AI / ML      │  Holt-Winters + Ridge Regression, Backtesting WAPE & Simulator (`forecasting.py`)
+  └────────┬────────┘
+           │
+           ▼
+  ┌─────────────────┐
+  │ 6. API Layer    │  JSON REST Endpoints (`/cargo/forecast`, `/trade/lanes`, `/anomaly/events`, etc.)
+  └────────┬────────┘
+           │
+           ▼
+  ┌─────────────────┐
+  │ 7. Dashboard    │  Streamlit UI layout, custom CSS cards & Plotly charts (`frontend/app.py`)
+  └────────┬────────┘
+           │
+           ▼
+  ┌─────────────────┐
+  │ 8. Port Insights│  Proactive berth allocation, risk mitigation & cargo decision support
+  └─────────────────┘
 ```
 
 ---
 
-## ðŸ” Detailed Breakdown of Every Pipeline Stage
+## 🔍 Detailed Breakdown of Every Pipeline Stage
 
 ### Stage 1: Data Sources
 * **What Happens?**: Historical multi-year port cargo statistics and AIS vessel parameters are stored as persistent CSV files.

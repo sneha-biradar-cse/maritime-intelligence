@@ -1,6 +1,6 @@
-﻿# 06 â€” Cargo-Focused Data Pipeline & Flow
+# 06 — Cargo-Focused Data Pipeline & Flow
 
-## âš“ Why Is This Project Classified as "Cargo-Focused"?
+## ⚓ Why Is This Project Classified as "Cargo-Focused"?
 
 Many maritime applications focus solely on AIS ship tracking (vessel location, flag state, vessel speed). While ship tracking is useful, it fails to provide operational intelligence for port logistics and hinterland supply chains.
 
@@ -13,52 +13,52 @@ Many maritime applications focus solely on AIS ship tracking (vessel location, f
 
 ---
 
-## ðŸ”„ Specific Cargo Data Transformation Pipeline
+## 🔄 Specific Cargo Data Transformation Pipeline
 
 ```text
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚  1. Cargo Dataset       â”‚  `data/port_cargo_monthly.csv` (1,354 NMPA historical monthly records)
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-              â”‚
-              â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚  2. Data Cleaning       â”‚  `forecasting.py:_load_and_prep_cargo_data()` (handles nulls, formats dates)
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-              â”‚
-              â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚  3. Cargo Classificationâ”‚  Groups into `LOADED` / `UNLOADED` & 16 NMPA commodity categories
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-              â”‚
-              â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚  4. Aggregation         â”‚  Monthly tonnage summation & historical YoY variation calculations
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-              â”‚
-              â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚  5. Trend Analysis      â”‚  Exponential Moving Average (EMA) smoothing & trend signal classification
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-              â”‚
-              â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚  6. AI/ML Analysis      â”‚  Holt-Winters + Ridge Regression, 95% Dynamic Interval & WAPE backtesting
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-              â”‚
-              â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚  7. Cargo Insights      â”‚  Quantified drivers, operational recommendations & What-If throughput simulations
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-              â”‚
-              â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚  8. UI Dashboard        â”‚  Streamlit â­ Cargo Forecasting Tab & Plotly visualization cards
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+ ┌─────────────────────────┐
+ │  1. Cargo Dataset       │  `data/port_cargo_monthly.csv` (1,354 NMPA historical monthly records)
+ └────────────┬────────────┘
+              │
+              ▼
+ ┌─────────────────────────┐
+ │  2. Data Cleaning       │  `forecasting.py:_load_and_prep_cargo_data()` (handles nulls, formats dates)
+ └────────────┬────────────┘
+              │
+              ▼
+ ┌─────────────────────────┐
+ │  3. Cargo Classification│  Groups into `LOADED` / `UNLOADED` & 16 NMPA commodity categories
+ └────────────┬────────────┘
+              │
+              ▼
+ ┌─────────────────────────┐
+ │  4. Aggregation         │  Monthly tonnage summation & historical YoY variation calculations
+ └────────────┬────────────┘
+              │
+              ▼
+ ┌─────────────────────────┐
+ │  5. Trend Analysis      │  Exponential Moving Average (EMA) smoothing & trend signal classification
+ └────────────┬────────────┘
+              │
+              ▼
+ ┌─────────────────────────┐
+ │  6. AI/ML Analysis      │  Holt-Winters + Ridge Regression, 95% Dynamic Interval & WAPE backtesting
+ └────────────┬────────────┘
+              │
+              ▼
+ ┌─────────────────────────┐
+ │  7. Cargo Insights      │  Quantified drivers, operational recommendations & What-If throughput simulations
+ └────────────┬────────────┘
+              │
+              ▼
+ ┌─────────────────────────┐
+ │  8. UI Dashboard        │  Streamlit ⭐ Cargo Forecasting Tab & Plotly visualization cards
+ └─────────────────────────┘
 ```
 
 ---
 
-## ðŸ” Detailed Code-Level Breakdown of Every Cargo Step
+## 🔍 Detailed Code-Level Breakdown of Every Cargo Step
 
 ### Step 1: Cargo Dataset Ingestion
 * **Code Responsible**: `data/port_cargo_monthly.csv`.
@@ -76,12 +76,12 @@ Many maritime applications focus solely on AIS ship tracking (vessel location, f
 ### Step 3: Cargo & Commodity Classification
 * **Code Responsible**: `backend/app/services/forecasting.py` (`NMPA_FACILITY_MAP` dictionary).
 * **Details**: Classifies data by flow section and commodity type. Maps each commodity to NMPA terminal berths:
-  * `TOTAL CRUDE`: Oil Jetty 1 & 2 / SPM (Draft: 15.4m) â†’ MRPL Refinery.
-  * `CRUDE - ISPRL`: Strategic Petroleum Cavern Line â†’ ISPRL Reserve.
-  * `TOTAL COAL`: Mechanized Coal Terminal Berths 15 & 16 (Draft: 14.0m) â†’ UPCL Power Plant.
-  * `IRON ORE`: KIOCL Bulk Terminal Berth 8 â†’ Kudremukh Corridor.
-  * `CONTAINER (JSW)`: Dedicated Container Berth 14 (Draft: 13.0m) â†’ Export Corridor.
-  * `FERTILIZER`: Dry Bulk Berths 5 & 6 (Draft: 11.5m) â†’ MCF Plant.
+  * `TOTAL CRUDE`: Oil Jetty 1 & 2 / SPM (Draft: 15.4m) → MRPL Refinery.
+  * `CRUDE - ISPRL`: Strategic Petroleum Cavern Line → ISPRL Reserve.
+  * `TOTAL COAL`: Mechanized Coal Terminal Berths 15 & 16 (Draft: 14.0m) → UPCL Power Plant.
+  * `IRON ORE`: KIOCL Bulk Terminal Berth 8 → Kudremukh Corridor.
+  * `CONTAINER (JSW)`: Dedicated Container Berth 14 (Draft: 13.0m) → Export Corridor.
+  * `FERTILIZER`: Dry Bulk Berths 5 & 6 (Draft: 11.5m) → MCF Plant.
 
 ---
 
@@ -96,7 +96,7 @@ Many maritime applications focus solely on AIS ship tracking (vessel location, f
 * **Details**: Evaluates Exponential Moving Average (EMA) slopes over a rolling 3-month window to classify traffic trend signals into:
   * `Increasing / Bullish`: Volume expanding > +5%.
   * `Decreasing / Bearish`: Volume contracting < -5%.
-  * `Stable / Neutral`: Volume within Â±5% tolerance.
+  * `Stable / Neutral`: Volume within ±5% tolerance.
 
 ---
 
@@ -116,5 +116,5 @@ Many maritime applications focus solely on AIS ship tracking (vessel location, f
 ---
 
 ### Step 8: Dashboard Presentation & What-If Simulator
-* **Code Responsible**: `frontend/app.py` (Tab 3: `â­ Cargo Forecasting`).
-* **Details**: Displays top hero banner (`Predictive Cargo Analytics â€” See What's Coming. Plan Ahead.`), 3 visual capability cards, selected commodity metrics, Plotly time-series chart, and interactive scenario simulator controls for vessel shifts, trade demand, and weather delays.
+* **Code Responsible**: `frontend/app.py` (Tab 3: `⭐ Cargo Forecasting`).
+* **Details**: Displays top hero banner (`Predictive Cargo Analytics — See What's Coming. Plan Ahead.`), 3 visual capability cards, selected commodity metrics, Plotly time-series chart, and interactive scenario simulator controls for vessel shifts, trade demand, and weather delays.

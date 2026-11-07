@@ -1,17 +1,17 @@
-﻿# 14 â€” Comprehensive Log of Changes Made
+# 14 — Comprehensive Log of Changes Made
 
-## ðŸ“ Detailed Transformation Log
+## 📝 Detailed Transformation Log
 
 This document provides a categorized, step-by-step record of all modifications, refactorings, and feature additions made across the codebase.
 
 ---
 
-## ðŸš€ 1. Major Architecture & Cargo-Related Changes
+## 🚀 1. Major Architecture & Cargo-Related Changes
 
 ### CHANGE 1: Positioning Predictive Cargo Analytics as the Primary Core Capability
 * **What Changed**: Re-architected the entire platform narrative and UI layout so that **Predictive Cargo Analytics** is the primary focal point.
 * **Old Implementation**: Generic vessel tracking and equal emphasis across all modules.
-* **New Implementation**: Added a top hero positioning banner (`Predictive Cargo Analytics â€” See What's Coming. Plan Ahead.`), highlighted `â­ Cargo Forecasting` in navigation, added 3 visual capability cards, and added selected commodity snapshot cards.
+* **New Implementation**: Added a top hero positioning banner (`Predictive Cargo Analytics — See What's Coming. Plan Ahead.`), highlighted `⭐ Cargo Forecasting` in navigation, added 3 visual capability cards, and added selected commodity snapshot cards.
 * **Why**: Port operations and academic mentors prioritize cargo throughput and logistics planning over passive ship tracking.
 * **Impact**: Immediately communicates the platform's core objective to mentors and users.
 
@@ -22,7 +22,7 @@ This document provides a categorized, step-by-step record of all modifications, 
 * **Old Implementation**: Basic linear growth calculations.
 * **New Implementation**: Full time-series model with dynamic 95% confidence intervals (`upper_bounds`, `lower_bounds`), feature engineering (lags, 3m rolling stats), and WAPE accuracy scoring.
 * **Why**: Cargo volume exhibits strong seasonal patterns (e.g., monsoon swell slowdowns).
-* **Impact**: Delivers forward visibility up to 12 months with 82â€“91% proven model accuracy.
+* **Impact**: Delivers forward visibility up to 12 months with 82–91% proven model accuracy.
 
 ---
 
@@ -44,7 +44,7 @@ This document provides a categorized, step-by-step record of all modifications, 
 
 ---
 
-## ðŸŽ¨ 2. UI & Frontend Changes
+## 🎨 2. UI & Frontend Changes
 
 ### CHANGE 5: Warm Amber / Cream Design System & Plotly Theme
 * **What Changed**: Injected modern CSS design system and custom Plotly chart theme in `frontend/app.py`.
@@ -55,21 +55,21 @@ This document provides a categorized, step-by-step record of all modifications, 
 
 ---
 
-### CHANGE 6: Module Alignment â€” Trade & Anomaly Retitling
+### CHANGE 6: Module Alignment — Trade & Anomaly Retitling
 * **What Changed**: Aligned Tab 4 and Tab 5 to explicitly support the cargo narrative.
 * **Old Implementation**: Tab 4: "Trade Intelligence", Tab 5: "Anomaly Detection".
 * **New Implementation**:
   * Tab 4: `Commodity Demand by Trade Lane`.
-  * Tab 5: `Cargo Anomaly & Risk Intelligence` with a 4-stage Severity Progression Indicator (`Normal â†’ Low/Medium Risk â†’ High Risk Warning â†’ Critical Anomaly`).
+  * Tab 5: `Cargo Anomaly & Risk Intelligence` with a 4-stage Severity Progression Indicator (`Normal → Low/Medium Risk → High Risk Warning → Critical Anomaly`).
 * **Why**: Ensures all supporting tabs reinforce the primary cargo analytics objective.
 * **Impact**: Seamless UX narrative across all 9 navigation tabs.
 
 ---
 
-## ðŸ› ï¸ 3. Backend & Data Changes
+## 🛠️ 3. Backend & Data Changes
 
 ### CHANGE 7: Real NMPA Cargo Dataset Ingestion & Facility Mapping
-* **What Changed**: Ingested `data/port_cargo_monthly.csv` (1,354 records across 2021â€“2026) and built `NMPA_FACILITY_MAP`.
+* **What Changed**: Ingested `data/port_cargo_monthly.csv` (1,354 records across 2021–2026) and built `NMPA_FACILITY_MAP`.
 * **Old Implementation**: Generic mock values.
 * **New Implementation**: Maps commodities to real NMPA terminals (Oil Jetties, UPCL Coal Berths, JSW Container Berth 14, KIOCL Jetty), max draft depths, and hinterland consumers (MRPL, UPCL, MCF).
 * **Why**: Real-world port grounding adds operational depth.
@@ -86,7 +86,7 @@ This document provides a categorized, step-by-step record of all modifications, 
 
 ---
 
-## ðŸ”§ 4. Minor Fixes & Refactorings
+## 🔧 4. Minor Fixes & Refactorings
 
 * **Fixed API Timeouts**: Increased frontend requests timeout to 6s for GET and 10s for POST requests.
 * **Fixed Plotly Legend Overlap**: Adjusted `legend=dict(orientation="h", y=-0.2)` across all chart rendering functions.

@@ -86,11 +86,12 @@ NOT_ESTIMATED = [
     ("Other cargo, other liquids, petrochemicals, cement",
      "Each covers several items with different rates in the Scale of Rates; a single rate would be a guess."),
     ("Vessel-related charges", "Port dues, pilotage and berth hire depend on each ship's size and stay; not included here."),
-    ("Waivers, rebates and discounts granted by NMPA", "From NMPA's notices held: (1) the March 2026 crude/LPG waiver ended on "
-     "31 Mar 2026 and does not affect these figures; (2) the 20% rebate on incremental iron ore exports (23 Sep 2026 to 31 Mar "
-     "2027) is NOT deducted: it is paid per exporter after 31 Mar 2027 on tonnes above each exporter's 2025-26 quantity, which "
-     "public data cannot show; (3) the container vessel rebate (from 3 Nov 2026) is on vessel-related charges, not wharfage. "
-     "See Proposals & schemes, NMPA's own incentive schemes."),
+    ("Waivers, rebates and discounts granted by NMPA", "From NMPA's notices held (all listed under Proposals & schemes, NMPA's "
+     "own incentive schemes): the March 2026 crude/LPG waiver ended on 31 Mar 2026 and does not affect these figures; the 20% "
+     "rebate on incremental iron ore exports (to 31 Mar 2027) is NOT deducted, because it is paid per exporter after the year "
+     "against each exporter's 2025-26 quantity, which public data cannot show; the new-export-cargo policy (25%) and the Harit "
+     "green cargo policy (40% / 75%) apply only to cargo not in the cargos priced here; the container (35% / 50%) and Cape-size "
+     "(30%) rebates are on vessel-related charges, not wharfage."),
 ]
 
 
@@ -120,7 +121,7 @@ def _crude_spm_share() -> float | None:
 def _sor_ref() -> dict:
     import json
     f = tmk.ROOT / "data" / "sor_reference.json"
-    return json.loads(f.read_text())["lines"] if f.exists() else {}
+    return json.loads(f.read_text(encoding="utf-8"))["lines"] if f.exists() else {}
 
 
 def _coastal_shares() -> dict[tuple[str, str], float]:
@@ -908,7 +909,7 @@ def _berth_occupancy() -> dict:
         m = d.strftime("%Y-%m")
         days[m] = days.get(m, 0) + 1
         seen = set()
-        for r in js.load(open(f)).get("berthed", []):
+        for r in js.load(open(f, encoding="utf-8")).get("berthed", []):
             b = str(r.get("berth_no") or "").strip().split("(")[0].strip()
             code = tsp._clean_code(str(r.get("cargo") or ""))
             vessel = str(r.get("vessel_name") or "").strip()

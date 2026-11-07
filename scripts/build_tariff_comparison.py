@@ -39,7 +39,7 @@ UNRESOLVED = [
 
 
 def text(pdf: Path) -> list[str]:
-    return subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True, check=True).stdout.split("\f")
+    return subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, encoding="utf-8", errors="replace", check=True).stdout.split("\f")
 
 
 def find(pages: list[str], label: str, a: float, b: float) -> int:

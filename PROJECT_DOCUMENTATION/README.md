@@ -1,6 +1,6 @@
-﻿> **Trade Intelligence and Incentive Engine:** the authoritative record of their data sources, verification status, assumptions and open questions is `../DATA_SOURCES_AND_ASSUMPTIONS.md` (with `../data/data_status.csv`, `../data/daily_reports_manifest.csv`, `../data/daily_reports_missing_pdfs.csv` and `../data/customer_identity_proposals.csv`). Where an older document in this folder differs, that file takes precedence.
+> **Trade Intelligence and Incentive Engine:** the authoritative record of their data sources, verification status, assumptions and open questions is `../DATA_SOURCES_AND_ASSUMPTIONS.md` (with `../data/data_status.csv`, `../data/daily_reports_manifest.csv`, `../data/daily_reports_missing_pdfs.csv` and `../data/customer_identity_proposals.csv`). Where an older document in this folder differs, that file takes precedence.
 
-# Project Documentation Directory â€” Maritime Port Intelligence Platform (MPIP)
+# Project Documentation Directory — Maritime Port Intelligence Platform (MPIP)
 
 Welcome to the official documentation folder for the **Maritime Port Intelligence Platform (MPIP)** / **Maritime Port Enhanced**.
 
@@ -8,15 +8,15 @@ This repository documentation is designed to give students, developers, and acad
 
 ---
 
-## ðŸ“Œ Project Overview at a Glance
+## 📌 Project Overview at a Glance
 
 * **Project Name**: Maritime Port Intelligence Platform (MPIP) / Maritime Port Enhanced
 * **One-Line Explanation**: An AI-powered, data-grounded maritime decision-support platform designed to deliver predictive cargo volume forecasting, trade lane momentum analytics, risk/anomaly detection, and interactive port scenario simulation.
 * **Main Objective**: Bridge fragmented maritime datasets and convert historical port operations into actionable, forward-looking decisions for port authorities, customs agencies, and shipping line operators.
-* **Primary Focus**: **Predictive Cargo Analytics & Intelligence** (specifically grounded on actual multi-year monthly port traffic records mapped to New Mangalore Port Authority â€” NMPA).
+* **Primary Focus**: **Predictive Cargo Analytics & Intelligence** (specifically grounded on actual multi-year monthly port traffic records mapped to New Mangalore Port Authority — NMPA).
 * **Technologies**: Python 3.12, FastAPI, Streamlit, Pandas, NumPy, Holt-Winters Exponential Smoothing, Multi-Feature Ridge Regression, Plotly, Docker, REST APIs.
 * **Main Features**:
-  1. â­ **Predictive Cargo Analytics & Volume Forecasting** (Holt-Winters + Ridge Regression with 95% dynamic confidence bounds)
+  1. ⭐ **Predictive Cargo Analytics & Volume Forecasting** (Holt-Winters + Ridge Regression with 95% dynamic confidence bounds)
   2. **Commodity & Trade Demand Intelligence** (Trade lane momentum, YoY growth tracking, commodity price indices)
   3. **Cargo Anomaly & Risk Intelligence** (Isolation Forest, LSTM, Autoencoder & Transformer simulation with severity progression)
   4. **Explainable Forecast Drivers** (Quantified weights for hinterland consumer demand, monsoon swells, and market inputs)
@@ -27,7 +27,7 @@ This repository documentation is designed to give students, developers, and acad
 
 ---
 
-## ðŸ“š Recommended Documentation Reading Order
+## 📚 Recommended Documentation Reading Order
 
 For maximum clarity when reviewing this project or preparing for a mentor presentation, follow this sequence:
 

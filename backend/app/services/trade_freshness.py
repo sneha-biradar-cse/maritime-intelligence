@@ -38,7 +38,7 @@ def get_freshness() -> dict[str, Any]:
     last_run = None
     log = DATA / "last_update.json"
     if log.exists():
-        last_run = json.loads(log.read_text()).get("finished")
+        last_run = json.loads(log.read_text(encoding="utf-8")).get("finished")
     return {"sources": sources, "last_update_run": last_run}
 
 

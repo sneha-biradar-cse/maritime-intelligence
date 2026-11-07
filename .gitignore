@@ -1,57 +1,38 @@
-# Virtual Environments
+# Virtual environments
+venv/
 venv311/
 .venv/
-venv/
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.pytest_cache/
 
-# macOS
+# Editors / OS
+.vscode/
 .DS_Store
 ._*
 
-# VS Code
-.vscode/
+# Private records created while using the tool (never upload)
+data/users.json
+data/customer_notes.json
+data/alert_feedback.json
+data/incentive_schemes.json
+data/_test_*.json
 
-# Runtime Data
+# Run logs and temporary files
+data/last_update.json
+data/last_update_failed.json
+data/download_log.csv
+.update_snapshot_*/
+incoming/*
+!incoming/README.txt
 uploads/*.csv
-backend/app/services/audit_log.json
-data/sor_watch_manifest.json
-data/daily_vessel_position/*.pdf
 
-# Streamlit
-# Allow theme config to be committed, ignore other local session/telemetry files
-.streamlit/*
-!.streamlit/config.toml
+# Downloaded tools (installed on demand by scripts/setup_poppler.py)
+tools/poppler/
 
-# Environment Variables
-.env
-.env.*
-
-# Logs
-*.log
-logs/
-# Raw NMPA source PDFs
-nmpa_public_data/**/*.pdf
-
-# Generated Excel reports
-output/*.xlsx
-
-# Temporary experiments
-scratch_aug2026_test/
-
-nmpa_public_data/
-
-# Temporary backup files
-*.before_pdf
-
-# Raw NMPA source folder
-nmpa_public_data/
-
-# Temporary experiments
-scratch_aug2026_test/
-
-data/daily_vessel_position_parsed/
+# Documents downloaded by the harvester for reading (re-downloadable; large)
+nmpa_public_data/harvested/

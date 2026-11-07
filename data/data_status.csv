@@ -30,3 +30,5 @@ March 2026 waiver cost,Estimated,"Upper estimate: wharfage only, every ship bert
 VOC (Tuticorin) Scale of Rates 2025-26,Extraction checked,Each compared rate located in the PDF; volume-based lines not compared,Tariff comparison
 Iron ore rebate: exporters' 2025-26 base,Unresolved,"Daily reports start Sep 2025; Apr-Aug 2025 missing, so the base per exporter cannot be built",Iron ore rebate monitor
 "Ministry report, October 2026",Unresolved,Not held: market comparisons stay at September 2026,"Market share, cargo lost, market context"
+"NMPA trade notices and circulars (all held, read in full)",Original obtained,"120 listed on NMPA's site, 104 downloaded on 7 Nov 2026 and read (69 scanned, read by OCR); 11 schemes recorded in data/nmpa_incentive_notices.csv, 5 in force",NMPA's own incentive schemes; eligibility rules
+"NMPA daily vessel reports, 27 Oct to 7 Nov 2026",Original obtained,11 days downloaded with the archive downloader and read; 1 Nov 2026 not on the archive (a Sunday),All customer figures

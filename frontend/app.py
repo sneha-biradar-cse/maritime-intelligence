@@ -11,6 +11,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import re
 import requests
 from datetime import datetime, timezone
 from pathlib import Path
@@ -2507,75 +2508,205 @@ with tabs[5]:
     cr = lambda v: "\u2014" if v is None else (("\u2212" if v < 0 else "") + (f"\u20b9{abs(v) / 1e7:,.2f} cr" if abs(v) >= 1e6
                                                                            else f"\u20b9{abs(v) / 1e5:,.1f} lakh"))
     tn = lambda v: f"{v / 1e6:,.2f} MMT" if v >= 1e6 else f"{v / 1e3:,.0f} thousand t"
+
+    # Product-style building blocks for this tab: the answer first, details on demand.
+    st.markdown("<style>" + "".join([
+        ".ie-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 16px 0}",
+        ".ie-card{background:#FFFFFF;border:1px solid #E7E5E4;border-radius:10px;padding:14px 16px;border-top:3px solid #CBD5E1}",
+        ".ie-card.good{border-top-color:#0F766E}.ie-card.watch{border-top-color:#D97706}.ie-card.act{border-top-color:#B91C1C}",
+        ".ie-card.info{border-top-color:#1D4E89}",
+        ".ie-card .l{font-size:12.5px;color:#57534E}",
+        ".ie-card .v{font-size:25px;font-weight:750;color:#1C1917;line-height:1.15;margin-top:4px;font-variant-numeric:tabular-nums}",
+        ".ie-card .s{font-size:12.5px;color:#57534E;margin-top:4px;line-height:1.35}",
+        ".ie-take{font-size:15px;color:#1C1917;margin:0 0 10px 0;line-height:1.45}",
+        ".ie-chip{display:inline-block;font-size:11.5px;font-weight:650;padding:2px 9px;border-radius:999px;margin:0 6px 4px 0;",
+        "background:#F1F5F9;color:#334155;white-space:nowrap}",
+        ".ie-chip.act{background:#FEE2E2;color:#991B1B}.ie-chip.watch{background:#FEF3C7;color:#92400E}",
+        ".ie-chip.good{background:#CCFBF1;color:#115E59}.ie-chip.info{background:#DBEAFE;color:#1E3A8A}",
+        ".ie-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:8px 0 14px 0}",
+        ".ie-act{background:#FFFFFF;border:1px solid #E7E5E4;border-radius:10px;padding:14px 16px}",
+        ".ie-act .t{font-size:15px;font-weight:700;color:#1C1917;margin:6px 0 4px 0;line-height:1.3}",
+        ".ie-act .w{font-size:13px;color:#44403C;line-height:1.45}",
+        ".ie-act .g{font-size:12px;color:#78716C;margin-top:8px}",
+        "details.ie-notes{margin:2px 0 18px 0}details.ie-notes summary{font-size:12.5px;color:#78716C;cursor:pointer}",
+        "details.ie-notes .ti-s{margin:6px 0}details.ie-notes .src{font-size:12px;color:#A8A29E;margin-top:4px}",
+        ".ie-data{font-size:12.5px;color:#57534E;margin:-6px 0 10px 0}",
+        ".ie-tw{max-height:460px;overflow:auto;border:1px solid #E7E5E4;border-radius:10px;background:#FFFFFF;margin:4px 0 4px 0}",
+        ".ie-tbl{border-collapse:collapse;width:100%;font-size:13px;color:#1C1917}",
+        ".ie-tbl th{position:sticky;top:0;background:#F5F5F4;color:#57534E;font-weight:600;text-align:left;padding:8px 10px;",
+        "border-bottom:1px solid #E7E5E4;white-space:normal;vertical-align:bottom}",
+        ".ie-tbl td{padding:7px 10px;border-bottom:1px solid #F5F5F4;vertical-align:top;white-space:normal;word-break:normal;",
+        "overflow-wrap:break-word;line-height:1.4}",
+        ".ie-tbl td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}",
+        ".ie-tbl tr:hover td{background:#FAFAF9}",
+        ".ie-csv{font-size:12px;margin:2px 0 10px 0}.ie-csv a{color:#78716C;text-decoration:none}",
+        "@media (max-width:900px){.ie-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.ie-acts{grid-template-columns:1fr}}",
+    ]) + "</style>", unsafe_allow_html=True)
+    _ie_notes = []
+    _ie_last_src = [None]
+
+    def _cards(items):
+        """KPI cards: (label, value, sub-line, tone) with tone good / watch / act / info."""
+        st.markdown('<div class="ie-cards">' + "".join(
+            f'<div class="ie-card {t}"><div class="l">{html.escape(l)}</div><div class="v">{v}</div><div class="s">{s_}</div></div>'
+            for l, v, s_, t in items) + "</div>", unsafe_allow_html=True)
+
+    def _ie_txt(t):
+        """Show the rupee sign and arrows on screen (the PDF brief uses 'Rs' and '->')."""
+        return t.replace("Rs ", "\u20b9").replace(" -> ", " \u2192 ")
+
+    def _htable(data, hide_index=True, width=None, column_config=None, height=None, key=None, **_kw):
+        """A table that wraps long text instead of cutting it, with a small CSV download link."""
+        import base64 as _b64
+        import numpy as _np
+        df = data if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
+        if df.empty:
+            st.markdown('<div class="ti-s">Nothing to show.</div>', unsafe_allow_html=True)
+            return
+
+        def cell(col, v):
+            if v is None or (isinstance(v, float) and _np.isnan(v)):
+                return '<td>\u2014</td>'
+            if isinstance(v, (bool, _np.bool_)):
+                return f'<td>{"Yes" if v else "No"}</td>'
+            if isinstance(v, (int, _np.integer)):
+                return f'<td class="n">{int(v):,}</td>'
+            if isinstance(v, (float, _np.floating)):
+                txt = f"{v:.1f}%" if str(col).lower().startswith("share") else (f"{v:,.0f}" if abs(v) >= 1000 else f"{v:,.2f}")
+                return f'<td class="n">{txt}</td>'
+            return f"<td>{html.escape(_ie_txt(str(v)))}</td>"
+        head = "".join(f"<th>{html.escape(str(c))}</th>" for c in df.columns)
+        body = "".join("<tr>" + "".join(cell(c, v) for c, v in zip(df.columns, row)) + "</tr>" for row in df.itertuples(index=False))
+        csv_ = _b64.b64encode(df.to_csv(index=False).encode("utf-8")).decode()
+        st.markdown(f'<div class="ie-tw"><table class="ie-tbl"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table></div>'
+                    f'<div class="ie-csv"><a download="table.csv" href="data:text/csv;base64,{csv_}">\u2913 Download CSV</a></div>',
+                    unsafe_allow_html=True)
+
+    def _chip(text, tone=""):
+        return f'<span class="ie-chip {tone}">{html.escape(text)}</span>'
+
+    def _first_sentence(text):
+        m = re.search(r"(?<=[a-z0-9\)%\]])\.\s+(?=[A-Z0-9])", text or "")
+        return ((text[:m.start() + 1], text[m.end():]) if m else (text or "", ""))
+
+    def _flush_notes(source=None):
+        """Notes and sources of the section just shown, collapsed under one small 'Notes and sources' line."""
+        notes = list(_ie_notes)
+        _ie_notes.clear()
+        if not notes and (not source or source == _ie_last_src[0]):
+            return
+        _ie_last_src[0] = source
+        st.markdown('<details class="ie-notes"><summary>Notes and sources</summary>' + "".join(notes)
+                    + (f'<div class="src">Source: {html.escape(source)}</div>' if source else "") + "</details>",
+                    unsafe_allow_html=True)
+
+    def _note_md(text, **_kw):
+        _ie_notes.append(text)
+
+    def _src(text):
+        _flush_notes(text)
+
+    def _head(title, sub=None, insight=None):
+        """Section title, one short takeaway, and the method behind a 'How it works' button."""
+        _flush_notes()
+        insight = _ie_txt(insight) if insight else insight
+        first, rest = _first_sentence(insight) if insight else ("", "")
+        more = " ".join(x for x in (rest, sub) if x)
+        st.markdown('<div style="height:22px"></div>', unsafe_allow_html=True)
+        c1, c2 = st.columns([0.8, 0.2], vertical_alignment="center")
+        c1.markdown(f'<div class="ti-h" style="margin:0">{title}</div>', unsafe_allow_html=True)
+        if more:
+            try:
+                with c2.popover("\u24d8 How it works"):
+                    st.markdown(more)
+            except Exception:
+                c2.markdown(f'<details class="ie-notes"><summary>How it works</summary><div class="ti-s">{more}</div></details>',
+                            unsafe_allow_html=True)
+        if first:
+            st.markdown(f'<div class="ie-take">{first}</div>', unsafe_allow_html=True)
     rv = api_get("/incentive/revenue", timeout=30)
-    st.markdown("""<div class="ti-head"><h2>Incentive Engine</h2>
-      <p>Estimated charges attributable to each cargo, where cargo is being lost, and what a proposed benefit would cost.
-      Built from NMPA's published tonnes and Scale of Rates; money figures are estimates, shown separately from actual billing,
-      which NMPA Finance holds. A proposal cannot move past Draft while a required input is missing.</p></div>""",
-                unsafe_allow_html=True)
+    st.markdown('<div class="ti-head"><h2>Incentive Engine</h2><p>What each cargo earns, who and what is at risk, and what a '
+                'discount would cost, from NMPA\'s own data.</p></div>', unsafe_allow_html=True)
     if not (rv and rv.get("available")):
         st.error("The Incentive Engine data did not load. Start the backend from the project folder, then refresh this page.")
     else:
         dcur = api_get("/incentive/data-current") or {}
         if dcur:
-            st.markdown(f'<div class="ti-s"><b>Data current through:</b> NMPA statements {_m(dcur["nmpa_statements_through"])}, '
-                        f'Ministry reports {_m(dcur["ministry_reports_through"])}, NMPA daily reports {_d(dcur["daily_reports_through"])}. '
-                        f'Data version {dcur["fingerprint"]}.</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="ie-data">Data to: {_chip("NMPA " + _m(dcur["nmpa_statements_through"]), "info")}'
+                        f'{_chip("Ministry " + _m(dcur["ministry_reports_through"]), "info")}'
+                        f'{_chip("Daily reports " + _d(dcur["daily_reports_through"]), "info")}'
+                        f'{_chip("Estimates, not NMPA bills")}</div>', unsafe_allow_html=True)
         it0, it1, it2, it3 = st.tabs(["Start here", "What we earn", "Customers & cargo", "Proposals & schemes"])
         with it0:
             # Start here: this week's actions, guide by role, glossary, one-page brief
             act = api_get("/incentive/actions", timeout=90)
+            kc0 = api_get("/incentive/key-customers", timeout=60) or {}
+            op0 = api_get("/incentive/opportunities", timeout=30) or {}
+            nn0 = api_get("/incentive/nmpa-notices") or {}
+            t0 = rv["total"]
+            ch0 = (t0["revenue_rs"] / t0["revenue_prev_rs"] - 1) * 100 if t0["revenue_prev_rs"] else None
+            stake0 = sum(o.get("wharfage_at_stake_rs") or 0 for o in op0.get("cargos", []))
+            infc0 = [x for x in nn0.get("notices", []) if x["status"] == "In force"]
+            _cards([
+                (f"Wharfage earned, {rv['period']}", cr(t0["revenue_rs"]),
+                 (f"{ch0:+.1f}% on last year" if ch0 is not None else "") + " (estimate)", "good" if (ch0 or 0) >= 0 else "watch"),
+                ("Key customers at risk", f"{kc0.get('at_risk_count', 0)} of {len(kc0.get('rows', []))}",
+                 f"their wharfage down {cr(-kc0.get('at_risk_quarter_fall_rs', 0))} last quarter" if kc0 else "", "act" if kc0.get("at_risk_count") else "good"),
+                ("Cargo going to other ports", cr(stake0), f"wharfage at stake, {op0.get('period', '')}", "watch" if stake0 else "good"),
+                ("NMPA schemes in force", str(len(infc0)), "from NMPA's own trade notices; see Proposals & schemes", "info"),
+            ])
             if act:
-                _head("This week's actions",
-                      insight=f"{len(act['actions'])} actions from the Incentive Engine's findings. {act['note']}",
-                      sub="Each action says who should act, why (the numbers), and where in this tool to look. Explained items: record "
-                          "the reason in Trade Intelligence, Customers, Update account.")
-                st.dataframe(pd.DataFrame([{"Who": x["who"], "Action": x["action"], "Why": x["why"], "Where in the tool": x["where"],
-                                            "Next step": x["next"]} for x in act["actions"]]), hide_index=True, width="stretch",
-                             column_config={"Action": st.column_config.TextColumn(width="medium"),
-                                            "Why": st.column_config.TextColumn(width="large"),
-                                            "Next step": st.column_config.TextColumn(width="medium")})
+                b1, b2 = st.columns([0.72, 0.28], vertical_alignment="bottom")
+                b1.markdown(f'<div class="ti-h" style="margin:10px 0 2px 0">This week\'s actions</div>'
+                            f'<div class="ie-take">{len(act["actions"])} things to do, worked out from the latest data.</div>',
+                            unsafe_allow_html=True)
                 try:
                     _bp = requests.get(f"{API}/incentive/brief.pdf", timeout=90)
                     if _bp.ok:
-                        st.download_button("Download the one-page Incentive brief (PDF)", _bp.content, file_name="NMPA_incentive_brief.pdf",
-                                           mime="application/pdf", key="ie_brief")
+                        b2.download_button("\u2913 One-page brief (PDF)", _bp.content, file_name="NMPA_incentive_brief.pdf",
+                                           mime="application/pdf", key="ie_brief", **_fullw(st.download_button))
                 except requests.RequestException:
                     pass
-                _head("How each team uses this tab")
-                st.dataframe(pd.DataFrame([{"Team": g["role"], "Use it for": g["use_for"], "Where to look": g["where"],
-                                            "What they record": g["records"]} for g in act["role_guide"]]), hide_index=True,
-                             width="stretch", column_config={"Where to look": st.column_config.TextColumn(width="large")})
-                st.markdown('<div class="ti-s">Every table can be downloaded as a CSV file or enlarged: hover over it and use the icons '
-                            'at its top right.</div>', unsafe_allow_html=True)
-                with st.expander("Words used in this tab, in plain language"):
-                    st.dataframe(pd.DataFrame(act["glossary"], columns=["Word", "Meaning"]), hide_index=True, width="stretch",
-                                 column_config={"Meaning": st.column_config.TextColumn(width="large")})
+                tone = {1: ("act", "Do now"), 2: ("watch", "This week"), 3: ("info", "When possible")}
+                st.markdown('<div class="ie-acts">' + "".join(
+                    f'<div class="ie-act">{_chip(tone.get(x["priority"], ("", ""))[1], tone.get(x["priority"], ("", ""))[0])}'
+                    f'{_chip(x["who"])}<div class="t">{html.escape(x["action"])}</div>'
+                    f'<div class="w">{html.escape(_ie_txt(x["why"]))}</div>'
+                    f'<div class="g">Where: {html.escape(x["where"])} &nbsp;\u2192&nbsp; {html.escape(x["next"])}</div></div>'
+                    for x in act["actions"]) + "</div>", unsafe_allow_html=True)
+                g1, g2 = st.columns(2)
+                with g1.expander("How each team uses this tab"):
+                    for g in act["role_guide"]:
+                        st.markdown(f"**{g['role']}**: {g['use_for']}.  \n*Where:* {g['where']}.  \n*Records:* {g['records']}.")
+                with g2.expander("Words used here, in plain language"):
+                    for w, m_ in act["glossary"]:
+                        st.markdown(f"**{w}**: {m_}")
 
             # 0. Baseline KPIs for this module
             kp = api_get("/incentive/kpis", timeout=60)
             if kp and kp.get("available"):
                 with st.expander("Baseline KPIs for this module: what is measured, and what is pending NMPA data"):
-                    st.dataframe(pd.DataFrame([{"Area": r["area"], "KPI": r["kpi"], "Current value": r["value"], "Status": r["status"],
+                    _htable(pd.DataFrame([{"Area": r["area"], "KPI": r["kpi"], "Current value": r["value"], "Status": r["status"],
                                                 "Source / what is needed": r["source"]} for r in kp["rows"]]),
                                  hide_index=True, width="stretch", column_config={
                                      "KPI": st.column_config.TextColumn(width="large"),
                                      "Current value": st.column_config.TextColumn(width="medium"),
                                      "Source / what is needed": st.column_config.TextColumn(width="large")})
-                    st.markdown(f'<div class="ti-s">{html.escape(kp["note"])}</div>', unsafe_allow_html=True)
+                    _note_md(f'<div class="ti-s">{html.escape(kp["note"])}</div>', unsafe_allow_html=True)
 
+            _flush_notes()
         with it1:
             tot = rv["total"]
             top = rv["cargos"][0]
             chg = (tot["revenue_rs"] / tot["revenue_prev_rs"] - 1) * 100 if tot["revenue_prev_rs"] else None
-            _kpis([
-                (f"Estimated wharfage, {rv['period']}", cr(tot["revenue_rs"]), _chg(chg, f"vs {rv['previous_period']}")),
-                ("Largest earner", top["cargo"], f'<div class="c">{cr(top["revenue_rs"])}, {top["tonnes"] / 1e6:.2f} MMT</div>'),
-                ("Coastal concession given up", cr(tot["coastal_concession_rs"]),
-                 '<div class="c">foreign rate minus coastal rate, on coastal tonnes</div>'),
-                ("Cargos covered", f"{len(rv['cargos'])}", f'<div class="c">{tot["tonnes"] / 1e6:.1f} MMT of cargo; see what is not covered below</div>'),
+            _cards([
+                (f"Wharfage earned, {rv['period']}", cr(tot["revenue_rs"]),
+                 (f"{chg:+.1f}% on {rv['previous_period']}" if chg is not None else "") + " (estimate)", "good" if (chg or 0) >= 0 else "watch"),
+                ("Largest earner", top["cargo"], f'{cr(top["revenue_rs"])} on {top["tonnes"] / 1e6:.2f} MMT', "info"),
+                ("Coastal concession given up", cr(tot["coastal_concession_rs"]), "coastal rates are lower than foreign", "info"),
+                ("Cargos priced", f"{len(rv['cargos'])}", f'{tot["tonnes"] / 1e6:.1f} MMT; the rest is listed below', "info"),
             ])
-            st.markdown(f'<div class="ti-s">{html.escape(rv["tariff"])} Wharfage only; both periods priced at today\'s rates, so the change '
+            _note_md(f'<div class="ti-s">{html.escape(rv["tariff"])} Wharfage only; both periods priced at today\'s rates, so the change '
                         'reflects tonnes, not tariff revisions.</div>', unsafe_allow_html=True)
 
             # 1. What each cargo earns
@@ -2585,32 +2716,41 @@ with tabs[5]:
                            "POL products and iron ore." if tot["coastal_concession_rs"] < 0.01 * tot["revenue_rs"] else None),
                   sub="Tonnes from NMPA's monthly statements x the wharfage rate in the Scale of Rates, split foreign/coastal using the F/C "
                       "flag in NMPA's daily reports. Sorted by estimated wharfage, largest first.")
-            rdf = pd.DataFrame([{
-                "Cargo": c["cargo"], "Tonnes": c["tonnes"], "Coastal": f"{c['coastal_share_pct']:.0f}%",
-                "Rate foreign / coastal (\u20b9/t)": f"{c['rate_foreign']:.2f} / {c['rate_coastal']:.2f}",
-                f"Wharfage {rv['period']}": cr(c["revenue_rs"]), f"Same months last year": cr(c["revenue_prev_rs"]),
-                "Change": _ptxt((c["revenue_rs"] / c["revenue_prev_rs"] - 1) * 100 if c["revenue_prev_rs"] else None, 0),
-                "Coastal concession": cr(c["coastal_concession_rs"]),
-                "Evidence": "Estimate (full tariff); billed figure not yet provided",
-                "Scale of Rates line": (f"p.{c['sor_page']}: " if c.get("sor_page") else "") + c["sor_line"]
-                    + (f" ({c['spm_share_pct']:.0f}% of crude at the SPM, rest at berths)" if c.get("spm_share_pct") is not None else "")
-                    + (f" (excludes {c['excluded_customer']}, {c['excluded_share_pct']:.0f}% of this cargo)" if c["excluded_share_pct"] else ""),
-            } for c in rv["cargos"]])
-            st.dataframe(rdf, hide_index=True, width="stretch", column_config={
-                "Cargo": st.column_config.TextColumn(width="medium"),
-                "Tonnes": st.column_config.NumberColumn(format="localized"),
-                "Coastal": st.column_config.TextColumn(help="Share of this cargo's tonnes on coastal (C) runs in NMPA's daily reports"),
-                "Coastal concession": st.column_config.TextColumn(help="Coastal tonnes x (foreign rate - coastal rate): wharfage the coastal rate gives up"),
-                "Scale of Rates line": st.column_config.TextColumn(width="large")})
-            calc_pick = st.selectbox("Show the calculation for", [c["cargo"] for c in rv["cargos"]], key="inc_calc",
-                                     help="Every step from the source document to the rupee figure")
-            cc_ = next(c for c in rv["cargos"] if c["cargo"] == calc_pick)
-            st.markdown('<div class="ti-insight">' + "<br>".join(f"{i + 1}. {html.escape(t)}" for i, t in enumerate(cc_["calculation"]))
-                        + "</div>", unsafe_allow_html=True)
-            st.markdown(f'<div class="ti-s"><b>Estimated at full tariff:</b> {cr(cc_["estimate_full_tariff_rs"])} &nbsp;·&nbsp; '
-                        f'<b>After known adjustments:</b> {html.escape(cc_["adjustments_status"]) if cc_["estimate_after_known_adjustments_rs"] is None else cr(cc_["estimate_after_known_adjustments_rs"])} '
-                        f'&nbsp;·&nbsp; <b>Billed (NMPA Finance):</b> {html.escape(cc_["billed_status"]) if cc_["billed_rs"] is None else cr(cc_["billed_rs"])}</div>',
-                        unsafe_allow_html=True)
+            _cg = list(reversed(rv["cargos"]))
+            _fa = go.Figure()
+            _fa.add_bar(y=[c["cargo"] for c in _cg], x=[(c["revenue_prev_rs"] or 0) / 1e7 for c in _cg], orientation="h",
+                        name=rv["previous_period"], marker_color="#D6D3D1")
+            _fa.add_bar(y=[c["cargo"] for c in _cg], x=[c["revenue_rs"] / 1e7 for c in _cg], orientation="h", name=rv["period"],
+                        marker_color="#1D4E89", text=[f"\u20b9{c['revenue_rs'] / 1e7:.1f} cr" for c in _cg], textposition="outside", cliponaxis=False)
+            _fa.update_layout(barmode="group", height=60 + 42 * len(_cg), xaxis_title="\u20b9 crore (estimate)", plot_bgcolor="white", paper_bgcolor="white", font=dict(size=12, color="#44403C"), margin=dict(l=10, r=90, t=56, b=30), legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
+            st.plotly_chart(_fa, **_W_CHART, config={"displayModeBar": False}, key="ie_chart_cargo")
+            with st.expander("See the full table, and how each figure is calculated"):
+                rdf = pd.DataFrame([{
+                    "Cargo": c["cargo"], "Tonnes": c["tonnes"], "Coastal": f"{c['coastal_share_pct']:.0f}%",
+                    "Rate foreign / coastal (\u20b9/t)": f"{c['rate_foreign']:.2f} / {c['rate_coastal']:.2f}",
+                    f"Wharfage {rv['period']}": cr(c["revenue_rs"]), f"Same months last year": cr(c["revenue_prev_rs"]),
+                    "Change": _ptxt((c["revenue_rs"] / c["revenue_prev_rs"] - 1) * 100 if c["revenue_prev_rs"] else None, 0),
+                    "Coastal concession": cr(c["coastal_concession_rs"]),
+                    "Evidence": "Estimate (full tariff); billed figure not yet provided",
+                    "Scale of Rates line": (f"p.{c['sor_page']}: " if c.get("sor_page") else "") + c["sor_line"]
+                        + (f" ({c['spm_share_pct']:.0f}% of crude at the SPM, rest at berths)" if c.get("spm_share_pct") is not None else "")
+                        + (f" (excludes {c['excluded_customer']}, {c['excluded_share_pct']:.0f}% of this cargo)" if c["excluded_share_pct"] else ""),
+                } for c in rv["cargos"]])
+                _htable(rdf, hide_index=True, width="stretch", column_config={
+                    "Cargo": st.column_config.TextColumn(width="medium"),
+                    "Tonnes": st.column_config.NumberColumn(format="localized"),
+                    "Coastal": st.column_config.TextColumn(help="Share of this cargo's tonnes on coastal (C) runs in NMPA's daily reports"),
+                    "Coastal concession": st.column_config.TextColumn(help="Coastal tonnes x (foreign rate - coastal rate): wharfage the coastal rate gives up"),
+                    "Scale of Rates line": st.column_config.TextColumn(width="large")})
+                calc_pick = st.selectbox("Show the calculation for", [c["cargo"] for c in rv["cargos"]], key="inc_calc",
+                                         help="Every step from the source document to the rupee figure")
+                cc_ = next(c for c in rv["cargos"] if c["cargo"] == calc_pick)
+                st.markdown('<div class="ti-insight">' + "<br>".join(f"{i + 1}. {html.escape(t)}" for i, t in enumerate(cc_["calculation"]))
+                            + "</div>", unsafe_allow_html=True)
+                _note_md(f'<div class="ti-s"><b>Estimated at full tariff:</b> {cr(cc_["estimate_full_tariff_rs"])} &nbsp;·&nbsp; '
+                            f'<b>After known adjustments:</b> {html.escape(cc_["adjustments_status"]) if cc_["estimate_after_known_adjustments_rs"] is None else cr(cc_["estimate_after_known_adjustments_rs"])} '
+                            f'&nbsp;·&nbsp; <b>Billed (NMPA Finance):</b> {html.escape(cc_["billed_status"]) if cc_["billed_rs"] is None else cr(cc_["billed_rs"])}</div>',
+                            unsafe_allow_html=True)
             with st.expander("What is not estimated here, and why"):
                 for n_ in rv["not_estimated"]:
                     st.markdown(f"- **{n_['item']}**: {n_['why']}")
@@ -2626,7 +2766,7 @@ with tabs[5]:
                                "part of them; the rest is not explained by the data held." if close else
                                "Compare the rates used here with the income per tonne in NMPA's published accounts."),
                       sub=ac["explain"])
-                st.dataframe(pd.DataFrame([{
+                _htable(pd.DataFrame([{
                     "Cargo": r["cargo"],
                     "NMPA income 2022-23 (actual)": cr(r["income_2022_23_rs"]), "Tonnes 2022-23": r["tonnes_2022_23"],
                     "Earned per tonne 2022-23": f"\u20b9{r['implied_rate_2022_23']:.2f}" if r["implied_rate_2022_23"] else "\u2014",
@@ -2638,10 +2778,10 @@ with tabs[5]:
                 pa = api_get("/incentive/published-accounts")
                 if pa and pa.get("available"):
                     with st.expander("NMPA's actual income by activity, 2023-24 and 2024-25 (Administration Report)"):
-                        st.dataframe(pd.DataFrame([{"Line": r["line"], "Head": r["head"], "2024-25 (Rs cr)": r["fy_2024_25_rs_cr"],
+                        _htable(pd.DataFrame([{"Line": r["line"], "Head": r["head"], "2024-25 (Rs cr)": r["fy_2024_25_rs_cr"],
                                                     "2023-24 (Rs cr)": r["fy_2023_24_rs_cr"]} for r in pa["rows"]]),
                                      hide_index=True, width="stretch", column_config={"Head": st.column_config.TextColumn(width="large")})
-                        st.markdown(f'<div class="ti-s">{html.escape(pa["note"])}</div>', unsafe_allow_html=True)
+                        _note_md(f'<div class="ti-s">{html.escape(pa["note"])}</div>', unsafe_allow_html=True)
                         _src(pa["source"])
                 _src(ac["source"])
 
@@ -2658,16 +2798,16 @@ with tabs[5]:
                                   f"At least {cr(ctn['royalty_estimate_rs'])} in royalty at \u20b9{ctn['royalty_rs_per_teu']:,.0f} per TEU.")),
                       sub=f"Coal other than UPCL is handled at {pr['coal_berth_16']['berth']}, operated by {pr['coal_berth_16']['operator']}, where NMPA "
                           f"earns {pr['coal_berth_16']['basis']}. {pr['coal_berth_16']['note']}")
-                st.markdown('<div class="ti-s">' + html.escape(ctn.get("implied_note", "")) + " " + html.escape(ctn["royalty_source"]) + " "
+                _note_md('<div class="ti-s">' + html.escape(ctn.get("implied_note", "")) + " " + html.escape(ctn["royalty_source"]) + " "
                             + " ".join(html.escape(x) for x in ctn["limits"]) + "</div>", unsafe_allow_html=True)
 
             if ac and ac.get("available"):
                 with st.expander("NMPA income from PPP berths and own-arrangement cargo (from its accounts)"):
-                    st.dataframe(pd.DataFrame([{"Income line": o["line"], "2022-23 actual": cr(o["actual_2022_23_rs"]),
+                    _htable(pd.DataFrame([{"Income line": o["line"], "2022-23 actual": cr(o["actual_2022_23_rs"]),
                                                 "2023-24 revised estimate": cr(o["re_2023_24_rs"]), "2024-25 budget": cr(o["be_2024_25_rs"])}
                                                for o in ac["other_lines"]]), hide_index=True, width="stretch")
                     t_ = ac["totals_re_2023_24"]
-                    st.markdown(f'<div class="ti-s">For scale, 2023-24 (revised estimate): cargo handling and storage charges '
+                    _note_md(f'<div class="ti-s">For scale, 2023-24 (revised estimate): cargo handling and storage charges '
                                 f'{cr(t_["TOTAL_CHSC"])}, port and dock charges {cr(t_["TOTAL_PDC"])}, total operating income '
                                 f'{cr(t_["TOTAL_OPINC"])}.</div>', unsafe_allow_html=True)
                 _src(ac["source"])
@@ -2675,28 +2815,38 @@ with tabs[5]:
             # customer wharfage (shown in Protect key customers; used by the deal desk)
             cwf = api_get("/incentive/customer-wharfage", timeout=30)
 
+            _flush_notes()
         with it2:
             # 1d. Protect key customers
             kc = api_get("/incentive/key-customers", timeout=60)
             if kc and kc.get("available") and kc["rows"]:
                 _head("Protect key customers",
-                      insight=(f"{len(kc['rows'])} customers make up {kc['key_share_pct']:.0f}% of the wharfage traced to customers. "
-                               f"{kc['at_risk_count']} show a warning sign; together their wharfage fell {cr(-kc['at_risk_quarter_fall_rs'])} "
-                               f"in {kc['q2_label']} against {kc['q1_label']}. "
+                      insight=(f"{kc['at_risk_count']} of the {len(kc['rows'])} key customers show a warning sign: their wharfage fell "
+                               f"{cr(-kc['at_risk_quarter_fall_rs'])} in {kc['q2_label']} against {kc['q1_label']}. "
+                               f"These {len(kc['rows'])} customers make up {kc['key_share_pct']:.0f}% of the wharfage traced to customers. "
                                + (f"{kc['no_owner_count']} have no NMPA account owner recorded." if kc["no_owner_count"] else "")),
                       sub=kc["rules"] + " Keeping existing cargo comes before chasing new cargo.")
-                st.dataframe(pd.DataFrame([{
-                    "Customer": r["customer"], "Risk": r["risk"], "Share": r["share_pct"], "Main cargo": r["main_cargo"],
-                    f"Wharfage {kc['period']}": cr(r["wharfage_rs"]),
-                    f"Wharfage {kc['q2_label']} vs {kc['q1_label']}": cr(r["change_q2_vs_q1_rs"]),
-                    "Warning signs": "; ".join(r["signals"]) or "\u2014",
-                    "Follow-up": r["engagement"] + (f"; follow-up {_d(r['follow_up'])}" if r["follow_up"] else "")
-                                 + (" (due)" if r["follow_up_due"] else ""),
-                    "Next step": r["next_step"]} for r in kc["rows"]]), hide_index=True, width="stretch",
-                    column_config={"Share": st.column_config.ProgressColumn("Share of traced wharfage", format="%.1f%%", min_value=0, max_value=100),
-                                   "Warning signs": st.column_config.TextColumn(width="large"),
-                                   "Next step": st.column_config.TextColumn(width="large")})
-                st.markdown('<div class="ti-s">' + " ".join(html.escape(c) for c in kc["caveats"]) + "</div>", unsafe_allow_html=True)
+                _kr = list(reversed(kc["rows"]))
+                _fb = go.Figure(go.Bar(y=[r["customer"] for r in _kr], x=[r["wharfage_rs"] / 1e7 for r in _kr], orientation="h",
+                                       marker_color=[{"High": "#B91C1C", "Medium": "#D97706"}.get(r["risk"], "#0F766E") for r in _kr],
+                                       text=[f"{r['risk'] if r['risk'] != 'None found' else 'OK'} \u00b7 {r['share_pct']:.0f}%" for r in _kr],
+                                       textposition="outside", cliponaxis=False, hovertext=["; ".join(r["signals"]) or "No warning sign" for r in _kr]))
+                _fb.update_layout(height=60 + 34 * len(_kr), xaxis_title=f"Wharfage \u20b9 crore, {kc['period']} (estimate)", plot_bgcolor="white", paper_bgcolor="white", font=dict(size=12, color="#44403C"), margin=dict(l=10, r=90, t=56, b=30), legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
+                st.plotly_chart(_fb, **_W_CHART, config={"displayModeBar": False}, key="ie_chart_keycust")
+                st.markdown(_chip("High risk", "act") + _chip("Medium", "watch") + _chip("No warning sign", "good"), unsafe_allow_html=True)
+                with st.expander("See the full table: warning signs, follow-up and next step"):
+                    _htable(pd.DataFrame([{
+                        "Customer": r["customer"], "Risk": r["risk"], "Share": r["share_pct"], "Main cargo": r["main_cargo"],
+                        f"Wharfage {kc['period']}": cr(r["wharfage_rs"]),
+                        f"Wharfage {kc['q2_label']} vs {kc['q1_label']}": cr(r["change_q2_vs_q1_rs"]),
+                        "Warning signs": "; ".join(r["signals"]) or "\u2014",
+                        "Follow-up": r["engagement"] + (f"; follow-up {_d(r['follow_up'])}" if r["follow_up"] else "")
+                                     + (" (due)" if r["follow_up_due"] else ""),
+                        "Next step": r["next_step"]} for r in kc["rows"]]), hide_index=True, width="stretch",
+                        column_config={"Share": st.column_config.ProgressColumn("Share of traced wharfage", format="%.1f%%", min_value=0, max_value=100),
+                                       "Warning signs": st.column_config.TextColumn(width="large"),
+                                       "Next step": st.column_config.TextColumn(width="large")})
+                _note_md('<div class="ti-s">' + " ".join(html.escape(c) for c in kc["caveats"]) + "</div>", unsafe_allow_html=True)
                 with st.expander("Record what you learned from a customer (owner, reason, follow-up)"):
                     cn_all = api_get("/trade/customer-notes") or {"customers": {}, "stages": []}
                     k1, k2 = st.columns(2)
@@ -2738,16 +2888,26 @@ with tabs[5]:
                                f"major ports ({op['period']}). Keeping last year's share would have meant about {big['tonnes_not_won'] / 1e3:,.0f} "
                                f"thousand tonnes more, worth {cr(big['wharfage_at_stake_rs'])} in wharfage. First step: find out why."),
                       sub=op["explain"])
-                st.dataframe(pd.DataFrame([{
-                    "Cargo": o["cargo"], "Signal": o["signal"], "Share last year": f"{o['share_prev_pct']:.2f}%", "Share this year": f"{o['share_pct']:.2f}%",
-                    "New Mangalore growth": _ptxt(o["nmpa_growth_pct"]), "Other major ports' growth": _ptxt(o["other_ports_growth_pct"]),
-                    "Tonnes not won": o["tonnes_not_won"], "Wharfage at stake": cr(o["wharfage_at_stake_rs"])}
-                    for o in op["cargos"]]), hide_index=True, width="stretch", column_config={
-                        "Signal": st.column_config.TextColumn(width="medium", help="Statistical gap = from the figures only. It becomes a "
-                                                              "confirmed opportunity once Traffic confirms it with the customer, and committed "
-                                                              "volume once there is an agreement."),
-                        "Tonnes not won": st.column_config.NumberColumn(format="localized",
-                            help="Last year's share x this year's all-major-port tonnes, minus what New Mangalore handled")})
+                _oc = list(reversed(op["cargos"]))
+                _fc = go.Figure()
+                _fc.add_bar(y=[o["cargo"] for o in _oc], x=[o["share_prev_pct"] for o in _oc], orientation="h", name="Share last year",
+                            marker_color="#D6D3D1")
+                _fc.add_bar(y=[o["cargo"] for o in _oc], x=[o["share_pct"] for o in _oc], orientation="h", name="Share this year",
+                            marker_color="#B91C1C", text=[(cr(o["wharfage_at_stake_rs"]) + " at stake") if o.get("wharfage_at_stake_rs") else ""
+                                                        for o in _oc], textposition="outside", cliponaxis=False)
+                _fc.update_layout(barmode="group", height=60 + 52 * len(_oc), xaxis_title="New Mangalore's share of all major ports (%)", plot_bgcolor="white", paper_bgcolor="white", font=dict(size=12, color="#44403C"), margin=dict(l=10, r=90, t=56, b=30), legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
+                st.plotly_chart(_fc, **_W_CHART, config={"displayModeBar": False}, key="ie_chart_lost")
+                with st.expander("See the numbers"):
+                    _htable(pd.DataFrame([{
+                        "Cargo": o["cargo"], "Signal": o["signal"], "Share last year": f"{o['share_prev_pct']:.2f}%", "Share this year": f"{o['share_pct']:.2f}%",
+                        "New Mangalore growth": _ptxt(o["nmpa_growth_pct"]), "Other major ports' growth": _ptxt(o["other_ports_growth_pct"]),
+                        "Tonnes not won": o["tonnes_not_won"], "Wharfage at stake": cr(o["wharfage_at_stake_rs"])}
+                        for o in op["cargos"]]), hide_index=True, width="stretch", column_config={
+                            "Signal": st.column_config.TextColumn(width="medium", help="Statistical gap = from the figures only. It becomes a "
+                                                                  "confirmed opportunity once Traffic confirms it with the customer, and committed "
+                                                                  "volume once there is an agreement."),
+                            "Tonnes not won": st.column_config.NumberColumn(format="localized",
+                                help="Last year's share x this year's all-major-port tonnes, minus what New Mangalore handled")})
                 for o in op["cargos"]:
                     with st.expander(f"{o['cargo']}: who to talk to, and what the data already says"):
                         if o["customers"]:
@@ -2780,9 +2940,9 @@ with tabs[5]:
                 sr = api_get("/incentive/schemes") or {}
                 if sr.get("reason_actions"):
                     with st.expander("Which action fits which reason"):
-                        st.dataframe(pd.DataFrame(sr["reason_actions"], columns=["Confirmed reason", "Suggested action"]),
+                        _htable(pd.DataFrame(sr["reason_actions"], columns=["Confirmed reason", "Suggested action"]),
                                      hide_index=True, width="stretch")
-                        st.markdown('<div class="ti-s">The reason is entered by Traffic after speaking to the customer; the tool does not '
+                        _note_md('<div class="ti-s">The reason is entered by Traffic after speaking to the customer; the tool does not '
                                     'guess it from tonnage.</div>', unsafe_allow_html=True)
                 _src("Ministry of Ports Table-2 (all major ports) and NMPA statements; customers from NMPA daily vessel reports")
 
@@ -2799,24 +2959,36 @@ with tabs[5]:
                 spare = max(reg, key=lambda r: (r["occupancy_other_pct"] or 0) - (r["occupancy_quiet_pct"] or 0)) if reg else None
                 with sw_head:
                   _head("Seasonal windows: a benefit only in quiet months",
-                      insight=(f"{sw['status']}. " + (
+                      insight=((
                           f"{spare['cargo']} is regularly quiet in {', '.join(spare['quiet_months'])}, when its berths "
                           f"({', '.join(spare['berths'])}) had a ship on {spare['occupancy_quiet_pct']}% of days against "
                           f"{spare['occupancy_other_pct']}% in other months; a {sw_d:g}% discount in those months only would cost "
                           f"{cr(spare['cost_quiet_months_rs'])} a year against {cr(spare['cost_all_year_rs'])} all year."
-                          if spare and (spare["occupancy_other_pct"] or 0) > (spare["occupancy_quiet_pct"] or 0) else "")),
+                          if spare and (spare["occupancy_other_pct"] or 0) > (spare["occupancy_quiet_pct"] or 0) else "")
+                          + f" {sw['status']}."),
                       sub=f"Quiet month = at or below 90% of an average month, over the complete financial years held. Costs on the "
                           f"last 12 months' tonnes ({sw['last12']}) at today's rates. Berth occupancy = share of report days a berth had a ship.")
-                st.dataframe(pd.DataFrame([{
-                    "Cargo": r["cargo"], "Regular pattern": "Yes" if r["regular"] else "No",
-                    "Quiet months": ", ".join(r["quiet_months"]) or "\u2014",
-                    f"{sw_d:g}% all year": cr(r["cost_all_year_rs"]), f"{sw_d:g}% in quiet months only": cr(r["cost_quiet_months_rs"]),
-                    "Berths used": ", ".join(r["berths"]) or "\u2014",
-                    "Berth occupancy: quiet / other months": (f"{r['occupancy_quiet_pct']}% / {r['occupancy_other_pct']}%"
-                                                              if r.get("occupancy_quiet_pct") is not None else "\u2014"),
-                    "Reading": r["verdict"]} for r in sw["rows"]]), hide_index=True, width="stretch",
-                    column_config={"Reading": st.column_config.TextColumn(width="large")})
-                st.markdown('<div class="ti-s">' + "<br>".join("\u2022 " + html.escape(c) for c in sw["caveats"]) + "</div>",
+                _sr = [r for r in sw["rows"] if r.get("seasonal_index")]
+                if _sr:
+                    _months = list(_sr[0]["seasonal_index"].keys())
+                    _fd = go.Figure(go.Heatmap(z=[[r["seasonal_index"][m] for m in _months] for r in _sr], x=_months,
+                                               y=[r["cargo"] + ("" if r["regular"] else " (irregular)") for r in _sr],
+                                               colorscale=[[0, "#B91C1C"], [0.4, "#FEF3C7"], [0.5, "#FFFFFF"], [1, "#0F766E"]], zmin=50, zmax=150,
+                                               text=[[f"{r['seasonal_index'][m]:.0f}" if r["seasonal_index"][m] is not None else "" for m in _months] for r in _sr],
+                                               texttemplate="%{text}", colorbar=dict(title="100 = average")))
+                    _fd.update_layout(height=70 + 34 * len(_sr), title=dict(text="Monthly cargo against an average month (red = quiet)", font=dict(size=13)), plot_bgcolor="white", paper_bgcolor="white", font=dict(size=12, color="#44403C"), margin=dict(l=10, r=40, t=44, b=30), legend=dict(orientation="h", y=1.12, x=0))
+                    st.plotly_chart(_fd, **_W_CHART, config={"displayModeBar": False}, key="ie_chart_season")
+                with st.expander("See the full table: cost of the discount, berths and occupancy"):
+                    _htable(pd.DataFrame([{
+                        "Cargo": r["cargo"], "Regular pattern": "Yes" if r["regular"] else "No",
+                        "Quiet months": ", ".join(r["quiet_months"]) or "\u2014",
+                        f"{sw_d:g}% all year": cr(r["cost_all_year_rs"]), f"{sw_d:g}% in quiet months only": cr(r["cost_quiet_months_rs"]),
+                        "Berths used": ", ".join(r["berths"]) or "\u2014",
+                        "Berth occupancy: quiet / other months": (f"{r['occupancy_quiet_pct']}% / {r['occupancy_other_pct']}%"
+                                                                  if r.get("occupancy_quiet_pct") is not None else "\u2014"),
+                        "Reading": r["verdict"]} for r in sw["rows"]]), hide_index=True, width="stretch",
+                        column_config={"Reading": st.column_config.TextColumn(width="large")})
+                _note_md('<div class="ti-s">' + "<br>".join("\u2022 " + html.escape(c) for c in sw["caveats"]) + "</div>",
                             unsafe_allow_html=True)
                 _src("NMPA monthly commodity statements (seasonal pattern, tonnes); NMPA daily vessel reports (berth occupancy); NMPA Scale of Rates")
 
@@ -2824,20 +2996,29 @@ with tabs[5]:
             tc = api_get("/incentive/tariff-comparison")
             if tc and tc.get("available"):
                 _head("Published wharfage: New Mangalore and Cochin", insight=tc["conclusion"], sub=tc["scope"])
-                st.dataframe(pd.DataFrame([{
-                    "Cargo": r["cargo"], "Comparability": r["comparability"],
-                    "NMPA foreign / coastal (Rs/t)": (f"{r['nmpa_foreign']:.2f} / {r['nmpa_coastal']:.2f}" if r.get("nmpa_foreign") is not None else "\u2014"),
-                    "Cochin foreign / coastal (Rs/t)": (f"{r['cochin_foreign']:.2f} / {r['cochin_coastal']:.2f}" if r.get("cochin_foreign") is not None else "\u2014"),
-                    "NMPA vs Cochin (foreign)": _ptxt(r.get("nmpa_vs_cochin_foreign_pct")),
-                    "Pages (PDF) NMPA / Cochin": (f"{int(r['nmpa_page'])} / {int(r['cochin_page'])}" if r.get("nmpa_page") else "\u2014"),
-                    "Note": r.get("note") or ""} for r in tc["rows"]]), hide_index=True, width="stretch",
-                    column_config={"Note": st.column_config.TextColumn(width="large"), "Comparability": st.column_config.TextColumn(width="medium")})
+                _tr = [r for r in tc["rows"] if r.get("nmpa_foreign") is not None and r.get("cochin_foreign") is not None]
+                _fe = go.Figure()
+                _fe.add_bar(x=[r["cargo"] for r in _tr], y=[r["nmpa_foreign"] for r in _tr], name="New Mangalore", marker_color="#1D4E89",
+                            text=[f"\u20b9{r['nmpa_foreign']:.0f}" for r in _tr], textposition="outside", cliponaxis=False)
+                _fe.add_bar(x=[r["cargo"] for r in _tr], y=[r["cochin_foreign"] for r in _tr], name="Cochin", marker_color="#A8A29E",
+                            text=[f"\u20b9{r['cochin_foreign']:.0f}" for r in _tr], textposition="outside", cliponaxis=False)
+                _fe.update_layout(barmode="group", height=360, yaxis_title="Published wharfage, foreign cargo (\u20b9 per tonne)", plot_bgcolor="white", paper_bgcolor="white", font=dict(size=12, color="#44403C"), margin=dict(l=10, r=90, t=56, b=30), legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
+                st.plotly_chart(_fe, **_W_CHART, config={"displayModeBar": False}, key="ie_chart_cochin")
+                with st.expander("See the full comparison table (with page numbers)"):
+                    _htable(pd.DataFrame([{
+                        "Cargo": r["cargo"], "Comparability": r["comparability"],
+                        "NMPA foreign / coastal (Rs/t)": (f"{r['nmpa_foreign']:.2f} / {r['nmpa_coastal']:.2f}" if r.get("nmpa_foreign") is not None else "\u2014"),
+                        "Cochin foreign / coastal (Rs/t)": (f"{r['cochin_foreign']:.2f} / {r['cochin_coastal']:.2f}" if r.get("cochin_foreign") is not None else "\u2014"),
+                        "NMPA vs Cochin (foreign)": _ptxt(r.get("nmpa_vs_cochin_foreign_pct")),
+                        "Pages (PDF) NMPA / Cochin": (f"{int(r['nmpa_page'])} / {int(r['cochin_page'])}" if r.get("nmpa_page") else "\u2014"),
+                        "Note": r.get("note") or ""} for r in tc["rows"]]), hide_index=True, width="stretch",
+                        column_config={"Note": st.column_config.TextColumn(width="large"), "Comparability": st.column_config.TextColumn(width="medium")})
                 _src(f"NMPA: {tc['sources']['nmpa']}. Cochin: {tc['sources']['cochin']}.")
             tv_ = api_get("/incentive/tariff-comparison-voc")
             if tv_ and tv_.get("available"):
                 with st.expander(f"Published wharfage: New Mangalore and V.O. Chidambaranar (Tuticorin), {tv_['period']}"):
                     st.markdown(f'<div class="ti-insight">{html.escape(tv_["conclusion"])}</div>', unsafe_allow_html=True)
-                    st.dataframe(pd.DataFrame([{
+                    _htable(pd.DataFrame([{
                         "Cargo": r["cargo"], "Comparability": r["comparability"],
                         "NMPA foreign / coastal": (f"{r['nmpa_foreign']:.2f} / {r['nmpa_coastal']:.2f}" if r.get("nmpa_foreign") is not None else "\u2014"),
                         "VOC Zone A foreign / coastal": (f"{r['voc_zone_a_foreign']:.2f} / {r['voc_zone_a_coastal']:.2f}" if r.get("voc_zone_a_foreign") is not None else "\u2014"),
@@ -2850,27 +3031,37 @@ with tabs[5]:
             cs = api_get("/incentive/cochin-schemes")
             if cs and cs.get("available"):
                 with st.expander("How another major port designs schemes: Cochin Port examples"):
-                    st.markdown(f'<div class="ti-s">{html.escape(cs["note"])}</div>', unsafe_allow_html=True)
+                    _note_md(f'<div class="ti-s">{html.escape(cs["note"])}</div>', unsafe_allow_html=True)
                     for x in cs["schemes"]:
                         st.markdown(f"**{x['notice']}** ({_d(x['date'])}): {x['type']}  \n"
                                     f"*Who benefits:* {x['who_benefits']}  \n*Terms:* {x['terms']}  \n*Period:* {x['period']}  \n"
                                     f"*Design features worth noting:* {x['design_features']}")
 
+            _flush_notes()
         with it3:
             # NMPA's own incentive schemes (from its trade notices)
             nn = api_get("/incentive/nmpa-notices") or {}
             if nn.get("notices"):
                 infc = [x for x in nn["notices"] if x["status"] == "In force"]
                 _head("NMPA's own incentive schemes",
-                      insight=(f"{len(infc)} NMPA schemes are in force: " + "; ".join(f"{x['benefit']} ({x['cargos']}, to {_d(x['valid_to'])})" for x in infc)
-                               + ". A new proposal that overlaps one of them is blocked unless an approved combination rule is recorded."),
-                      sub="From NMPA's trade notices held in the project. Earlier container notices are referred to but not held.")
-                st.dataframe(pd.DataFrame([{"Notice": x["notice"], "Date": _d(x["date"]) if x["date"] else "", "Type": x["type"], "Cargo": x["cargos"],
-                                            "Benefit": x["benefit"], "Who qualifies": x["eligibility"],
-                                            "Valid": f"{_d(x['valid_from'])} to {_d(x['valid_to'])}" if x["valid_from"] else "",
-                                            "Paid": x["settlement"] or "", "Status": x["status"]} for x in nn["notices"]]),
-                             hide_index=True, width="stretch", column_config={"Benefit": st.column_config.TextColumn(width="large"),
-                                                                              "Who qualifies": st.column_config.TextColumn(width="large")})
+                      insight=(f"NMPA runs {len(infc)} incentive schemes today, from its own trade notices. A new proposal that overlaps "
+                               "one of them is blocked unless an approved combination rule is recorded."),
+                      sub="Read from NMPA's trade notices and circulars held in the project (scanned notices read in full). Each card "
+                          "shows the benefit, who qualifies and the period; the notice number is in the table below.")
+                st.markdown('<div class="ie-acts">' + "".join(
+                    f'<div class="ie-act">{_chip("In force", "good")}{_chip("to " + _d(x["valid_to"]) if x["valid_to"] else "open-ended", "info")}'
+                    f'<div class="t">{html.escape(x["type"])}</div>'
+                    f'<div class="w"><b>{html.escape(x["benefit"])}</b></div>'
+                    f'<div class="w" style="margin-top:4px">{html.escape(x["cargos"])}</div>'
+                    f'<div class="g">Notice {html.escape(x["notice"])}, {_d(x["date"])}</div></div>'
+                    for x in infc) + "</div>", unsafe_allow_html=True)
+                with st.expander(f"All {len(nn['notices'])} notices, with who qualifies (in force and ended)"):
+                    _htable(pd.DataFrame([{"Status": x["status"], "Notice": x["notice"], "Date": _d(x["date"]) if x["date"] else "",
+                                           "Type": x["type"], "Cargo / vessels": x["cargos"], "Benefit": x["benefit"],
+                                           "Who qualifies": x["eligibility"],
+                                           "Valid": (f"{_d(x['valid_from'])} to {_d(x['valid_to'])}" if x["valid_to"] else
+                                                     (f"from {_d(x['valid_from'])}" if x["valid_from"] else "")),
+                                           "Paid": x["settlement"] or ""} for x in nn["notices"]]))
                 io_ = api_get("/incentive/iron-ore-rebate", timeout=60)
                 if io_:
                     with st.expander("Iron ore export rebate (in force): what the public data shows so far"):
@@ -2881,57 +3072,83 @@ with tabs[5]:
                                     f'against {io_["since_scheme_prev_t"]:,} t a year earlier. Each extra tonne earns NMPA '
                                     f'\u20b9{io_["rate_rs_per_t"] - io_["rebate_per_extra_t_rs"]:.2f} after the \u20b9{io_["rebate_per_extra_t_rs"]:.2f} rebate.</div>',
                                     unsafe_allow_html=True)
-                        st.dataframe(pd.DataFrame([{"Exporter (as written)": e["customer"], "2026-27 to date (t)": e["fy2026_27_to_date_t"],
+                        _htable(pd.DataFrame([{"Exporter (as written)": e["customer"], "2026-27 to date (t)": e["fy2026_27_to_date_t"],
                                                     "Sep 2025 to Mar 2026 (t, partial base)": e["sep2025_mar2026_t"], "Status": e["status"]}
                                                    for e in io_["exporters"]]), hide_index=True, width="stretch",
                                      column_config={"Status": st.column_config.TextColumn(width="large"),
                                         "2026-27 to date (t)": st.column_config.NumberColumn(format="localized"),
                                                     "Sep 2025 to Mar 2026 (t, partial base)": st.column_config.NumberColumn(format="localized")})
-                        st.markdown('<div class="ti-s">' + " ".join(html.escape(x) for x in io_["limits"]) + "</div>", unsafe_allow_html=True)
+                        _note_md('<div class="ti-s">' + " ".join(html.escape(x) for x in io_["limits"]) + "</div>", unsafe_allow_html=True)
                         _src(io_["source"])
 
             # 3. Discount scenarios: blanket discount vs rebate on extra volume only
-            _head("Discount scenarios",
-                  sub="Compare a blanket wharfage discount (every tonne pays less) with a rebate paid only on tonnes above an agreed "
-                      "baseline. The extra tonnes in each scenario are inputs, not predictions. Plain arithmetic, shown below.")
-            k1, k2 = st.columns([0.5, 0.5])
-            cargos_ = [c["cargo"] for c in rv["cargos"]]
-            pick_i = k1.selectbox("Cargo", cargos_, key="inc_cargo")
-            disc = k2.slider("Wharfage discount (%)", 1, 30, 10, key="inc_disc")
-            won = next((o for o in (op or {}).get("cargos", []) if pick_i.lower().startswith(o["cargo"].lower().split(" ")[0])), None)
-            k3, k4 = st.columns([0.5, 0.5])
-            low_pct = k3.number_input("Low response: extra cargo (% of today's volume)", 0.0, 100.0, 2.0, 0.5, key="inc_low")
-            tgt_default = 0.0
-            with st.expander("Optional: costs, and a commercial target"):
-                c1_, c2_, c3_ = st.columns(3)
-                cost_t = c1_.number_input("Extra port cost per extra tonne (\u20b9)", 0.0, 1000.0, 0.0, 1.0, key="inc_cost",
-                                          help="Leave 0 if not known; the result is then wharfage receipts, not profit")
-                fixed = c2_.number_input("Fixed cost of running the scheme (\u20b9)", 0.0, 1e10, 0.0, 100000.0, key="inc_fixed")
-                tgt = c3_.number_input("Commercial target: extra tonnes a year", 0.0, 1e8, 0.0, 10000.0, key="inc_target",
-                                       help="E.g. a volume Traffic has confirmed with the customer. "
-                                            + (f"For reference, {won['cargo']} cargo not won at other ports: {won['tonnes_not_won']:,.0f} t "
-                                               f"in {op['period']}." if won else ""))
+            _head("Discount calculator",
+                  insight="Compare a discount on all cargo with a rebate on extra cargo only.",
+                  sub="A blanket discount lowers the rate on every tonne, including cargo that would come anyway. A rebate on extra "
+                      "volume pays the discount only on tonnes above an agreed baseline, so existing cargo keeps the full rate. The extra "
+                      "tonnes are inputs you choose, not predictions: the tool does not guess how customers will react. Rate: the "
+                      "cargo's average wharfage per tonne from NMPA's Scale of Rates (foreign/coastal and SPM/berth mix from NMPA's daily "
+                      "reports). Baseline: this year's tonnes from NMPA's monthly statements, scaled to a year.")
+            L_, R_ = st.columns([0.34, 0.66], gap="large")
+            with L_:
+                cargos_ = [c["cargo"] for c in rv["cargos"]]
+                pick_i = st.selectbox("Cargo", cargos_, key="inc_cargo")
+                disc = st.slider("Discount (%)", 1, 30, 10, key="inc_disc")
+                won = next((o for o in (op or {}).get("cargos", []) if pick_i.lower().startswith(o["cargo"].lower().split(" ")[0])), None)
+                low_pct = st.number_input("If customers bring this much more cargo (%)", 0.0, 100.0, 2.0, 0.5, key="inc_low",
+                                          help="A what-if, not a prediction")
+                with st.expander("Optional: costs and a target"):
+                    cost_t = st.number_input("Extra port cost per extra tonne (\u20b9)", 0.0, 1000.0, 0.0, 1.0, key="inc_cost",
+                                             help="Leave 0 if not known; results are then wharfage receipts, not profit")
+                    fixed = st.number_input("Fixed cost of running the scheme (\u20b9)", 0.0, 1e10, 0.0, 100000.0, key="inc_fixed")
+                    tgt = st.number_input("Target: extra tonnes a year", 0.0, 1e8, 0.0, 10000.0, key="inc_target",
+                                          help="E.g. a volume Traffic has confirmed with the customer. "
+                                               + (f"For reference, {won['cargo']} cargo not won at other ports: {won['tonnes_not_won']:,.0f} t "
+                                                  f"in {op['period']}." if won else ""))
             sc = api_get("/incentive/scenario", {"cargo": pick_i, "discount_pct": disc, "cost_per_t": cost_t, "fixed_cost": fixed,
                                                   "low_response_pct": low_pct, **({"target_t": tgt} if tgt else {})})
             if sc:
-                _kpis([
-                    ("Rate now \u2192 with discount", f"\u20b9{sc['rate_rs_per_t']:.2f} \u2192 \u20b9{sc['discounted_rate_rs_per_t']:.2f}",
-                     '<div class="c">per tonne (average foreign/coastal)</div>'),
-                    ("Blanket discount: given up on today's cargo", cr(sc["blanket_given_up_on_baseline_rs"]),
-                     f'<div class="c">on {sc["baseline_tonnes_per_year"] / 1e6:.2f} MMT a year</div>'),
-                    ("Blanket: extra cargo to break even", "never" if sc["never_breaks_even"] else tn(sc["break_even_extra_tonnes_blanket"]),
-                     '<div class="c">' + ("" if sc["never_breaks_even"] else f"{sc['break_even_extra_pct_blanket']:.1f}% more than today") + "</div>"),
-                    ("Rebate on extra volume: break even", "never" if sc["never_breaks_even"] else
-                     ("from the first extra tonne" if not sc["break_even_extra_tonnes_rebate"] else tn(sc["break_even_extra_tonnes_rebate"])),
-                     '<div class="c">existing cargo keeps the full rate</div>'),
-                ])
-                st.markdown(f'<div class="ti-s"><b>Measure:</b> {html.escape(sc["measure"])}.</div>', unsafe_allow_html=True)
-                st.dataframe(pd.DataFrame([{
-                    "Scenario": r["scenario"], "Extra tonnes a year": r["extra_tonnes"], "Source of the figure": r["source"],
-                    "Blanket discount: change": cr(r["blanket_change_rs"]), "Rebate on extra volume: change": cr(r["rebate_change_rs"])}
-                    for r in sc["scenarios"]]), hide_index=True, width="stretch", column_config={
-                        "Extra tonnes a year": st.column_config.NumberColumn(format="localized"),
-                        "Source of the figure": st.column_config.TextColumn(width="large")})
+                with R_:
+                    st.markdown('<div class="ie-cards" style="grid-template-columns:repeat(2,minmax(0,1fr))">' + "".join(
+                        f'<div class="ie-card {t}"><div class="l">{l}</div><div class="v">{v}</div><div class="s">{s_}</div></div>' for l, v, s_, t in [
+                            ("Rate per tonne", f"\u20b9{sc['rate_rs_per_t']:.2f} \u2192 \u20b9{sc['discounted_rate_rs_per_t']:.2f}",
+                             "today \u2192 with the discount", "info"),
+                            ("Discount on all cargo: cost", cr(sc["blanket_given_up_on_baseline_rs"]),
+                             f"a year, on {sc['baseline_tonnes_per_year'] / 1e6:.2f} MMT of existing cargo", "act"),
+                            ("Discount on all cargo: break-even", "never" if sc["never_breaks_even"] else tn(sc["break_even_extra_tonnes_blanket"]),
+                             ("" if sc["never_breaks_even"] else f"{sc['break_even_extra_pct_blanket']:.1f}% more cargo needed"), "watch"),
+                            ("Rebate on extra cargo only: break-even", "never" if sc["never_breaks_even"] else
+                             ("first extra tonne" if not sc["break_even_extra_tonnes_rebate"] else tn(sc["break_even_extra_tonnes_rebate"])),
+                             "existing cargo keeps the full rate", "good")]) + "</div>", unsafe_allow_html=True)
+                    r_, d_, q0_ = sc["rate_rs_per_t"], disc / 100, sc["baseline_tonnes_per_year"]
+                    be_ = sc["break_even_extra_tonnes_blanket"] or 0
+                    xmax = max(be_ * 1.4, (tgt or 0) * 1.2, q0_ * low_pct / 100 * 1.5, q0_ * 0.05)
+                    xs = [xmax * k / 40 for k in range(41)]
+                    m_ = r_ * (1 - d_) - cost_t
+                    yb = [(m_ * x - r_ * d_ * q0_ - fixed) / 1e7 for x in xs]
+                    yr = [(m_ * x - fixed) / 1e7 for x in xs]
+                    _ff = go.Figure()
+                    _ff.add_scatter(x=[x / 1e6 for x in xs], y=yr, name="Rebate on extra cargo only", line=dict(color="#0F766E", width=3))
+                    _ff.add_scatter(x=[x / 1e6 for x in xs], y=yb, name="Discount on all cargo", line=dict(color="#B91C1C", width=3))
+                    _ff.add_hline(y=0, line=dict(color="#78716C", width=1))
+                    if be_ and not sc["never_breaks_even"]:
+                        _ff.add_vline(x=be_ / 1e6, line=dict(color="#B91C1C", width=1, dash="dot"),
+                                      annotation_text=f"break-even {be_ / 1e6:.2f} MMT", annotation_position="top left")
+                    if tgt:
+                        _ff.add_vline(x=tgt / 1e6, line=dict(color="#1D4E89", width=1, dash="dash"), annotation_text="your target",
+                                      annotation_position="bottom right")
+                    _ff.update_layout(height=330, xaxis_title="Extra cargo a year (million tonnes)",
+                                      yaxis_title="Change in wharfage a year (\u20b9 crore)", hovermode="x unified", plot_bgcolor="white", paper_bgcolor="white", font=dict(size=12, color="#44403C"), margin=dict(l=10, r=20, t=56, b=30), legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
+                    st.plotly_chart(_ff, **_W_CHART, config={"displayModeBar": False}, key="ie_chart_calc")
+                    st.markdown(f'<div class="ie-take" style="font-size:13.5px">Above the line the port gains; below it the port loses. '
+                                f'{html.escape(sc["measure"])}.</div>', unsafe_allow_html=True)
+                with st.expander("See the scenario table"):
+                    _htable(pd.DataFrame([{
+                        "Scenario": r["scenario"], "Extra tonnes a year": r["extra_tonnes"], "Source of the figure": r["source"],
+                        "Discount on all cargo: change": cr(r["blanket_change_rs"]), "Rebate on extra cargo: change": cr(r["rebate_change_rs"])}
+                        for r in sc["scenarios"]]), hide_index=True, width="stretch", column_config={
+                            "Extra tonnes a year": st.column_config.NumberColumn(format="localized"),
+                            "Source of the figure": st.column_config.TextColumn(width="large")})
                 with st.expander("Formulas and conditions for a rebate scheme"):
                     st.markdown(f"- Blanket discount: `{sc['formulas']['blanket']}`\n- Rebate on extra volume: `{sc['formulas']['rebate']}`\n"
                                 "- r = wharfage per tonne today, d = discount, c = extra cost per tonne, F = fixed cost.")
@@ -2975,12 +3192,12 @@ with tabs[5]:
                         + f'; {ev["not_ready_ship_days"] or 0:.0f} ship-days waiting because the customer was not ready. '
                         + (f'Baseline {bl_["tonnes"]:,} t ({html.escape(bl_["label"])}).' if bl_.get("tonnes") is not None
                            else f'Baseline cannot be set: {html.escape(str(bl_.get("blocked")))}')) + "</div>", unsafe_allow_html=True)
-                    st.dataframe(pd.DataFrame([{"Option": o["option"], "Tariff change": o["tariff_change"],
+                    _htable(pd.DataFrame([{"Option": o["option"], "Tariff change": o["tariff_change"],
                                                 "Cost over the period": cr(o["cost_rs"]) if o.get("cost_rs") else "\u2014", "Notes": o["notes"]}
                                                for o in dd["options"]]), hide_index=True, width="stretch",
                                  column_config={"Notes": st.column_config.TextColumn(width="large")})
                     if dd["scenarios"]:
-                        st.dataframe(pd.DataFrame([{"Scenario": x["scenario"], "Extra t": x["extra_tonnes"], "Extra wharfage": cr(x["extra_wharfage_rs"]),
+                        _htable(pd.DataFrame([{"Scenario": x["scenario"], "Extra t": x["extra_tonnes"], "Extra wharfage": cr(x["extra_wharfage_rs"]),
                                                     "Rebate (slabs)": cr(x["rebate_rs"]) + (" (capped)" if x["rebate_capped"] else ""),
                                                     "Rebate option: net": cr(x["rebate_net_rs"]), "Blanket option: net": cr(x["blanket_net_rs"])}
                                                    for x in dd["scenarios"]]), hide_index=True, width="stretch",
@@ -2988,7 +3205,7 @@ with tabs[5]:
                     if dd["eligibility"]["blocks"]:
                         st.markdown('<div class="ti-insight"><b>Blocked:</b> ' + " | ".join(html.escape(b) for b in dd["eligibility"]["blocks"])
                                     + "</div>", unsafe_allow_html=True)
-                    st.markdown('<div class="ti-s"><b>Data gaps:</b> ' + " ".join(html.escape(g) for g in dd["data_gaps"])
+                    _note_md('<div class="ti-s"><b>Data gaps:</b> ' + " ".join(html.escape(g) for g in dd["data_gaps"])
                                 + "<br><b>Approval route:</b> " + " \u2192 ".join(html.escape(a) for a in dd["approval_route"]) + "</div>",
                                 unsafe_allow_html=True)
                     if dd["baseline"].get("tonnes") and dd["scenarios"]:
@@ -3027,13 +3244,13 @@ with tabs[5]:
             rl = api_get("/incentive/rules")
             if rl:
                 with st.expander("Rules applied to every proposal: tariff version, who controls each charge, combining benefits"):
-                    st.dataframe(pd.DataFrame([{"Tariff version": v["name"], "From": _d(v["from"]), "To": _d(v["to"]),
+                    _htable(pd.DataFrame([{"Tariff version": v["name"], "From": _d(v["from"]), "To": _d(v["to"]),
                                                 "Original held": "Yes" if v["held"] else "No: proposals in these dates are blocked",
                                                 "Note": v["note"]} for v in rl["tariff_versions"]]), hide_index=True, width="stretch")
-                    st.dataframe(pd.DataFrame([{"Charge": k, "NMPA can offer a benefit": {True: "Yes", False: "No", None: "Finance to confirm"}[v["nmpa_controls"]],
+                    _htable(pd.DataFrame([{"Charge": k, "NMPA can offer a benefit": {True: "Yes", False: "No", None: "Finance to confirm"}[v["nmpa_controls"]],
                                                 "Basis": v["basis"]} for k, v in rl["charge_control"].items()]), hide_index=True, width="stretch",
                                  column_config={"Basis": st.column_config.TextColumn(width="large")})
-                    st.markdown(f'<div class="ti-s"><b>Combining benefits:</b> {html.escape(rl["combination_rule"])} Benefits already granted: '
+                    _note_md(f'<div class="ti-s"><b>Combining benefits:</b> {html.escape(rl["combination_rule"])} Benefits already granted: '
                                 + "; ".join(f'{html.escape(b["name"])}, {_d(b["from"])} to {_d(b["to"])}' for b in rl["known_benefits"]) + ".</div>",
                                 unsafe_allow_html=True)
 
@@ -3065,12 +3282,12 @@ with tabs[5]:
                 blv = api_get("/incentive/baseline", {"cargo": pick_i, "start": d_start.isoformat(), "end": d_end.isoformat(), "method": bm_,
                                                       "years": by_years, **({"contractual_t": ct_} if ct_ else {})})
                 if blv:
-                    st.markdown('<div class="ti-s">' + (f'<b>Baseline:</b> {blv["tonnes"]:,} t ({html.escape(blv["label"])}; '
+                    _note_md('<div class="ti-s">' + (f'<b>Baseline:</b> {blv["tonnes"]:,} t ({html.escape(blv["label"])}; '
                                 f'{html.escape(blv.get("detail", ""))})' if blv.get("tonnes") is not None else
                                 f'<b>Baseline cannot be set:</b> {html.escape(blv.get("blocked") or "")}') + "</div>", unsafe_allow_html=True)
                 tiers_df = None
                 if scope_ == "Rebate on extra volume":
-                    st.markdown('<div class="ti-s"><b>Marginal slabs</b>: each block of tonnes above the baseline gets its own rate. '
+                    _note_md('<div class="ti-s"><b>Marginal slabs</b>: each block of tonnes above the baseline gets its own rate. '
                                 'Leave the last "up to" empty for no upper limit. Rates are entered by authorised users; they are not NMPA policy.</div>',
                                 unsafe_allow_html=True)
                     tiers_df = st.data_editor(pd.DataFrame([{"up_to_pct_above_baseline": 10.0, "rebate_pct": float(disc) / 2},
@@ -3087,7 +3304,7 @@ with tabs[5]:
                     if el["blocks"]:
                         st.markdown('<div class="ti-insight"><b>Blocked:</b><br>' + "<br>".join("\u2022 " + html.escape(b) for b in el["blocks"])
                                     + "<br>It can be saved as a draft, but cannot go to review until these are resolved.</div>", unsafe_allow_html=True)
-                    st.markdown('<div class="ti-s"><b>Not checked by this tool:</b> ' + " ".join(html.escape(w) for w in el["warnings"]) + "</div>",
+                    _note_md('<div class="ti-s"><b>Not checked by this tool:</b> ' + " ".join(html.escape(w) for w in el["warnings"]) + "</div>",
                                 unsafe_allow_html=True)
                 if st.button("Save as draft", key="sch_save", type="primary"):
                     tiers_ = None
@@ -3107,7 +3324,7 @@ with tabs[5]:
                     except requests.RequestException:
                         st.error("Could not save. Is the backend running?")
             if sch["schemes"]:
-                st.dataframe(pd.DataFrame([{
+                _htable(pd.DataFrame([{
                     "Scheme": x["id"], "Status": x["status"], "Cargo": x["cargo"], "Type": x["scope"], "Discount": f"{x['discount_pct']:g}%",
                     "Period": f"{_d(x['start'])} to {_d(x['end'])}", "Baseline (t)": x["baseline_tonnes"], "Budget cap": cr(x["budget_cap_rs"]),
                     "Approval ref.": x.get("approval_reference") or "\u2014",
@@ -3138,19 +3355,19 @@ with tabs[5]:
                                 + "; ".join(html.escape(c) for c in xs["data_changed"])
                                 + ". Re-check the figures before it moves on.</div>", unsafe_allow_html=True)
                 if xs.get("approved_on_data"):
-                    st.markdown(f'<div class="ti-s">Approved on data version {xs["approved_on_data"]["fingerprint"]} (NMPA statements to '
+                    _note_md(f'<div class="ti-s">Approved on data version {xs["approved_on_data"]["fingerprint"]} (NMPA statements to '
                                 f'{_m(xs["approved_on_data"]["nmpa_statements_through"])}); its terms and baseline stay as approved.</div>',
                                 unsafe_allow_html=True)
                 mc_ = xs.get("market_context") or {}
                 if mc_.get("available"):
-                    st.markdown(f'<div class="ti-s"><b>Market context</b> ({html.escape(mc_["commodity"])}, '
+                    _note_md(f'<div class="ti-s"><b>Market context</b> ({html.escape(mc_["commodity"])}, '
                                 f'{", ".join(_m(m) for m in mc_["months_compared"])} against a year earlier): New Mangalore '
                                 f'{_ptxt(mc_["nmpa_growth_pct"])}, the other 11 major ports {_ptxt(mc_["other_ports_growth_pct"])}. '
                                 f'{html.escape(mc_["label"].split(": ", 1)[1])}'
                                 + (f' Months without comparable figures, left out: {", ".join(_m(m) for m in mc_["months_missing"])}.'
                                    if mc_.get("months_missing") else "") + "</div>", unsafe_allow_html=True)
                 elif mc_:
-                    st.markdown(f'<div class="ti-s"><b>Market context:</b> not comparable ({html.escape(mc_.get("reason", ""))})</div>',
+                    _note_md(f'<div class="ti-s"><b>Market context:</b> not comparable ({html.escape(mc_.get("reason", ""))})</div>',
                                 unsafe_allow_html=True)
                 if xs["status"] in ("Approved", "Active"):
                     with st.expander("Amend this scheme (old terms are kept; it returns to Traffic review for re-approval)"):
@@ -3174,7 +3391,7 @@ with tabs[5]:
                                 st.error("Could not amend. Is the backend running?")
                 if xs.get("amendments"):
                     st.markdown("**Amendments** (earlier terms kept)")
-                    st.dataframe(pd.DataFrame([{"When": a["at"].replace("T", " "), "Who": a["by"], "Reason": a["reason"],
+                    _htable(pd.DataFrame([{"When": a["at"].replace("T", " "), "Who": a["by"], "Reason": a["reason"],
                                                 "Earlier terms": str(a["previous_terms"]), "New terms": str(a["new_terms"]),
                                                 "Earlier approval": a.get("previous_approval_reference") or ""} for a in xs["amendments"]]),
                                  hide_index=True, width="stretch")
@@ -3192,60 +3409,73 @@ with tabs[5]:
                                 + "</div>", unsafe_allow_html=True)
                 if xs.get("baselines"):
                     st.markdown("**Baseline versions** (frozen at approval; earlier versions kept)")
-                    st.dataframe(pd.DataFrame([{"Version": b["version"], "When": b["at"].replace("T", " "), "Method": b["label"],
+                    _htable(pd.DataFrame([{"Version": b["version"], "When": b["at"].replace("T", " "), "Method": b["label"],
                                                 "Tonnes": b.get("tonnes"), "Detail": b.get("detail") or b.get("blocked") or "",
                                                 "Reason": b.get("reason", ""), "Frozen": "Yes" if b.get("frozen") else "No"} for b in xs["baselines"]]),
                                  hide_index=True, width="stretch", column_config={"Tonnes": st.column_config.NumberColumn(format="localized")})
                 if xs.get("tiers"):
-                    st.markdown('<div class="ti-s"><b>Marginal slabs:</b> ' + "; ".join(
+                    _note_md('<div class="ti-s"><b>Marginal slabs:</b> ' + "; ".join(
                         (f'up to {t["up_to_pct_above_baseline"]:g}% above baseline: {t["rebate_pct"]:g}%' if t.get("up_to_pct_above_baseline") is not None
                          else f'beyond that: {t["rebate_pct"]:g}%') for t in xs["tiers"]) + "</div>", unsafe_allow_html=True)
                 if xs.get("success_target_t") or xs.get("stop_rule"):
-                    st.markdown(f'<div class="ti-s"><b>Success target:</b> {xs.get("success_target_t") or 0:,.0f} extra tonnes over the baseline. '
+                    _note_md(f'<div class="ti-s"><b>Success target:</b> {xs.get("success_target_t") or 0:,.0f} extra tonnes over the baseline. '
                                 f'<b>Stop rule:</b> {html.escape(xs.get("stop_rule") or "none")}.</div>', unsafe_allow_html=True)
                 if (xs.get("observed") or {}).get("slabs"):
                     sl = xs["observed"]["slabs"]
-                    st.markdown(f'<div class="ti-s"><b>Rebate at the observed volume:</b> {cr(sl["rebate_rs"])}'
+                    _note_md(f'<div class="ti-s"><b>Rebate at the observed volume:</b> {cr(sl["rebate_rs"])}'
                                 + (f' (capped; {cr(sl["rebate_before_cap_rs"])} before the cap)' if sl["capped"] else "")
                                 + f'. {html.escape(sl["status"])}.</div>', unsafe_allow_html=True)
                 st.markdown("**Audit trail** (who changed what, when)")
-                st.dataframe(pd.DataFrame(xs["audit"]).assign(at=lambda d_: d_["at"].str.replace("T", " "))
+                _htable(pd.DataFrame(xs["audit"]).assign(at=lambda d_: d_["at"].str.replace("T", " "))
                              .rename(columns={"at": "When", "by": "Who", "event": "Change", "detail": "Detail"}),
                              hide_index=True, width="stretch")
-                st.markdown(f'<div class="ti-s">Tariff version used: {html.escape(xs["tariff_version"])}; rate \u20b9{xs["rate_rs_per_t"]:.2f}/t. '
+                _note_md(f'<div class="ti-s">Tariff version used: {html.escape(xs["tariff_version"])}; rate \u20b9{xs["rate_rs_per_t"]:.2f}/t. '
                             f'Conditions: {html.escape(xs.get("conditions") or "none recorded")}. Eligible customers: '
                             f'{html.escape(xs.get("customers") or "not specified")}.</div>', unsafe_allow_html=True)
             else:
-                st.markdown('<div class="ti-s">No schemes yet.</div>', unsafe_allow_html=True)
+                _note_md('<div class="ti-s">No schemes yet.</div>', unsafe_allow_html=True)
 
             # 4. What happened after past incentives
             ev = api_get("/incentive/evidence", timeout=30)
             if ev and ev.get("available"):
                 _head("What happened after past incentives",
+                      insight="Each past incentive, and what the cargo did around it. Market context, not proof of effect.",
                       sub="New Mangalore against the other 11 major ports, before and after each incentive. " + ev["caution"])
+                _pc, _wc0 = [], api_get("/incentive/waiver-cost", timeout=60) or {}
                 for c in ev["cases"]:
                     if not c.get("measurable"):
-                        st.markdown(f"**{c['incentive']}**: {c['result']}")
+                        _pc.append((c["incentive"], "not measurable", html.escape(_ie_txt(c["result"]))[:140], ""))
+                        _note_md(f'<div class="ti-s"><b>{html.escape(c["incentive"])}</b>: {html.escape(_ie_txt(c["result"]))}</div>')
                         continue
                     if c.get("comparison_only"):
-                        st.markdown(f"**{c['incentive']}**  \nApril to September 2026 against a year earlier: New Mangalore's coastal cargo "
-                                    f"**{_ptxt(c['nmpa_coastal_growth_pct'])}**, the other 11 major ports' coastal cargo **{_ptxt(c['other_ports_coastal_growth_pct'])}**; "
-                                    f"New Mangalore's overseas cargo {_ptxt(c['nmpa_overseas_growth_pct'])}. The concession applies at every major port, "
-                                    "so the gap is specific to New Mangalore's customers, not the concession itself.")
+                        _pc.append((c["incentive"], f"{_ptxt(c['nmpa_coastal_growth_pct'])}",
+                                    f"New Mangalore's coastal cargo, against {_ptxt(c['other_ports_coastal_growth_pct'])} at the other 11 major "
+                                    f"ports (Apr to Sep 2026 vs a year earlier)", "good" if (c["nmpa_coastal_growth_pct"] or 0) > 0 else "watch"))
+                        _note_md(f'<div class="ti-s"><b>{html.escape(c["incentive"])}</b>: New Mangalore\'s overseas cargo '
+                                 f'{_ptxt(c["nmpa_overseas_growth_pct"])}. The concession applies at every major port, so the gap is specific '
+                                 f'to New Mangalore\'s customers, not the concession itself.</div>')
                         continue
                     if c.get("waiver_window"):
-                        sh = (f" New Mangalore's share of crude, POL products and LPG at all major ports: {c['group_share_march_2026']:.1f}% in "
-                              f"March 2026, against {c['group_share_dec_feb']:.1f}% in Dec 2025 to Feb 2026 and {c['group_share_march_2025']:.1f}% "
-                              "in March 2025 (the Ministry's March report gives these three cargos only together)."
-                              if c.get("group_share_march_2026") and c.get("group_share_dec_feb") and c.get("group_share_march_2025") else "")
-                        st.markdown(f"**{c['incentive']}**  \nMarch 2026 (the waiver month): **{c['march_2026_t']:,} t**, "
-                                    f"{_ptxt(c['vs_feb_pct'])} on February 2026 and {_ptxt(c['vs_march_2025_pct'])} on March 2025.{sh}")
+                        _pc.append((c["incentive"], f"{c['march_2026_t'] / 1e3:,.0f} thousand t",
+                                    f"in March 2026: {_ptxt(c['vs_march_2025_pct'])} on March 2025, {_ptxt(c['vs_feb_pct'])} on February 2026",
+                                    "watch" if (c["vs_march_2025_pct"] or 0) < 0 else "good"))
+                        if c.get("group_share_march_2026") and c.get("group_share_dec_feb") and c.get("group_share_march_2025"):
+                            _note_md(f'<div class="ti-s"><b>{html.escape(c["incentive"])}</b>: New Mangalore\'s share of crude, POL products and '
+                                     f'LPG at all major ports was {c["group_share_march_2026"]:.1f}% in March 2026, against '
+                                     f'{c["group_share_dec_feb"]:.1f}% in Dec 2025 to Feb 2026 and {c["group_share_march_2025"]:.1f}% in March 2025 '
+                                     f'(the Ministry\'s March report gives these three cargos only together).</div>')
                         continue
                     gap = f" ({', '.join(c['months_without_data'])}: no separate figure in the Ministry report)" if c.get("months_without_data") else ""
-                    st.markdown(f"**{c['incentive']}**  \n{c['before_label']} \u2192 {c['after_label']}{gap}: New Mangalore "
-                                f"**{_ptxt(c['nmpa_change_pct'])}**, the other 11 major ports **{_ptxt(c['other_ports_change_pct'])}**. "
-                                f"Share of all major ports: {c['share_before_pct']:.1f}% \u2192 **{c['share_after_pct']:.1f}%** "
-                                f"({c['share_change_points']:+.1f} points).")
+                    _pc.append((c["incentive"], f"{_ptxt(c['nmpa_change_pct'])}",
+                                f"New Mangalore against {_ptxt(c['other_ports_change_pct'])} at the other 11 major ports; share "
+                                f"{c['share_before_pct']:.1f}% \u2192 {c['share_after_pct']:.1f}%", "good" if (c["share_change_points"] or 0) > 0 else "watch"))
+                    _note_md(f'<div class="ti-s"><b>{html.escape(c["incentive"])}</b>: {c["before_label"]} \u2192 {c["after_label"]}{gap}.</div>')
+                if _wc0.get("total_rs"):
+                    _pc.append(("Cost of the March 2026 waiver", cr(_wc0["total_rs"]),
+                                "wharfage given up, upper estimate at the 2025-26 rates in force then", "act"))
+                st.markdown('<div class="ie-cards" style="grid-template-columns:repeat(2,minmax(0,1fr))">' + "".join(
+                    f'<div class="ie-card {t}"><div class="l">{html.escape(l)}</div><div class="v">{v}</div><div class="s">{s_}</div></div>'
+                    for l, v, s_, t in _pc) + "</div>", unsafe_allow_html=True)
                 _src("NMPA Trade Circular NMPA/TM/2025-26/Gen.2 (14 Mar 2026); NMPA statements; Ministry of Ports Tables 1 and 2")
 
             wv = api_get("/incentive/waiver-coverage", timeout=60)
@@ -3255,19 +3485,20 @@ with tabs[5]:
                                 + ", ".join(f"{c} {t / 1e3:,.0f} thousand t" for c, t in wv["tonnes_by_cargo"].items())
                                 + (f' (no quantity recorded for {", ".join(wv["ships_without_quantity"])})' if wv["ships_without_quantity"] else "")
                                 + f'.</div>', unsafe_allow_html=True)
-                    st.dataframe(pd.DataFrame([{"Ship": x["vessel"], "Cargo": x["cargo"], "Customer": x["customer"], "Berthed": _d(x["berthed"]),
+                    _htable(pd.DataFrame([{"Ship": x["vessel"], "Cargo": x["cargo"], "Customer": x["customer"], "Berthed": _d(x["berthed"]),
                                                 "Berth": x["berth"] or "\u2014", "Run": {"F": "Foreign", "C": "Coastal"}.get(x["run"], x["run"]),
-                                                "Tonnes": x["tonnes"], "Daily report": x["report_status"]} for x in wv["ships"]]),
+                                                "Tonnes": f"{x['tonnes']:,}" if x["tonnes"] else "not recorded",
+                                                "Daily report": x["report_status"]} for x in wv["ships"]]),
                                  hide_index=True, width="stretch", column_config={"Tonnes": st.column_config.NumberColumn(format="localized")})
                     wc = api_get("/incentive/waiver-cost", timeout=60)
                     if wc:
                         st.markdown(f'<div class="ti-insight"><b>Wharfage waived (upper estimate): {cr(wc["total_rs"])}</b>, at the 2025-26 rates in force '
                                     f'then. {html.escape(wc["basis"])}</div>', unsafe_allow_html=True)
-                        st.dataframe(pd.DataFrame([{"Ship": x["vessel"], "Rate line (2025-26)": {"crude_spm": "Crude through SPM", "crude_berth": "Crude at berth",
+                        _htable(pd.DataFrame([{"Ship": x["vessel"], "Rate line (2025-26)": {"crude_spm": "Crude through SPM", "crude_berth": "Crude at berth",
                                                     "lpg": "LPG"}[x["rate_line"]], "Rate (Rs/t)": x["rate_rs_per_t"], "SOR page": x["sor_page"],
                                                     "Wharfage waived": cr(x["wharfage_waived_rs"]) if x["wharfage_waived_rs"] else "not priced (no quantity)"}
                                                    for x in wc["ships"]]), hide_index=True, width="stretch")
-                    st.markdown('<div class="ti-s">' + " ".join(html.escape(n) for n in wv["notes"])
+                    _note_md('<div class="ti-s">' + " ".join(html.escape(n) for n in wv["notes"])
                                 + (f' Left out, already working on 14 Mar: {", ".join(wv["excluded_already_working"])}.' if wv["excluded_already_working"] else "")
                                 + "</div>", unsafe_allow_html=True)
                     _src(wv["source"])

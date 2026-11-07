@@ -1,42 +1,42 @@
-﻿# 09 â€” Data Persistence Layer & Dataset Ingestion
+# 09 — Data Persistence Layer & Dataset Ingestion
 
-## ðŸ—„ï¸ Storage Architecture Overview
+## 🗄️ Storage Architecture Overview
 
 The Maritime Port Intelligence Platform utilizes an **In-Memory Analytical Data Pool** powered by **Pandas DataFrames**, backed by persistent CSV files and an HTTP Multipart File Upload service.
 
 While production maritime platforms often connect to PostgreSQL or TimescaleDB, this application uses a high-performance Python time-series ingestion engine that loads, cleans, and indexes multi-year CSV datasets directly into memory upon server initialization.
 
 ```text
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚                                PERSISTENT CSV STORAGE                                  â”‚
- â”‚                                                                                        â”‚
- â”‚  `data/port_cargo_monthly.csv` (1,354 records)   `data/sample_cargo_data.csv` (62 records)â”‚
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                             â”‚
-                                             â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚                            IN-MEMORY PANDAS DATA POOL                                  â”‚
- â”‚  (`backend/app/services/forecasting.py:_load_and_prep_cargo_data()`)                   â”‚
- â”‚                                                                                        â”‚
- â”‚  - Continuous monthly datetime index (`ds`: 2021-01-01 to 2026-07-01)                  â”‚
- â”‚  - Categorical commodity indexing (16+ NMPA commodities)                               â”‚
- â”‚  - Directional filtering (`LOADED` / `UNLOADED` / `ALL`)                               â”‚
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                             â”‚
-                                             â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚                          DYNAMIC CSV UPLOAD & STORAGE ENGINE                           â”‚
- â”‚  (`backend/app/routes/upload.py:upload_file()`)                                        â”‚
- â”‚                                                                                        â”‚
- â”‚  - Accepts custom multipart CSV reports via `POST /upload/`                            â”‚
- â”‚  - Saves uploads to `uploads/` directory with timestamped filenames                    â”‚
- â”‚  - Validates file size (max 20MB) and CSV header integrity                            â”‚
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+ ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │                                PERSISTENT CSV STORAGE                                  │
+ │                                                                                        │
+ │  `data/port_cargo_monthly.csv` (1,354 records)   `data/sample_cargo_data.csv` (62 records)│
+ └───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                             │
+                                             ▼
+ ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │                            IN-MEMORY PANDAS DATA POOL                                  │
+ │  (`backend/app/services/forecasting.py:_load_and_prep_cargo_data()`)                   │
+ │                                                                                        │
+ │  - Continuous monthly datetime index (`ds`: 2021-01-01 to 2026-07-01)                  │
+ │  - Categorical commodity indexing (16+ NMPA commodities)                               │
+ │  - Directional filtering (`LOADED` / `UNLOADED` / `ALL`)                               │
+ └───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                             │
+                                             ▼
+ ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │                          DYNAMIC CSV UPLOAD & STORAGE ENGINE                           │
+ │  (`backend/app/routes/upload.py:upload_file()`)                                        │
+ │                                                                                        │
+ │  - Accepts custom multipart CSV reports via `POST /upload/`                            │
+ │  - Saves uploads to `uploads/` directory with timestamped filenames                    │
+ │  - Validates file size (max 20MB) and CSV header integrity                            │
+ └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## ðŸ“Š Dataset Schemas & Attributes
+## 📊 Dataset Schemas & Attributes
 
 ### 1. Primary Dataset: `data/port_cargo_monthly.csv`
 * **Source**: Official monthly cargo traffic records mapped to New Mangalore Port Authority (NMPA).
@@ -66,7 +66,7 @@ While production maritime platforms often connect to PostgreSQL or TimescaleDB, 
 
 ---
 
-## ðŸ”„ Data Lifecycle: How Data Reaches the Dashboard
+## 🔄 Data Lifecycle: How Data Reaches the Dashboard
 
 1. **Storage**: File remains safely stored on disk in `data/port_cargo_monthly.csv`.
 2. **Read & Clean**: `forecasting.py:_get_raw_df()` invokes `pd.read_csv()`, strips whitespace from commodity strings, and parses numeric columns.

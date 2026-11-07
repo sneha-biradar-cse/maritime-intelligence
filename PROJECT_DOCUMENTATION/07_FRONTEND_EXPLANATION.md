@@ -1,6 +1,6 @@
-﻿# 07 â€” Frontend Architecture & UI Component Guide
+# 07 — Frontend Architecture & UI Component Guide
 
-## ðŸŽ¨ Overview of the Frontend Layer
+## 🎨 Overview of the Frontend Layer
 
 The frontend of the Maritime Port Intelligence Platform is a single-page web dashboard built using **Streamlit 1.50.0** and **Plotly 6.7.0**. It is contained inside `frontend/app.py` (1,560+ lines of Python UI code).
 
@@ -9,19 +9,19 @@ The frontend of the Maritime Port Intelligence Platform is a single-page web das
 
 ---
 
-## ðŸ› ï¸ Key Frontend Components & Helper Functions
+## 🛠️ Key Frontend Components & Helper Functions
 
-### 1. Injected Custom CSS System (`app.py` lines 70â€“314)
+### 1. Injected Custom CSS System (`app.py` lines 70–314)
 * **Purpose**: Replaces standard default Streamlit styles with a custom Warm Amber / Cream design token system (`#FCFAF5` background, `#1C1917` dark neutral text, `#F59E0B` Gold primary accents).
 * **Components Injected**: `.ys-header`, `.ys-live-badge`, `.alert-card`, `.rec-card`, `.opp-card`, `.pipeline-stage`, `.log-container`.
 
-### 2. API Communication Helpers (`app.py` lines 43â€“60)
+### 2. API Communication Helpers (`app.py` lines 43–60)
 * **`api_get(path, params)`**: Issues HTTP GET requests to backend `http://127.0.0.1:8000{path}` with a 6-second timeout and JSON parsing.
 * **`api_post(path, payload)`**: Issues HTTP POST requests to backend `http://127.0.0.1:8000{path}` with JSON payload and error handling.
 
 ---
 
-## ðŸ“‘ Complete Breakdown of All 9 Navigation Tabs
+## 📑 Complete Breakdown of All 9 Navigation Tabs
 
 ### Tab 1: Executive Dashboard (`tabs[0]`)
 * **Purpose**: Provides a top-level port-wide command center for executive leadership.
@@ -44,7 +44,7 @@ The frontend of the Maritime Port Intelligence Platform is a single-page web das
 
 ---
 
-### â­ Tab 3: Cargo Forecasting â€” CORE FEATURE (`tabs[2]`)
+### ⭐ Tab 3: Cargo Forecasting — CORE FEATURE (`tabs[2]`)
 * **Purpose**: Predictive Cargo Analytics, volume forecasting, commodity breakdown, driver explainability, backtesting model validation, and What-If scenario simulation.
 * **APIs Called**:
   * `GET /cargo/commodities` (List of commodities for dropdown).
@@ -52,11 +52,11 @@ The frontend of the Maritime Port Intelligence Platform is a single-page web das
   * `GET /cargo/accuracy` (Chronological backtesting matrix vs Seasonal Naive baseline).
   * `POST /cargo/scenario` (Interactive What-If cargo scenario simulator).
 * **Visuals Displayed**:
-  * **Top Hero Objective Banner**: `Predictive Cargo Analytics â€” See What's Coming. Plan Ahead.`
+  * **Top Hero Objective Banner**: `Predictive Cargo Analytics — See What's Coming. Plan Ahead.`
   * **3 Visual Capability Cards**: `Cargo Volume Forecasting`, `Commodity & Trade Demand`, `Cargo Risk & Anomaly Detection`.
   * **Selected Commodity Analytics Banner**: Current volume, forecast average, expected growth %, predictability level, and accuracy.
   * **NMPA Facility Banner**: Berths, hinterland consumer, draft depth.
-  * **Plotly Main Forecast Graph**: `Cargo Volume Forecast â€” [Commodity] â€” [Horizon] Month Horizon` with Y-axis `Cargo Volume (Tonnes)` and X-axis `Month`.
+  * **Plotly Main Forecast Graph**: `Cargo Volume Forecast — [Commodity] — [Horizon] Month Horizon` with Y-axis `Cargo Volume (Tonnes)` and X-axis `Month`.
   * **Explainable Forecast Drivers**: Card list detailing WHY cargo is changing.
   * **Cargo Forecast Model Validation Table & Plot**: WAPE, MAPE, MAE, RMSE performance comparison.
   * **What-If Cargo Scenario Simulator**: Sliders for vessel shift %, trade demand %, weather delay days, metrics for `Predicted Cargo Throughput`, and scenario comparison chart.
@@ -78,7 +78,7 @@ The frontend of the Maritime Port Intelligence Platform is a single-page web das
 * **APIs Called**:
   * `GET /anomaly/events` (Active anomaly event logs).
   * `GET /anomaly/history` (30-day anomaly frequency histogram).
-* **Visuals Displayed**: Section header `Cargo Anomaly & Risk Intelligence`, Severity Progression Bar (`Normal â†’ Low/Medium Risk â†’ High Risk Warning â†’ Critical Anomaly`), active anomaly cards, stacked bar chart of anomaly frequency, and algorithm explanatory panel (Isolation Forest, LSTM, Autoencoder, Transformer).
+* **Visuals Displayed**: Section header `Cargo Anomaly & Risk Intelligence`, Severity Progression Bar (`Normal → Low/Medium Risk → High Risk Warning → Critical Anomaly`), active anomaly cards, stacked bar chart of anomaly frequency, and algorithm explanatory panel (Isolation Forest, LSTM, Autoencoder, Transformer).
 
 ---
 

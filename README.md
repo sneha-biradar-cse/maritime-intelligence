@@ -1,3 +1,5 @@
+Requirement: Python 3.12 or newer (scipy 1.18 and scikit-learn 1.9 in requirements.txt need it). Check with:  python --version
+
 # 🚢 Maritime Port Intelligence Platform (MPIP)
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
@@ -163,7 +165,7 @@ Ensure you have [Docker](https://www.docker.com/) and [Docker Compose](https://d
 
 ### Option 2: Local Installation (For Development)
 
-Ensure you have Python 3.10+ installed.
+Ensure you have Python 3.12 or newer installed (check with: python --version).
 
 #### 1. Setup Virtual Environment
 ```bash

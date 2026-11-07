@@ -1,38 +1,38 @@
-﻿# 08 â€” Backend Architecture & Service Layer Reference
+# 08 — Backend Architecture & Service Layer Reference
 
-## âš™ï¸ Backend Structure & Module Overview
+## ⚙️ Backend Structure & Module Overview
 
 The backend of the Maritime Port Intelligence Platform is built on **FastAPI** (`0.128.8`) and running asynchronously on **Uvicorn** (`0.39.0`).
 
 ```text
 backend/
-â”œâ”€â”€ app/
-â”‚   â”œâ”€â”€ main.py                   # FastAPI Application Entry Point & Router Assembly
-â”‚   â”œâ”€â”€ routes/                   # HTTP Controller Router Layer
-â”‚   â”‚   â”œâ”€â”€ cargo.py              # Cargo Forecasting & Scenario Simulation Routes
-â”‚   â”‚   â”œâ”€â”€ vessels.py            # AIS Vessel Tracking & Congestion Routes
-â”‚   â”‚   â”œâ”€â”€ trade.py              # Trade Lanes & Commodity Prices Routes
-â”‚   â”‚   â”œâ”€â”€ anomaly.py            # Anomaly Detection Event Routes
-â”‚   â”‚   â”œâ”€â”€ incentive.py          # Trade Incentive & Monte Carlo Simulation Routes
-â”‚   â”‚   â”œâ”€â”€ twin.py               # Digital Twin Scenario Routes
-â”‚   â”‚   â”œâ”€â”€ copilot.py            # AI Copilot Query & Dispatcher Routes
-â”‚   â”‚   â”œâ”€â”€ pipeline.py           # Ingestion Pipeline & Log Routes
-â”‚   â”‚   â”œâ”€â”€ executive.py          # Executive KPI & Revenue Trend Routes
-â”‚   â”‚   â”œâ”€â”€ security.py           # SOC Threats, DPDP Compliance & Audit Logs Routes
-â”‚   â”‚   â”œâ”€â”€ upload.py             # Custom CSV File Upload Controller
-â”‚   â”‚   â”œâ”€â”€ forecast.py           # Intelligence Forecasting Router
-â”‚   â”‚   â””â”€â”€ health.py             # Health Check Route
-â”‚   â””â”€â”€ services/                 # Analytical Business Logic & Analytical Engines
-â”‚       â”œâ”€â”€ forecasting.py        # Holt-Winters + Ridge Regression ML Cargo Engine
-â”‚       â”œâ”€â”€ synthetic_data.py     # Port Metric Generators & Monte Carlo Engine
-â”‚       â”œâ”€â”€ copilot.py            # LangGraph Cognitive 3-Tier Query Dispatcher
-â”‚       â”œâ”€â”€ nmpa_vessels.py       # AIS Tracking & Vessel Route Risk Engine
-â”‚       â””â”€â”€ security.py           # MITRE ATT&CK & Cryptographic Audit Logger
+├── app/
+│   ├── main.py                   # FastAPI Application Entry Point & Router Assembly
+│   ├── routes/                   # HTTP Controller Router Layer
+│   │   ├── cargo.py              # Cargo Forecasting & Scenario Simulation Routes
+│   │   ├── vessels.py            # AIS Vessel Tracking & Congestion Routes
+│   │   ├── trade.py              # Trade Lanes & Commodity Prices Routes
+│   │   ├── anomaly.py            # Anomaly Detection Event Routes
+│   │   ├── incentive.py          # Trade Incentive & Monte Carlo Simulation Routes
+│   │   ├── twin.py               # Digital Twin Scenario Routes
+│   │   ├── copilot.py            # AI Copilot Query & Dispatcher Routes
+│   │   ├── pipeline.py           # Ingestion Pipeline & Log Routes
+│   │   ├── executive.py          # Executive KPI & Revenue Trend Routes
+│   │   ├── security.py           # SOC Threats, DPDP Compliance & Audit Logs Routes
+│   │   ├── upload.py             # Custom CSV File Upload Controller
+│   │   ├── forecast.py           # Intelligence Forecasting Router
+│   │   └── health.py             # Health Check Route
+│   └── services/                 # Analytical Business Logic & Analytical Engines
+│       ├── forecasting.py        # Holt-Winters + Ridge Regression ML Cargo Engine
+│       ├── synthetic_data.py     # Port Metric Generators & Monte Carlo Engine
+│       ├── copilot.py            # LangGraph Cognitive 3-Tier Query Dispatcher
+│       ├── nmpa_vessels.py       # AIS Tracking & Vessel Route Risk Engine
+│       └── security.py           # MITRE ATT&CK & Cryptographic Audit Logger
 ```
 
 ---
 
-## ðŸ” Detailed Breakdown of Every Backend File
+## 🔍 Detailed Breakdown of Every Backend File
 
 ### File: `backend/app/main.py`
 * **Purpose**: Application entry point. Instantiates `FastAPI(title="YellowSense Maritime Intelligence API")`, configures CORS middleware, mounts all 12 feature routers, and defines root status endpoint.
@@ -48,7 +48,7 @@ backend/
 * **Input**: HTTP GET/POST queries (`horizon`, `commodity`, `section`, scenario JSON payloads).
 * **Processing**: Validates input parameters via FastAPI `Query` and `Body` helpers and delegates computations to `services/forecasting.py`.
 * **Output**: JSON REST responses containing forecast values, prediction intervals, WAPE metrics, and simulation results.
-* **Used by**: Streamlit Tab 3 (`â­ Cargo Forecasting`).
+* **Used by**: Streamlit Tab 3 (`⭐ Cargo Forecasting`).
 
 ---
 
@@ -74,7 +74,7 @@ backend/
 * **Purpose**: Serves active anomaly detection logs and historical severity frequency distributions.
 * **Input**: HTTP GET request.
 * **Processing**: Calls `services/synthetic_data.py:generate_anomaly_events()`.
-* **Output**: JSON list of classified anomaly events (Surge, Decline, Congestion, Weather) with severity ratings (`Normal â†’ Critical`).
+* **Output**: JSON list of classified anomaly events (Surge, Decline, Congestion, Weather) with severity ratings (`Normal → Critical`).
 * **Used by**: Streamlit Tab 5 (`Cargo Anomaly & Risk Intelligence`).
 
 ---
@@ -145,15 +145,15 @@ backend/
 
 ---
 
-## ðŸ” Request-Response Lifecycle
+## 🔁 Request-Response Lifecycle
 
 ```text
-1. Client Sends Request  â”€â”€â–º HTTP GET /cargo/forecast?horizon=6&commodity=TOTAL%20COAL
-2. FastAPI Middleware    â”€â”€â–º CORS validation & URL path matching
-3. Router Dispatcher     â”€â”€â–º Calls `routes/cargo.py:get_forecast()`
-4. Business Service      â”€â”€â–º Invokes `forecasting.py:get_enhanced_cargo_forecast()`
-5. Data Extraction       â”€â”€â–º Reads `data/port_cargo_monthly.csv` & filters `TOTAL COAL`
-6. ML Execution          â”€â”€â–º Fits Holt-Winters + Ridge model, calculates 95% bounds & WAPE
-7. Response Structuring  â”€â”€â–º Pydantic/FastAPI serializes dictionary to JSON
-8. HTTP Response Sent    â”€â”€â–º Returns HTTP 200 OK + JSON payload to Client
+1. Client Sends Request  ──► HTTP GET /cargo/forecast?horizon=6&commodity=TOTAL%20COAL
+2. FastAPI Middleware    ──► CORS validation & URL path matching
+3. Router Dispatcher     ──► Calls `routes/cargo.py:get_forecast()`
+4. Business Service      ──► Invokes `forecasting.py:get_enhanced_cargo_forecast()`
+5. Data Extraction       ──► Reads `data/port_cargo_monthly.csv` & filters `TOTAL COAL`
+6. ML Execution          ──► Fits Holt-Winters + Ridge model, calculates 95% bounds & WAPE
+7. Response Structuring  ──► Pydantic/FastAPI serializes dictionary to JSON
+8. HTTP Response Sent    ──► Returns HTTP 200 OK + JSON payload to Client
 ```

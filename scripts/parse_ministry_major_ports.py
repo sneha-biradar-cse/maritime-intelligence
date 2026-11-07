@@ -37,7 +37,7 @@ def month_of(name: str) -> str | None:
 
 
 def read_table(pdf: Path) -> pd.DataFrame:
-    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True, check=True).stdout
+    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, encoding="utf-8", errors="replace", check=True).stdout
     start = text.upper().find("TABLE-1")
     end = text.find("Table-2", start)
     rows, block = [], {}
@@ -72,7 +72,7 @@ def read_table(pdf: Path) -> pd.DataFrame:
 def read_text_table(path: Path) -> pd.DataFrame:
     """TABLE-1 as plain text: a port-name line, then Overseas / Coastal / Total lines with 8 numbers each."""
     out, port = [], None
-    for line in path.read_text().splitlines():
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
             continue
@@ -108,7 +108,7 @@ def main() -> None:
     for txt in sorted((ROOT / "data" / "ministry_table1_text").glob("*.txt")):
         if any(r[0] == txt.stem for r in reports):
             continue
-        reports.append((txt.stem, f"{txt.name} ({txt.read_text().splitlines()[0].lstrip('# ')[:90]})", read_text_table(txt)))
+        reports.append((txt.stem, f"{txt.name} ({txt.read_text(encoding='utf-8', errors='replace').splitlines()[0].lstrip('# ')[:90]})", read_text_table(txt)))
     for m, src, t in sorted(reports, key=lambda r: r[0]):
         allp = t[t["port"] == "All major ports"].set_index("column")
         ports = t[t["port"] != "All major ports"]

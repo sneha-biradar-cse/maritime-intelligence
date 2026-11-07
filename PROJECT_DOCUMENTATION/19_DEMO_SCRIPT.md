@@ -1,10 +1,10 @@
-﻿# 19 â€” Step-by-Step Live Project Demonstration Script
+# 19 — Step-by-Step Live Project Demonstration Script
 
 This document provides a live demonstration script for presenting the Maritime Port Intelligence Platform (MPIP) to an audience or evaluation panel.
 
 ---
 
-## ðŸŽ¬ Pre-Demo Setup Verification Checklist
+## 🎬 Pre-Demo Setup Verification Checklist
 
 1. **Backend Server**: Ensure FastAPI backend is running on `http://127.0.0.1:8000`.
    ```bash
@@ -18,53 +18,53 @@ This document provides a live demonstration script for presenting the Maritime P
 
 ---
 
-## ðŸ“º Live Demo Step-by-Step Guide
+## 📺 Live Demo Step-by-Step Guide
 
-### STEP 1 â€” Platform Overview & Core Objective Header
+### STEP 1 — Platform Overview & Core Objective Header
 * **SHOW ON SCREEN**:
-  * The top header card (`Maritime Intelligence Platform â€” AI-POWERED PREDICTIVE CARGO ANALYTICS & DECISION SUPPORT SYSTEM`).
-  * The top hero positioning banner (`Predictive Cargo Analytics â€” See What's Coming. Plan Ahead.`).
+  * The top header card (`Maritime Intelligence Platform — AI-POWERED PREDICTIVE CARGO ANALYTICS & DECISION SUPPORT SYSTEM`).
+  * The top hero positioning banner (`Predictive Cargo Analytics — See What's Coming. Plan Ahead.`).
 * **WHAT TO SAY**:
   > *"Welcome everyone. As you can see on the screen, our platform's primary objective is **Predictive Cargo Analytics**. Rather than simply tracking ship coordinates, our platform connects historical cargo data, machine learning algorithms, commodity demand trends, and anomaly detection to support proactive port planning decisions."*
 
 ---
 
-### STEP 2 â€” Core Feature: â­ Cargo Forecasting Tab
+### STEP 2 — Core Feature: ⭐ Cargo Forecasting Tab
 * **SHOW ON SCREEN**:
-  * Click on the 3rd navigation tab: **`â­ Cargo Forecasting`**.
+  * Click on the 3rd navigation tab: **`⭐ Cargo Forecasting`**.
   * Point out the 3 visual capability cards: `Cargo Volume Forecasting`, `Commodity & Trade Demand`, `Cargo Risk & Anomaly Detection`.
 * **WHAT TO SAY**:
   > *"Here on the Cargo Forecasting Command Center, we immediately see our three core operational pillars. Let's select a specific commodity to analyze, such as **TOTAL COAL**."*
 
 ---
 
-### STEP 3 â€” Commodity Selection & Metric Snapshot
+### STEP 3 — Commodity Selection & Metric Snapshot
 * **SHOW ON SCREEN**:
   * Select `TOTAL COAL` from the commodity dropdown.
   * Point to the **Selected Commodity Analytics Banner** and **NMPA Facility Banner**.
 * **WHAT TO SAY**:
-  > *"When I select 'TOTAL COAL', the platform dynamically pulls multi-year historical records for New Mangalore Port Authority. We see our current monthly volume is 625,768 tonnes, with an expected 6-month average of 710,889 tonnesâ€”a +13.6% growth trend. Notice the NMPA facility mapping below: thermal coal is automatically mapped to Mechanized Coal Handling Berths 15 & 16 (14.0m draft depth) supplying the UPCL Power Plant."*
+  > *"When I select 'TOTAL COAL', the platform dynamically pulls multi-year historical records for New Mangalore Port Authority. We see our current monthly volume is 625,768 tonnes, with an expected 6-month average of 710,889 tonnes—a +13.6% growth trend. Notice the NMPA facility mapping below: thermal coal is automatically mapped to Mechanized Coal Handling Berths 15 & 16 (14.0m draft depth) supplying the UPCL Power Plant."*
 
 ---
 
-### STEP 4 â€” Main Forecast Chart & 95% Confidence Interval
+### STEP 4 — Main Forecast Chart & 95% Confidence Interval
 * **SHOW ON SCREEN**:
-  * Hover over the Plotly main time-series forecast graph (`Cargo Volume Forecast â€” TOTAL COAL â€” 6 Month Horizon`).
+  * Hover over the Plotly main time-series forecast graph (`Cargo Volume Forecast — TOTAL COAL — 6 Month Horizon`).
   * Highlight the dark grey historical line, the dashed gold forecast line, and the shaded 95% dynamic prediction interval band.
 * **WHAT TO SAY**:
   > *"On this chart, the dark grey line represents historical actual cargo tonnage. The dashed gold line displays our machine learning forecast for the next 6 months. The shaded amber band represents our 95% dynamic prediction interval, giving port operators mathematical confidence bounds for berth capacity planning."*
 
 ---
 
-### STEP 5 â€” Explainable Forecast Drivers
+### STEP 5 — Explainable Forecast Drivers
 * **SHOW ON SCREEN**:
   * Scroll down to `Explainable Forecast Drivers (WHY this prediction?)`.
 * **WHAT TO SAY**:
-  > *"Crucially, our platform is not a black box. Here we answer: **WHY is cargo volume expected to change?** The ML driver engine decomposes the forecast into weighted factorsâ€”showing that UPCL power plant demand contributes 45% to the forecast, while seasonal monsoon swell delays account for 25%."*
+  > *"Crucially, our platform is not a black box. Here we answer: **WHY is cargo volume expected to change?** The ML driver engine decomposes the forecast into weighted factors—showing that UPCL power plant demand contributes 45% to the forecast, while seasonal monsoon swell delays account for 25%."*
 
 ---
 
-### STEP 6 â€” Model Validation & Chronological Backtesting
+### STEP 6 — Model Validation & Chronological Backtesting
 * **SHOW ON SCREEN**:
   * Scroll down to `Cargo Forecast Model Validation (Baseline vs Primary ML Model)`.
   * Highlight the WAPE metric (`17.15%`) and model accuracy (`82.8%`).
@@ -73,7 +73,7 @@ This document provides a live demonstration script for presenting the Maritime P
 
 ---
 
-### STEP 7 â€” Interactive What-If Cargo Scenario Simulator
+### STEP 7 — Interactive What-If Cargo Scenario Simulator
 * **SHOW ON SCREEN**:
   * Move the **Vessel Arrival Change** slider to `+15%`.
   * Move the **Trade Demand Shift** slider to `+10%`.
@@ -84,7 +84,7 @@ This document provides a live demonstration script for presenting the Maritime P
 
 ---
 
-### STEP 8 â€” Supporting Modules: Trade, Anomaly & Copilot
+### STEP 8 — Supporting Modules: Trade, Anomaly & Copilot
 * **SHOW ON SCREEN**:
   * Briefly click **Trade Intelligence** (`Commodity Demand by Trade Lane`).
   * Briefly click **Anomaly Detection** (`Cargo Anomaly & Risk Intelligence`).
@@ -94,6 +94,6 @@ This document provides a live demonstration script for presenting the Maritime P
 
 ---
 
-### STEP 9 â€” Concluding Remarks
+### STEP 9 — Concluding Remarks
 * **WHAT TO SAY**:
   > *"In conclusion, our platform transforms fragmented maritime data into actionable, predictive decision support. Thank you, and I am now ready to take your questions."*

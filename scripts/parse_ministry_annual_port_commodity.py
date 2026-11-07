@@ -25,7 +25,7 @@ ROW = re.compile(r"(20\d\d-\d\d)\s*(\(P\))?\s+((?:[\d.]+\s+){11}[\d.]+)\s*$")
 def find_page(pdf: Path) -> int:
     n = int(re.search(r"Pages:\s+(\d+)", subprocess.run(["pdfinfo", str(pdf)], capture_output=True, text=True).stdout).group(1))
     for p in range(1, n + 1):
-        t = subprocess.run(["pdftotext", "-layout", "-f", str(p), "-l", str(p), str(pdf), "-"], capture_output=True, text=True).stdout
+        t = subprocess.run(["pdftotext", "-layout", "-f", str(p), "-l", str(p), str(pdf), "-"], capture_output=True, encoding="utf-8", errors="replace").stdout
         if "Annexure-I\n" in t or re.search(r"Annexure-I\s*\n", t):
             if "Commodity-wise Traffic Handled at Major Ports" in t:
                 return p
@@ -34,7 +34,7 @@ def find_page(pdf: Path) -> int:
 
 def main() -> None:
     page = find_page(PDF)
-    text = subprocess.run(["pdftotext", "-layout", "-f", str(page), "-l", str(page), str(PDF), "-"], capture_output=True, text=True).stdout
+    text = subprocess.run(["pdftotext", "-layout", "-f", str(page), "-l", str(page), str(PDF), "-"], capture_output=True, encoding="utf-8", errors="replace").stdout
     rows = []
     for line in text.splitlines():
         m = ROW.search(line)

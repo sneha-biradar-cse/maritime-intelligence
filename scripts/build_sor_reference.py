@@ -20,7 +20,7 @@ from backend.app.services import incentive_engine as ie  # noqa: E402
 
 def main() -> None:
     pdf = ROOT / ie.SOR_FILE
-    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True, check=True).stdout
+    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, encoding="utf-8", errors="replace", check=True).stdout
     pages = text.split("\f")
     ref = {}
     for name, c in ie.CARGO.items():
@@ -41,7 +41,7 @@ def main() -> None:
             raise SystemExit(f"{name}: rate {a} / {b} not found in {pdf.name}")
         ref[c["rate"]] = hit
     out = {"file": ie.SOR_FILE, "lines": ref}
-    (ROOT / "data" / "sor_reference.json").write_text(json.dumps(out, indent=2))
+    (ROOT / "data" / "sor_reference.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(f"{len(ref)} tariff lines located -> data/sor_reference.json")
 
 

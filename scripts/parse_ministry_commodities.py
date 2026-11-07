@@ -33,7 +33,7 @@ def read_table2(pdf: Path) -> dict[str, list[int]]:
     """Table-2 lists the same rows in the same order, each with 4 whole-number columns (shares and % changes have
     decimals). A row's numbers sometimes wrap over two lines in either order, so every number is placed by its
     horizontal position into one of the 4 columns, and a row is complete when all 4 are filled."""
-    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True, check=True).stdout
+    text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, encoding="utf-8", errors="replace", check=True).stdout
     start = text.find("Table-2")
     if start < 0:
         return {}

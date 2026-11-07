@@ -1,16 +1,16 @@
-﻿# 15 â€” Features Implemented & System Capabilities Checklist
+# 15 — Features Implemented & System Capabilities Checklist
 
-## ðŸ“‹ Comprehensive Feature Implementation Status
+## 📋 Comprehensive Feature Implementation Status
 
 This document provides a feature checklist evaluating every major component against codebase evidence.
 
 ---
 
-## âš¡ Feature Implementation Matrix
+## ⚡ Feature Implementation Matrix
 
 | Feature / Capability | Implementation Status | Evidence in Codebase (`file://...`) | Operational Summary |
 | :--- | :--- | :--- | :--- |
-| **â­ Predictive Cargo Volume Forecasting** | **Implemented** | `forecasting.py:get_enhanced_cargo_forecast()` | Dual Holt-Winters + Ridge ML time-series model projecting 3, 6, 12-month cargo tonnage with 95% dynamic confidence bounds. |
+| **⭐ Predictive Cargo Volume Forecasting** | **Implemented** | `forecasting.py:get_enhanced_cargo_forecast()` | Dual Holt-Winters + Ridge ML time-series model projecting 3, 6, 12-month cargo tonnage with 95% dynamic confidence bounds. |
 | **Commodity-Wise Traffic Analysis** | **Implemented** | `forecasting.py:NMPA_FACILITY_MAP`, `app.py:615` | Filters and analyzes 16+ commodity categories (Crude, Coal, Containers, Fertilizers, POL, LPG, etc.). |
 | **Import / Export Directional Filtering** | **Implemented** | `forecasting.py`, `app.py:630` | Filters traffic by `LOADED` (Export) vs `UNLOADED` (Import) vs `ALL`. |
 | **Model Validation & Backtesting** | **Implemented** | `forecasting.py:evaluate_forecast_models()`, `routes/cargo.py:get_accuracy()` | Chronological out-of-sample backtesting evaluating WAPE, MAPE, MAE, RMSE vs Seasonal Naive baseline. |

@@ -1,23 +1,23 @@
-﻿# 02 â€” Problem Statement & Industry Context
+# 02 — Problem Statement & Industry Context
 
-## âš“ Real-World Maritime Port Challenges
+## ⚓ Real-World Maritime Port Challenges
 
 Maritime ports handle over 80% of global trade volume. However, port management systems around the world face fundamental operational hurdles due to legacy data management practices.
 
 ```text
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚    EXISTING PROBLEM     â”‚ â”€â”€â”€â–º â”‚     CURRENT SYSTEM      â”‚ â”€â”€â”€â–º â”‚   SYSTEM IMPROVEMENT    â”‚ â”€â”€â”€â–º â”‚   BUSINESS & PORT VALUE â”‚
-â”‚                         â”‚      â”‚                         â”‚      â”‚                         â”‚      â”‚                         â”‚
-â”‚ â€¢ Fragmented Cargo Data â”‚      â”‚ â€¢ MPIP Central Data     â”‚      â”‚ â€¢ ML Cargo Forecasting  â”‚      â”‚ â€¢ Proactive Operations  â”‚
-â”‚ â€¢ Reactive Planning     â”‚      â”‚   Pipeline & REST APIs  â”‚      â”‚ â€¢ 95% Confidence Bounds â”‚      â”‚ â€¢ Reduced Turnaround    â”‚
-â”‚ â€¢ Manual Spreadsheets   â”‚      â”‚ â€¢ Streamlit Analytics   â”‚      â”‚ â€¢ Explainable Drivers   â”‚      â”‚ â€¢ Zero Demurrage Penaltiesâ”‚
-â”‚ â€¢ Unplanned Bottlenecks â”‚      â”‚   Dashboard             â”‚      â”‚ â€¢ What-If Simulators    â”‚      â”‚ â€¢ Hinterland Efficiency â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+┌─────────────────────────┐      ┌─────────────────────────┐      ┌─────────────────────────┐      ┌─────────────────────────┐
+│    EXISTING PROBLEM     │ ───► │     CURRENT SYSTEM      │ ───► │   SYSTEM IMPROVEMENT    │ ───► │   BUSINESS & PORT VALUE │
+│                         │      │                         │      │                         │      │                         │
+│ • Fragmented Cargo Data │      │ • MPIP Central Data     │      │ • ML Cargo Forecasting  │      │ • Proactive Operations  │
+│ • Reactive Planning     │      │   Pipeline & REST APIs  │      │ • 95% Confidence Bounds │      │ • Reduced Turnaround    │
+│ • Manual Spreadsheets   │      │ • Streamlit Analytics   │      │ • Explainable Drivers   │      │ • Zero Demurrage Penalties│
+│ • Unplanned Bottlenecks │      │   Dashboard             │      │ • What-If Simulators    │      │ • Hinterland Efficiency │
+└─────────────────────────┘      └─────────────────────────┘      └─────────────────────────┘      └─────────────────────────┘
 ```
 
 ---
 
-## ðŸ›‘ Key Problem Drivers Addressed by MPIP
+## 🛑 Key Problem Drivers Addressed by MPIP
 
 ### 1. Cargo Data Fragmentation
 In traditional port authorities, operational data is fragmented across distinct departments:
@@ -29,7 +29,7 @@ In traditional port authorities, operational data is fragmented across distinct 
 Because these datasets exist in isolated silos, port executives lack a single unified view of cargo throughput.
 
 ### 2. Difficulty Analyzing Historical Cargo Data
-Ports accumulate tens of thousands of PDF trade reports and static Excel sheets annually. Manually analyzing multi-year monthly cargo traffic (e.g., comparing 2021 vs. 2024â€“2026 trends) is time-consuming, prone to human error, and fails to reveal non-linear seasonal cycles.
+Ports accumulate tens of thousands of PDF trade reports and static Excel sheets annually. Manually analyzing multi-year monthly cargo traffic (e.g., comparing 2021 vs. 2024–2026 trends) is time-consuming, prone to human error, and fails to reveal non-linear seasonal cycles.
 
 ### 3. Commodity-Wise Traffic Blind Spots
 Different commodities require specialized infrastructure:
@@ -53,13 +53,13 @@ Manual PDF monthly reports suffer from severe limitations:
 
 ---
 
-## ðŸ’¡ How the Proposed System (MPIP) Solves These Problems
+## 💡 How the Proposed System (MPIP) Solves These Problems
 
 | Problem | Legacy Port Approach | MPIP Platform Approach | Business & Port Value |
 | :--- | :--- | :--- | :--- |
 | **Data Silos** | Disconnected PDF/Excel files | Centralized pandas ingestion pipeline & FastAPI endpoints | Single source of truth across all port departments |
 | **Cargo Visibility** | Aggregate ship count only | Commodity-specific monthly volume breakdown (Crude, Coal, Containers, etc.) | Optimized berth draft allocation & specialized equipment staging |
 | **Forecasting** | Intuitive guessing / simple averages | Holt-Winters & Ridge ML time-series model with 95% dynamic prediction interval | Forward visibility 3, 6, and 12 months ahead |
-| **Model Trust** | Unvalidated assumptions | Out-of-sample backtesting evaluating WAPE against Seasonal Naive baseline | Proven mathematical accuracy (82â€“91% accuracy) |
+| **Model Trust** | Unvalidated assumptions | Out-of-sample backtesting evaluating WAPE against Seasonal Naive baseline | Proven mathematical accuracy (82–91% accuracy) |
 | **Explainability** | Black-box intuition | Quantified forecast drivers (MRPL Crude input, UPCL Coal demand, Monsoon swells) | Clear justification for capital & labor allocation |
 | **Disruption Risk** | Crisis response after bottleneck occurs | Interactive What-If Cargo Scenario Simulator | Proactive stress-testing before weather or traffic surges hit |

@@ -620,3 +620,34 @@ def test_update_without_poppler_daily_only_works_and_statements_explain(monkeypa
     finally:
         fake.unlink(missing_ok=True)
         (up.ROOT / "data" / "last_update_failed.json").unlink(missing_ok=True)
+
+
+def test_kpi_tariff_check_survives_unreadable_pdftotext_output(monkeypatch):
+    """Windows case: a pdftotext exists but its output cannot be decoded, so Python gets stdout=None. The check must fall back
+    to pdfplumber and still find every rate, not fail."""
+    from backend.app.services import incentive_kpis as ik
+    import subprocess, types
+    real = subprocess.run
+    monkeypatch.setattr(ik.subprocess, "run", lambda cmd, *a, **k: types.SimpleNamespace(stdout=None) if cmd[0] == "pdftotext" else real(cmd, *a, **k))
+    getattr(ik._sor_text, "cache_clear", lambda: None)()
+    getattr(ik.get_module_kpis, "cache_clear", lambda: None)()
+    if hasattr(ik._sor_text, "__wrapped__"):
+        txt = ik._sor_text.__wrapped__()
+    else:
+        txt = ik._sor_text()
+    assert "34.90" in txt                                  # read by the fallback reader
+    found, total = ik._tariff_check()
+    assert found == total and total > 0
+
+
+def test_nmpa_scheme_records_are_backed_by_notice_files():
+    import pandas as pd
+    d = pd.read_csv(ie.tmk.ROOT / "data" / "nmpa_incentive_notices.csv", dtype=str).fillna("")
+    infc = d[d.status == "In force"]
+    assert len(infc) == 5
+    for f in d.file:
+        if f:
+            assert (ie.tmk.ROOT / f).exists(), f
+    assert all(r.valid_to >= "2026-11-07" for r in infc.itertuples())          # in force today
+    newexp = d[d.notice == "NMPA/TM/SM/2026"].iloc[0]
+    assert "25%" in newexp.benefit and newexp.valid_to == "2027-07-28"

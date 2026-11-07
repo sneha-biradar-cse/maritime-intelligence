@@ -31,7 +31,7 @@ def month_of(pdf: Path) -> str | None:
 
 
 def read_port_rows(pdf: Path) -> dict[str, list[int]]:
-    lines = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True, check=True).stdout.splitlines()
+    lines = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, encoding="utf-8", errors="replace", check=True).stdout.splitlines()
     start = next(i for i, l in enumerate(lines) if "TABLE-1" in l.upper())
     k = next(i for i in range(start, len(lines)) if PORT in lines[i] and "Coastal" in lines[i])
     nums = lambda l: [int(x) for x in re.findall(r"(?<![\d.])\d{4,}(?![\d.])", l)]

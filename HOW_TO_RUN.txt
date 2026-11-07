@@ -1,6 +1,8 @@
+Requirement: Python 3.12 or newer (scipy 1.18 and scikit-learn 1.9 in requirements.txt need it). Check with:  python --version
+
 HOW TO RUN (no git needed)
 
-1. Install Python 3.10+ from python.org
+1. Install Python 3.12 or newer from python.org (check with: python --version)
 2. Open a terminal in this folder and run:
      python -m venv venv
      venv\Scripts\activate          (Windows)   |   source venv/bin/activate   (Mac/Linux)

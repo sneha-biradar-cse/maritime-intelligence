@@ -1,6 +1,6 @@
-﻿# 16 â€” Tech Stack & Dependency Justification
+# 16 — Tech Stack & Dependency Justification
 
-## ðŸ› ï¸ Complete Technical Stack Table
+## 🛠️ Complete Technical Stack Table
 
 | System Layer | Technology / Library | Version | Why Chosen / Industry Advantage | Where Used in Project |
 | :--- | :--- | :--- | :--- | :--- |
@@ -17,7 +17,7 @@
 
 ---
 
-## ðŸ’¡ Technology Choice Justification vs. Alternatives
+## 💡 Technology Choice Justification vs. Alternatives
 
 ### 1. FastAPI vs. Flask / Django
 * **Why FastAPI?**: FastAPI is asynchronous by design, provides automatic interactive OpenAPI Swagger documentation at `/docs`, and serializes Pydantic models up to 300% faster than traditional Flask.
