@@ -15,13 +15,13 @@ cr = ie.cr_text
 
 ROLE_GUIDE = [
     {"role": "Traffic / Marketing officer", "use_for": "Who to call this week, and why",
-     "where": "Start here (actions) \u2192 Customers & cargo (key customers, cargo lost) \u2192 Proposals & schemes (customer proposal)",
+     "where": "Start here (actions) \u2192 Customers & cargo (key customers, cargo lost) \u2192 Plan a discount (calculator, customer proposal)",
      "records": "Owner, reason, opportunity stage and follow-up date in Trade Intelligence, Customers, Update account"},
     {"role": "Finance", "use_for": "Checking every rupee: rates, reconciliation with the accounts, cost of any proposal",
-     "where": "What we earn (estimated wharfage, 'Show the calculation', reconciliation) \u2192 Proposals & schemes (scenarios, scheme review)",
+     "where": "What we earn (estimated wharfage, 'Show the calculation', reconciliation) \u2192 Plan a discount (scenarios) \u2192 Schemes (scheme review)",
      "records": "Finance review step in the scheme register; billing figures when shared"},
     {"role": "Management", "use_for": "The picture in one page, and decisions on schemes",
-     "where": "Start here (actions, KPIs) and the one-page Incentive brief (PDF)",
+     "where": "Start here (actions, KPIs), Schemes (register, past results) and the one-page Incentive brief (PDF)",
      "records": "Approval with an order / file reference in the scheme register"},
 ]
 GLOSSARY = [
@@ -66,7 +66,7 @@ def get_actions() -> dict[str, Any]:
                      "why": f"Iron ore exports {io['months']}: {io['fy2026_27_to_date_t'] / 1e6:.2f} MMT against "
                             f"{io['same_months_2025_t'] / 1e6:.2f} MMT a year earlier"
                             + (f"; no 2026-27 shipments yet from {', '.join(gone)}" if gone else "") + ".",
-                     "where": "Proposals & schemes > NMPA's own incentive schemes",
+                     "where": "Schemes > NMPA's own incentive schemes",
                      "next": "Tell exporters their 2025-26 base and what qualifies; record replies in Update account."})
     sw = ie.get_seasonal_windows(10)
     best = [r for r in sw["rows"] if r["regular"] and r["quiet_months"] and r.get("occupancy_quiet_pct") is not None
@@ -80,10 +80,10 @@ def get_actions() -> dict[str, Any]:
     for s in ie._load_schemes():
         if s["status"] in ("Traffic review", "Finance review"):
             acts.append({"priority": 2, "who": s["status"].split()[0], "action": f"Review scheme {s['id']} ({s['cargo']})",
-                         "why": f"Waiting at {s['status']}.", "where": "Proposals & schemes > Scheme register", "next": "Move it on or send it back."})
+                         "why": f"Waiting at {s['status']}.", "where": "Schemes > Scheme register", "next": "Move it on or send it back."})
         if s["status"] == "Active" and s["end"] <= (date.today() + timedelta(days=30)).isoformat():
             acts.append({"priority": 2, "who": "Traffic + Finance", "action": f"Evaluate scheme {s['id']} before it ends ({s['end']})",
-                         "why": "Ends within 30 days.", "where": "Proposals & schemes > Scheme register", "next": "Compare with its target and stop rule."})
+                         "why": "Ends within 30 days.", "where": "Schemes > Scheme register", "next": "Compare with its target and stop rule."})
     for d in tfb.get_customer_notes().get("follow_ups_due", [])[:5]:
         acts.append({"priority": 2, "who": d.get("owner") or "Traffic", "action": f"Follow up with {d['customer']}",
                      "why": f"Follow-up date {d.get('follow_up')} has come.", "where": "Trade Intelligence > Customers", "next": "Record the outcome."})

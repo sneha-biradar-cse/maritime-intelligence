@@ -651,3 +651,46 @@ def test_nmpa_scheme_records_are_backed_by_notice_files():
     assert all(r.valid_to >= "2026-11-07" for r in infc.itertuples())          # in force today
     newexp = d[d.notice == "NMPA/TM/SM/2026"].iloc[0]
     assert "25%" in newexp.benefit and newexp.valid_to == "2027-07-28"
+
+
+def test_scenario_baseline_is_actual_last_12_months_and_rows_are_sourced():
+    sc = ie.scenario("Iron ore exports", 10, low_response_pct=2.5)
+    assert "last 12 months" in sc["baseline_basis"]
+    assert sc["baseline_tonnes_per_year"] != sc["this_year_scaled_tonnes"]       # seasonal cargo: scaling 7 months would be wrong
+    names = [r["scenario"] for r in sc["scenarios"]]
+    assert names[0] == "No extra cargo comes" and any(n.startswith("Break-even") for n in names)
+    assert all(r["source"] for r in sc["scenarios"])
+    for r in sc["scenarios"]:                                                     # the arithmetic of every row
+        dq, rate, d, q0 = r["extra_tonnes"], sc["rate_rs_per_t"], 0.10, sc["baseline_tonnes_per_year"]
+        assert abs(r["rebate_change_rs"] - rate * (1 - d) * dq) < 2000
+        assert abs(r["blanket_change_rs"] - (rate * (1 - d) * dq - rate * d * q0)) < 2000
+
+
+def test_win_back_gap_is_split_between_linked_cargos():
+    out = ie.scenario("POL products (out)", 10)
+    row = next(r for r in out["scenarios"] if r["scenario"].startswith("Win back"))
+    assert "of the POL products gap" in row["source"]
+
+
+def test_previous_financial_year_baseline_matches_nmpa_notice():
+    from backend.app.services import incentive_rules as rl
+    b = rl.baseline(ie.CARGO["Iron ore exports"]["keys"], ["2026-12", "2027-01", "2027-02"], "previous_fy")
+    assert "4,000,419 t" in b["detail"]            # FY 2025-26 iron ore exports: 4.00 MMT, as in NMPA's rebate notice
+    assert b["tonnes"] == round(4000419 * 3 / 12)
+
+
+def test_other_ports_schemes_are_sourced_and_nmpa_use_comes_from_its_notices():
+    import pandas as pd
+    o = ie.get_other_ports_schemes()
+    assert o["available"] and o["schemes"]
+    for x in o["schemes"]:
+        assert x["source_url"].startswith("https://") and x["source_type"] and x["design_pattern"]
+    pats = {r["pattern"]: r for r in o["patterns"]}
+    assert set(x["design_pattern"] for x in o["schemes"]) <= set(pats)          # every example belongs to a listed kind
+    notices = pd.read_csv(ie.tmk.ROOT / "data" / "nmpa_incentive_notices.csv", dtype=str).fillna("")
+    held = " ".join(notices.notice)
+    for r in o["patterns"]:
+        if r["used_by_nmpa"] and not r["nmpa"].startswith("NMPA Scale of Rates"):
+            assert r["nmpa"].split(" (")[0] in held, r["nmpa"]                 # NMPA's use is backed by a notice held
+    assert pats["Transshipment rate"]["used_by_nmpa"]                           # checked in NMPA's Scale of Rates (2.5.3, 4.2)
+    assert "Performance norms (incentive and penalty)" in o["not_at_nmpa"]

@@ -70,7 +70,7 @@ class UpdateFailed(Exception):
 
 def main() -> int:
     """Run the update inside a snapshot: on any failure, restore the data folder and return the new files to incoming/."""
-    sys.path.insert(0, str(ROOT / "scripts"))
+    sys.path.insert(0, str(Path(__file__).resolve().parent))    # this script's own folder, wherever the data folder is
     from _poppler import ensure_on_path
     ensure_on_path()                       # the project's own Poppler (tools/poppler), if installed
     INBOX.mkdir(exist_ok=True)

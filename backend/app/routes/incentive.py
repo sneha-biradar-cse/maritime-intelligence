@@ -252,6 +252,11 @@ def get_iron_ore_rebate():
     return ie.iron_ore_rebate_monitor()
 
 
+@router.get("/other-ports", summary="How other major ports design incentive schemes, by kind, against NMPA's own notices")
+def get_other_ports():
+    return ie.get_other_ports_schemes()
+
+
 @router.get("/nmpa-notices", summary="NMPA's incentive notices held: scheme, terms, period, status")
 def get_nmpa_notices():
     import pandas as pd

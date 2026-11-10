@@ -16,7 +16,7 @@ with management.
 | **Start here** | What should we do this week? How is the module measured (baseline KPIs)? | Everyone |
 | **What we earn** | How much wharfage each cargo and each customer brings; does it match NMPA's accounts? | Finance, management |
 | **Customers & cargo** | Which key customers are at risk? Which cargo is going to other ports? Which months are quiet? How do our rates compare with Cochin? | Traffic / marketing |
-| **Proposals & schemes** | What would a discount or rebate cost? A draft proposal for one customer (PDF). Approval and tracking of schemes. | Traffic, Finance, approving authority |
+| **Plan a discount** and **Schemes** | Plan a discount: what would a discount or rebate cost? A draft proposal for one customer (PDF). Schemes: NMPA's schemes in force, the scheme register, past results, other ports. Approval and tracking of schemes. | Traffic, Finance, approving authority |
 
 ## A typical week for a Traffic officer (15 minutes)
 
@@ -24,7 +24,7 @@ with management.
 2. **Customers & cargo → Protect key customers:** check the customers with a warning sign.
 3. **Call the customer**, then open **"Record what you learned"** (same section) and save the owner, the reason, the stage and
    a follow-up date. It also appears in Trade Intelligence, Customers.
-4. Only if price is the confirmed reason: **Proposals & schemes → Customer proposal**. Check the options and download the
+4. Only if price is the confirmed reason: **Plan a discount → Customer proposal**. Check the options and download the
    one-page PDF, then use **"Save this proposal as a draft scheme"**.
 5. **Scheme register** (same tab): Traffic review → Finance review → approval with an order or file reference → Active. While
    it runs, the register shows the customer's own cargo against the baseline agreed at the start.
@@ -137,3 +137,29 @@ schtasks /Create /SC WEEKLY /D MON /ST 07:00 /TN "NMPA data refresh" /TR "C:\nmp
 ```
 
 To remove it: `schtasks /Delete /TN "NMPA data refresh" /F`. The computer must be on at that time.
+
+## Discount calculator and scheme register (November 2026 update)
+
+- **Baseline = actual tonnes in the last 12 months** (from NMPA's monthly statements), shown above the cards with the
+  three earlier financial years. It is no longer this year's months scaled up, which was wrong for seasonal cargo
+  (iron ore was understated by about 30%).
+- **"What if…?" table, from real data:** no extra cargo; your estimate; winning back last year's share of all major
+  ports (Ministry of Ports figures, split between linked cargos); getting back to NMPA's best recent year; break-even;
+  your target. Every row says where its figure comes from.
+- **What research and other Indian ports show:** sourced notes on how shippers react to port charges, the national
+  40% coastal concession, Mormugao's and Deendayal's schemes, and Cochin's design rules.
+- **Scheme register:** start from one of NMPA's own designs (iron ore rebate, quiet months, Harit-style slabs,
+  customer commitment); new baseline method "previous financial year, pro rata" as in NMPA's iron ore notice; the
+  expected cost of the scheme from real tonnes; and a "ready for review" checklist of seven items.
+- **How other major ports design schemes** (Schemes tab): 14 kinds of scheme, whether NMPA's own notices show
+  each one, examples at other major ports with their sources (`data/other_ports_schemes.csv`), and what each suggests
+  for NMPA. Legal basis: Section 27(1) of the Major Port Authorities Act, 2021 and the Tariff Policy 2021.
+- New register template: larger ships only (parcel size). The approval reference field asks for the Board resolution
+  and the trade notice.
+
+## Layout (November 2026)
+
+Five tabs, each answering one question: **Start here** (what to do this week), **What we earn**, **Customers & cargo**
+(who and what is at risk, and why), **Plan a discount** (calculator, customer proposal, rules) and **Schemes** (NMPA's
+schemes in force, scheme register, past results, other major ports for reference). The register states which cargo and
+discount from *Plan a discount* its designs use.

@@ -13,7 +13,7 @@ Open the dashboard, tab **Incentive Engine**. Speak to the numbers on screen; ev
    POL products' share fell from 10.2% to 7.8%. Seasonal windows: LPG's quiet months, when its berths are free.
    Price comparison: NMPA's wharfage is below Cochin's and VOC's on almost every line.
    *Say:* "Price is rarely the reason here; the tool shows what to check first."
-4. **Proposals & schemes (3 min).** Your two schemes in force, and the iron ore rebate so far. The discount calculator:
+4. **Schemes, then Plan a discount (3 min).** Schemes: NMPA's five schemes in force, and the iron ore rebate so far. Plan a discount: the discount calculator:
    move the slider; the red line (discount on all cargo) only breaks even at 11% more cargo, the green line (rebate on
    extra cargo only) gains from the first extra tonne. Customer proposal: one page per customer, saved as a draft that goes
    Traffic review, Finance review, approval.

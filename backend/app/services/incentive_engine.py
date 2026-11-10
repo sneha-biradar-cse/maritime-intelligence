@@ -86,7 +86,7 @@ NOT_ESTIMATED = [
     ("Other cargo, other liquids, petrochemicals, cement",
      "Each covers several items with different rates in the Scale of Rates; a single rate would be a guess."),
     ("Vessel-related charges", "Port dues, pilotage and berth hire depend on each ship's size and stay; not included here."),
-    ("Waivers, rebates and discounts granted by NMPA", "From NMPA's notices held (all listed under Proposals & schemes, NMPA's "
+    ("Waivers, rebates and discounts granted by NMPA", "From NMPA's notices held (all listed under Schemes, NMPA's "
      "own incentive schemes): the March 2026 crude/LPG waiver ended on 31 Mar 2026 and does not affect these figures; the 20% "
      "rebate on incremental iron ore exports (to 31 Mar 2027) is NOT deducted, because it is paid per exporter after the year "
      "against each exporter's 2025-26 quantity, which public data cannot show; the new-export-cargo policy (25%) and the Harit "
@@ -417,26 +417,84 @@ def scenario(cargo: str, discount_pct: float, cost_per_t: float = 0.0, fixed_cos
     if not 0 <= discount_pct < 100:
         raise ValueError("discount_pct must be between 0 and 100")
     row = rev[cargo]
-    months = len(_fy_months(ti._prepared()["wide"].index.max())[0])
-    q0 = row["tonnes"] / months * 12
+    wide = ti._prepared()["wide"]
+    latest = wide.index.max()
+    fy_now = _fy_months(latest)[0]
+    months = len(fy_now)
+    keys = CARGO[cargo]["keys"]
+
+    def raw(dates):
+        tot, ok = 0.0, True
+        for d in dates:
+            vals = [wide.loc[d, k] for k in keys if d in wide.index and k in wide.columns]
+            if not vals or any(pd.isna(v) for v in vals):
+                ok = False
+                continue
+            tot += float(sum(vals))
+        return tot, ok
+    raw_ytd, _ = raw(fy_now)
+    share = row["tonnes"] / raw_ytd if raw_ytd else 1.0       # same exclusions as the wharfage estimate (e.g. KIOCL's own arrangement)
+    last12 = pd.date_range(end=latest, periods=12, freq="MS")
+    raw12, ok12 = raw(last12)
+    annualised = row["tonnes"] / months * 12
+    if ok12 and raw12 > 0:
+        q0 = raw12 * share
+        q0_basis = (f"actual tonnes in the last 12 months ({last12[0].strftime('%b %Y')} to {last12[-1].strftime('%b %Y')}), "
+                    "NMPA monthly commodity statements")
+    else:
+        q0 = annualised
+        q0_basis = f"this financial year's {months} months scaled to 12 (a full 12 months of statements is not available)"
+    # real reference points from NMPA's own history and the Ministry's figures
+    fy_hist = {}
+    fy0 = fy_now[0].year
+    for y in range(fy0 - 3, fy0):
+        t, ok = raw(pd.date_range(f"{y}-04-01", f"{y + 1}-03-01", freq="MS"))
+        if ok and t > 0:
+            fy_hist[f"FY {y}-{str(y + 1)[2:]}"] = t * share
     r, d, c, F = row["avg_rate_rs_per_t"], discount_pct / 100, max(cost_per_t, 0.0), max(fixed_cost, 0.0)
     margin = r * (1 - d) - c                       # what one extra tonne earns at the discounted rate, after its cost
     blanket = lambda dq: margin * dq - r * d * q0 - F
     rebate = lambda dq: margin * dq - F
     be_blanket = (r * d * q0 + F) / margin if margin > 0 else None
     be_rebate = (F / margin if F > 0 else 0.0) if margin > 0 else None
-    scen = [("No response", 0.0, "No extra cargo: the discount is a pure cost"),
-            (f"Low response ({low_response_pct:g}% more cargo)", q0 * low_response_pct / 100, "Your input"),
-            ("Break-even for a blanket discount", be_blanket, "Calculated")]
+    scen = [("No extra cargo comes", 0.0, "The discount is announced, but customers send the same cargo as before")]
+    if low_response_pct:
+        scen.append((f"Your estimate: {low_response_pct:g}% more cargo", q0 * low_response_pct / 100,
+                     f"Your input: {low_response_pct:g}% of the baseline of {q0:,.0f} t a year"))
+    link = {"POL products": ["POL products (out)", "POL products (in)"], "Iron ore": ["Iron ore exports"],
+            "Crude oil": ["Crude oil"], "LPG": ["LPG"], "Edible oil": ["Edible oil"],
+            "Fertilizer and raw materials": ["Fertilizer (finished)", "Fertilizer raw materials (dry)"], "Food grains": ["Food grains"]}
+    op_all = get_opportunities()
+    grp = next((g for g, names in link.items() if cargo in names), None)
+    opp = next((o for o in op_all.get("cargos", []) if o["cargo"] == grp), None) if grp else None
+    if opp and (opp.get("tonnes_not_won") or 0) > 0:
+        through = pd.Timestamp(tmk.get_market_share()["through"] + "-01")
+        n_m = (through.year - (through.year if through.month >= 4 else through.year - 1)) * 12 + (through.month - 4) % 12 + 1
+        group_t = sum(rev[n]["tonnes"] for n in link[grp] if n in rev)
+        part = row["tonnes"] / group_t if group_t else 1.0          # this cargo's part of the group's gap
+        gap_year = opp["tonnes_not_won"] * part * 12 / n_m
+        scen.append(("Win back last year's share of all major ports", gap_year,
+                     f"Ministry of Ports figures: New Mangalore's {grp} share fell from {opp['share_prev_pct']:.1f}% to "
+                     f"{opp['share_pct']:.1f}% ({op_all.get('period', '')}); gap of {opp['tonnes_not_won'] * part:,.0f} t in "
+                     f"{n_m} months" + (f" ({part:.0%} of the {grp} gap, by tonnes)" if part < 0.999 else "") + ", scaled to a year"))
+    if fy_hist:
+        best_fy, best_t = max(fy_hist.items(), key=lambda kv: kv[1])
+        if best_t > q0 * 1.005:
+            scen.append((f"Back to NMPA's best recent year ({best_fy})", best_t - q0,
+                         f"NMPA monthly statements: {best_t:,.0f} t in {best_fy}, against {q0:,.0f} t in the last 12 months. "
+                         "Shows the port has handled this much before"))
+    scen.append(("Break-even for a discount on all cargo", be_blanket, "Calculated: the extra cargo at which a discount on all cargo stops losing money"))
     if target_t:
-        scen.append(("Commercial target", float(target_t), "Your input (e.g. cargo lost to other ports, or a figure agreed by Traffic)"))
+        scen.append(("Your target", float(target_t), "Your input (e.g. a volume a customer has committed to)"))
     rows = [{"scenario": n, "extra_tonnes": None if dq is None else round(dq), "source": src,
              "blanket_change_rs": None if dq is None else round(blanket(dq)),
              "rebate_change_rs": None if dq is None else round(rebate(dq))} for n, dq, src in scen]
     costs_entered = c > 0 or F > 0
     return {
         "cargo": cargo, "discount_pct": discount_pct, "rate_rs_per_t": r, "discounted_rate_rs_per_t": round(r * (1 - d), 2),
-        "tariff_version": TARIFF_VERSION, "baseline_tonnes_per_year": round(q0), "months_this_year": months, "cost_per_t": c, "fixed_cost_rs": F,
+        "tariff_version": TARIFF_VERSION, "baseline_tonnes_per_year": round(q0), "baseline_basis": q0_basis,
+        "this_year_scaled_tonnes": round(annualised), "history_tonnes": {k: round(v) for k, v in fy_hist.items()},
+        "months_this_year": months, "cost_per_t": c, "fixed_cost_rs": F,
         "measure": "Change in contribution (after the costs entered)" if costs_entered else
                    "Change in wharfage receipts only (operating costs not included)",
         "blanket_given_up_on_baseline_rs": round(r * d * q0),
@@ -1052,6 +1110,8 @@ def get_key_customers() -> dict[str, Any]:
     fall = sum(r["change_q2_vs_q1_rs"] for r in at_risk if r["change_q2_vs_q1_rs"] < 0)
     return {"available": True, "period": cw["period"], "q1_label": cw["q1_label"], "q2_label": cw["q2_label"], "rows": rows,
             "key_share_pct": round(cum, 1), "at_risk_count": len(at_risk), "at_risk_quarter_fall_rs": round(fall),
+            "at_risk_falling_count": sum(1 for r in at_risk if (r["change_q2_vs_q1_rs"] or 0) < 0),
+            "at_risk_waiting_count": sum(1 for r in at_risk if any("ship-days" in x for x in r["signals"])),
             "no_owner_count": sum(1 for r in rows if not r["owner"]),
             "rules": (f"Key customers: those making up the first {KEY_SHARE_CUM:.0f}% of traced wharfage. Warning signs: wharfage down "
                       "10% or more on the previous quarter (or status Falling), gone quiet, or 20+ ship-days waiting because the "
@@ -1321,3 +1381,60 @@ def daily_report_note() -> str:
     chk = int(m["status"].str.startswith("Extraction checked").sum())
     return (f"Customer tonnes come from {n} NMPA daily reports: the original PDF is held for {n - miss}"
             + (f" ({miss} not obtained, records not checked)" if miss else "") + f"; {chk} checked by two independent readings.")
+
+
+# How other major ports design schemes, by kind, against what NMPA's own notices show. NMPA's use is taken only from the
+# notices held (data/nmpa_incentive_notices.csv); "not found" means not among those notices, not that NMPA has never done it.
+SCHEME_PATTERNS = [
+    ("Incremental volume rebate", "NMPA/TM/IOF-Exp-Rebate/26-27 (iron ore, 20% above FY 2025-26)",
+     "NMPA's own design: rebate only on tonnes above last year, paid after verification."),
+    ("New cargo concession", "NMPA/TM/SM/2026 (25% for cargo not handled in 5 years)",
+     "NMPA's own design: open to all users, by cargo type, for one year."),
+    ("Container service incentive", "Comrc/DTM(C)/2026-27/01 (35% feeder / 50% mainline)",
+     "Design idea only: other ports vary the benefit by vessel type, TEUs per call or route, and review it after a fixed period. "
+     "Their percentages are set for their own traffic and costs, so they are not a benchmark for NMPA's rates."),
+    ("Route or new-service incentive", None,
+     "Not among NMPA's notices. Cochin, VOC and JNPA reward new routes or new services; NMPA's container rebate could be tied "
+     "to new services or routes (for example West Asia) rather than all calls."),
+    ("Vessel or parcel-size concession", "12/1/2021-22/ATM Gr.I (Com)/JSW (30% for Cape-size vessels at Berth 16)",
+     "Larger parcels use berths better; Deendayal's salt scheme is linked to a rise of about 8.5 million t in a year."),
+    ("Performance norms (incentive and penalty)", None,
+     "Not among NMPA's notices. Cochin and Paradip reward handling faster than a norm and penalise slower handling. Relevant "
+     "where berth time is lost: NMPA's daily reports show key customers' ships waiting because the customer was not ready."),
+    ("Green ship discount", "NMPA/DC/Trade Circular/2025/01 (Harit Shrey, ended 31 Mar 2025)",
+     "Mormugao started first (Oct 2023). NMPA's trial ended; no renewal found among its notices."),
+    ("Green cargo concession", "NMPA/Traffic/Com/Green Policy/01 (Harit Cargo, 40% / 75%, to 2030)",
+     "No similar cargo scheme recorded at other ports here."),
+    ("Coastal concession", "NMPA Scale of Rates (coastal rates)",
+     "National 40% coastal concession; NMPA's Scale of Rates applies it (POL and thermal coal excluded)."),
+    ("Passenger ferry exemption", "NMPA/TM/2024-25/Gen-2 (RoPax, to 21 Jan 2026)",
+     "Cochin renewed its exemption for 2026 (Trade Notice 01/2026); no NMPA renewal found among its notices."),
+    ("Cargo-type (packaging) rebate", None,
+     "Not among NMPA's notices. Deendayal gives a wharfage rebate on bagged cargo."),
+    ("Hinterland (rail) concession", None,
+     "Not among NMPA's notices. Deendayal gives a concession on railway terminal charges."),
+    ("Route or handling-channel discount", None,
+     "Not among NMPA's notices. Paradip discounts one cargo moved through a specific facility."),
+    ("Transshipment rate", "NMPA Scale of Rates 2.5.3 and 4.2 (transhipment charges); 50% foreign + 50% coastal rate for coastal transshipment",
+     "Deendayal charges 75% of wharfage on cargo landed only for reshipment; NMPA has its own transhipment charges."),
+]
+
+
+@_ttl_cache(seconds=600)
+def get_other_ports_schemes() -> dict[str, Any]:
+    f = tmk.ROOT / "data" / "other_ports_schemes.csv"
+    if not f.exists():
+        return {"available": False}
+    d = pd.read_csv(f, dtype=str).fillna("")
+    rows = []
+    for name, nmpa, idea in SCHEME_PATTERNS:
+        ex = d[d.design_pattern == name]
+        rows.append({"pattern": name, "nmpa": nmpa, "used_by_nmpa": nmpa is not None,
+                     "other_ports": sorted(set(ex.port)), "examples": len(ex), "idea": idea})
+    gaps = [r["pattern"] for r in rows if not r["used_by_nmpa"] and r["examples"]]
+    return {"available": True, "patterns": rows, "schemes": d.to_dict(orient="records"),
+            "nmpa_used": sum(r["used_by_nmpa"] for r in rows), "kinds": len(rows), "not_at_nmpa": gaps,
+            "legal_basis": ("Under Section 27(1) of the Major Port Authorities Act, 2021, each port's Board frames its Scale of Rates "
+                            "and conditions; rates are ceilings, so the Board can approve lower rates and rebates, within the Tariff "
+                            "Policy for Major Port Authorities 2021, and notify them by trade notice."),
+            "source": "Each scheme's own source (official port documents, the Ministry, a port association list or a press report)"}

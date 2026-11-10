@@ -58,6 +58,7 @@ BASELINE_METHODS = {
     "same_months_last_year": "Same months last year",
     "same_months_avg_years": "Average of the same months over several complete years",
     "contractual": "Contractual commitment (entered from the agreement)",
+    "previous_fy": "Previous financial year, pro rata to the scheme's months (as NMPA's iron ore rebate)",
 }
 
 
@@ -129,6 +130,24 @@ def baseline(keys: list, months: list[str], method: str, years: int = 3, contrac
         return {"method": method, "label": BASELINE_METHODS[method], "tonnes": round(contractual_t), "blocked": None,
                 "detail": "Entered from the agreement."}
     wide = ti._prepared()["wide"]
+    if method == "previous_fy":
+        start = pd.Timestamp(months[0] + "-01")
+        fy = start.year if start.month >= 4 else start.year - 1          # the scheme's financial year starts in April of this year
+        prev = pd.date_range(f"{fy - 1}-04-01", f"{fy}-03-01", freq="MS")
+        miss, tot = [], 0.0
+        for d in prev:
+            vals = [wide.loc[d, k] for k in keys if d in wide.index and k in wide.columns]
+            if not vals or any(pd.isna(v) for v in vals):
+                miss.append(d.strftime("%b %Y"))
+                continue
+            tot += float(sum(vals))
+        if miss:
+            return {"method": method, "label": BASELINE_METHODS[method], "tonnes": None,
+                    "blocked": "Months missing from NMPA's statements: " + ", ".join(miss) + "."}
+        t = tot * len(months) / 12
+        return {"method": method, "label": BASELINE_METHODS[method], "tonnes": round(t), "blocked": None,
+                "detail": f"FY {fy - 1}-{str(fy)[2:]}: {tot:,.0f} t in 12 months x {len(months)}/12 months of the scheme",
+                "source": "NMPA monthly commodity statements"}
     back = [1] if method == "same_months_last_year" else list(range(1, years + 1))
     per_year, missing = {}, []
     for b in back:
