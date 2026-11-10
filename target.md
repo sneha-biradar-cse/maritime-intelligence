@@ -18,8 +18,8 @@ would really cost, using only NMPA's own public documents.
 | # | Target | Status |
 |---|---|---|
 | 1 | Built only on real NMPA and Ministry of Ports data, with every figure traceable to its source | Done |
-| 2 | All 334 daily vessel reports held as original PDFs and checked | Done (to 7 Nov 2026) |
-| 3 | Clean, simple interface that a port officer can use without training | Done (five tabs) |
+| 2 | All 334 daily vessel reports held as original PDFs; 277 checked by two independent readings | Done (to 7 Nov 2026) |
+| 3 | Clean, simple interface designed for port officers; to be tried with NMPA's team | Built (five tabs); NMPA trial pending |
 | 4 | Discount calculator and scenarios based on real tonnes, not guesses | Done |
 | 5 | Scheme register that follows NMPA's own way of designing and approving schemes | Done |
 | 6 | Data refreshed automatically with one command (can run weekly) | Done |
@@ -33,7 +33,7 @@ would really cost, using only NMPA's own public documents.
 Tracking with daily branches starts today. What already exists in the project on this date:
 
 - Trade Intelligence and Incentive Engine, built on NMPA and Ministry of Ports public data
-- 334 daily vessel reports (to 7 Nov 2026), all held as original PDFs and checked
+- 334 daily vessel reports (to 7 Nov 2026), all held as original PDFs; 277 checked by two independent readings
 - Five-tab interface: Start here, What we earn, Customers & cargo, Plan a discount, Schemes
 - Discount calculator on actual last-12-months tonnes, with "What if" scenarios from real data
 - Scheme register with NMPA scheme templates, expected cost and a "ready for review" checklist
