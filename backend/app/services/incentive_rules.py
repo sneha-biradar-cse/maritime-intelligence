@@ -42,17 +42,17 @@ COMBINATION_RULE = ("Benefits cannot be combined. A cargo or customer already co
                     "overlapping period is blocked, unless an approved combination rule is recorded.")
 KNOWN_BENEFIT_PERIODS = [  # benefits granted by NMPA, from its notices held (data/nmpa_incentive_notices.csv)
     {"cargos": ["LPG", "Crude oil"], "from": "2026-03-14", "to": "2026-03-31",
-     "name": "Waiver of cargo-related charges (NMPA Trade Circular NMPA/TM/2025-26/Gen.2)"},
+     "pct": 100, "charge": "wharfage", "name": "Waiver of cargo-related charges (NMPA Trade Circular NMPA/TM/2025-26/Gen.2)"},
     {"cargos": ["Iron ore exports"], "from": "2026-09-23", "to": "2027-03-31",
-     "name": "20% rebate on wharfage for incremental iron ore fines/lumps exports (NMPA Trade Notice NMPA/TM/IOF-Exp-Rebate/26-27)"},
+     "pct": 20, "charge": "wharfage", "name": "20% rebate on wharfage for incremental iron ore fines/lumps exports (NMPA Trade Notice NMPA/TM/IOF-Exp-Rebate/26-27)"},
     {"cargos": ["Containers"], "from": "2026-11-03", "to": "2027-03-31",
-     "name": "35% / 50% rebate on vessel-related charges for feeder / mainline container vessels (NMPA Trade Notice Comrc/DTM(C)/2026-27/01)"},
+     "pct": 50, "charge": "vessel", "name": "35% / 50% rebate on vessel-related charges for feeder / mainline container vessels (NMPA Trade Notice Comrc/DTM(C)/2026-27/01)"},
     {"cargos": ["New bulk / break-bulk export cargo"], "from": "2026-07-29", "to": "2027-07-28",
-     "name": "25% wharfage concession for new export cargo not handled at NMPA in the preceding 5 years (NMPA Trade Notice NMPA/TM/SM/2026)"},
+     "pct": 25, "charge": "wharfage", "name": "25% wharfage concession for new export cargo not handled at NMPA in the preceding 5 years (NMPA Trade Notice NMPA/TM/SM/2026)"},
     {"cargos": ["Green fuel exports"], "from": "2025-07-01", "to": "2030-06-30",
-     "name": "40% / 75% wharfage concession for certified green fuel exports (NMPA Harit Cargo Concession Policy 2025)"},
+     "pct": 75, "charge": "wharfage", "name": "40% / 75% wharfage concession for certified green fuel exports (NMPA Harit Cargo Concession Policy 2025)"},
     {"cargos": ["Cape-size vessels at Berth 16"], "from": "2025-04-03", "to": "2027-04-02",
-     "name": "30% rebate on port dues and pilotage for Cape-size vessels at Berth 16 (NMPA Trade Notice 12/1/2021-22/ATM Gr.I (Com)/JSW)"},
+     "pct": 30, "charge": "vessel", "name": "30% rebate on port dues and pilotage for Cape-size vessels at Berth 16 (NMPA Trade Notice 12/1/2021-22/ATM Gr.I (Com)/JSW)"},
 ]
 BASELINE_METHODS = {
     "same_months_last_year": "Same months last year",
@@ -80,8 +80,10 @@ def _identity_status() -> dict[str, str]:
 
 def check_eligibility(cargo: str, start: str, end: str, customers: list[str] | None = None,
                       existing_schemes: list[dict] | None = None, priced_cargos: list[str] | None = None,
-                      exclude_id: str | None = None) -> dict[str, Any]:
-    blocks, warnings = [], []
+                      exclude_id: str | None = None, discount_pct: float | None = None) -> dict[str, Any]:
+    """discount_pct (optional): the proposed benefit; used only if the Board allows combining benefits up to a ceiling
+    (data/incentive_policy.json). Without it, or without that policy, any overlap blocks, as before."""
+    blocks, warnings, overlaps = [], [], []
     # 1. tariff version for every day of the scheme
     for d in pd.date_range(start, end, freq="D"):
         v = tariff_for(d.strftime("%Y-%m-%d"))
@@ -106,17 +108,28 @@ def check_eligibility(cargo: str, start: str, end: str, customers: list[str] | N
     # 4. combination with other benefits
     for b in KNOWN_BENEFIT_PERIODS:
         if any(cargo.startswith(x) for x in b["cargos"]) and not (end < b["from"] or start > b["to"]):
-            blocks.append(f"Overlaps an existing benefit: {b['name']} ({b['from']} to {b['to']}). {COMBINATION_RULE}")
+            overlaps.append({"text": f"Overlaps an existing benefit: {b['name']} ({b['from']} to {b['to']}).", "pct": b.get("pct"),
+                             "charge": b.get("charge", "wharfage")})
     for s in existing_schemes or []:
         if s.get("id") == exclude_id or s.get("status") not in ("Approved", "Active"):
             continue
         if s["cargo"] == cargo and not (end < s["start"] or start > s["end"]):
-            blocks.append(f"Overlaps scheme {s['id']} ({s['status']}) on the same cargo. {COMBINATION_RULE}")
+            overlaps.append({"text": f"Overlaps scheme {s['id']} ({s['status']}) on the same cargo.", "pct": s.get("discount_pct"),
+                             "charge": "wharfage"})
+    stacking = None
+    if overlaps:
+        from backend.app.services import incentive_portfolio as ipf
+        stacking = ipf.combination_check(cargo, start, end, discount_pct, overlaps)
+        if stacking.get("allowed"):
+            warnings.extend(o["text"] + " Allowed by the Board's combination rule: " + stacking["plain"] for o in overlaps)
+        else:
+            extra = (" " + stacking["plain"]) if stacking.get("plain") else ""
+            blocks.extend(o["text"] + " " + COMBINATION_RULE + extra for o in overlaps)
     # 5. things the tool cannot check yet
     warnings.append("Operational capacity (berth, equipment, storage, evacuation) is not checked: Marine / Operations to confirm.")
     warnings.append("Costs of handling extra cargo are not known: results are wharfage receipts, not profit.")
     return {"eligible": not blocks, "blocks": blocks, "warnings": warnings,
-            "tariff": tariff_for(start), "combination_rule": COMBINATION_RULE}
+            "tariff": tariff_for(start), "combination_rule": COMBINATION_RULE, "stacking": stacking}
 
 
 def baseline(keys: list, months: list[str], method: str, years: int = 3, contractual_t: float | None = None) -> dict[str, Any]:

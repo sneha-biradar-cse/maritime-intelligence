@@ -136,6 +136,14 @@ def build_proposal(customer: str, cargo: str | None = None, start: str = "2026-1
                         "cost_rs": None, "notes": "Existing cargo keeps the full rate; the rebate is paid only on tonnes above the baseline."})
         options.append({"option": f"Blanket discount ({discount_pct:g}% on all of this cargo)", "tariff_change": "Lower rate on every tonne",
                         "cost_rs": round(given_up), "notes": f"Needs {be_blanket:,.0f} t more ({be_blanket / q0 * 100:.1f}%) just to break even."})
+        from backend.app.services import incentive_portfolio as ipf
+        ret = ipf.retention_option(q0, rate, discount_pct)
+        options.append({k: ret[k] for k in ("option", "tariff_change", "cost_rs", "notes")})
+    try:
+        from backend.app.services import incentive_integrity as iig
+        integrity = iig.check(cargo, start, end, customer, bl.get("tonnes"))
+    except Exception as e:                           # the proposal must still be produced
+        integrity = {"checks": [], "warnings": 0, "summary": f"Gaming checks not available: {e}"}
     gaps = [
         "Customer tonnes are traced from NMPA daily reports (about 85% of official tonnes); NMPA billing figures not provided.",
         ie.daily_report_note(),
@@ -156,7 +164,7 @@ def build_proposal(customer: str, cargo: str | None = None, start: str = "2026-1
                      "owner": notes.get("owner"), "stage": notes.get("stage"), "reason": notes.get("reason"),
                      "proposed_action": notes.get("action")},
         "rate_rs_per_t": rate, "discount_pct": discount_pct, "tiers": tiers, "budget_cap_rs": budget_cap_rs,
-        "baseline": bl, "options": options, "scenarios": scenarios, "eligibility": elig, "data_gaps": gaps,
+        "baseline": bl, "options": options, "scenarios": scenarios, "eligibility": elig, "integrity": integrity, "data_gaps": gaps,
         "approval_route": APPROVAL_ROUTE, "tariff_version": ie.TARIFF_VERSION,
         "sources": ["NMPA daily vessel reports (customer tonnes, waiting)", "NMPA Scale of Rates (rate)",
                     "NMPA monthly statements (cargo totals)", "Customer notes recorded in Trade Intelligence"],
@@ -217,6 +225,13 @@ def proposal_pdf(p: dict) -> bytes:
              else f"beyond: {x['rebate_pct']:g}%") for x in p["tiers"]) + (f". Budget cap {cr(p['budget_cap_rs'])}." if p.get("budget_cap_rs") else ".")), small))
     el.append(Paragraph("5. Eligibility", h))
     el.append(Paragraph(asc("Blocked: " + " | ".join(p["eligibility"]["blocks"]) if p["eligibility"]["blocks"] else "No blocking issue found by the tool."), b))
+    ig = p.get("integrity") or {}
+    if ig.get("checks"):
+        el.append(Paragraph("5b. Checks for gaming (a warning is a reason to look, not proof)", h))
+        el.append(Paragraph(asc(ig.get("summary", "")), b))
+        for c in ig["checks"]:
+            if c["status"] in ("Warning", "Watch", "Note"):
+                el.append(Paragraph(asc(f"- {c['check']} ({c['status']}): {c['plain']}"), b))
     el.append(Paragraph("6. Data gaps and assumptions", h))
     for g in p["data_gaps"]:
         el.append(Paragraph(asc("- " + g), b))

@@ -32,7 +32,8 @@ _lock = threading.Lock()
 STATUS_ROLES = {"Traffic review": {"traffic"}, "Finance review": {"traffic"}, "Draft": {"traffic", "finance"},
                 "Rejected": {"traffic", "approver"}, "Approved": {"approver"}, "Active": {"traffic"}, "Completed": {"traffic"}}
 ACTION_ROLES = {"create_scheme": {"traffic"}, "rebaseline": {"traffic"}, "amend": {"traffic"}, "scheme_note": {"traffic", "finance", "approver"},
-                "customer_notes": {"traffic"}, "alert_feedback": {"traffic", "finance"}}
+                "customer_notes": {"traffic"}, "alert_feedback": {"traffic", "finance"},
+                "set_policy": {"approver"}}
 
 
 def _hash(password: str, salt: str) -> str:

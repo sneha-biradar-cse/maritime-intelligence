@@ -2647,6 +2647,8 @@ with tabs[5]:
             ch0 = (t0["revenue_rs"] / t0["revenue_prev_rs"] - 1) * 100 if t0["revenue_prev_rs"] else None
             stake0 = sum(o.get("wharfage_at_stake_rs") or 0 for o in op0.get("cargos", []))
             infc0 = [x for x in nn0.get("notices", []) if x["status"] == "In force"]
+            ex0 = api_get("/incentive/expiring") or {}
+            due0 = (ex0.get("review_now", 0) or 0) + (ex0.get("plan_review", 0) or 0)
             _cards([
                 (f"Wharfage earned, {rv['period']}", cr(t0["revenue_rs"]),
                  (f"{ch0:+.1f}% on last year" if ch0 is not None else "") + " (estimate)", "good" if (ch0 or 0) >= 0 else "watch"),
@@ -2654,7 +2656,9 @@ with tabs[5]:
                  (f"{kc0.get('at_risk_falling_count', 0)} lost {cr(-kc0.get('at_risk_quarter_fall_rs', 0))} last quarter; "
                   f"{kc0.get('at_risk_waiting_count', 0)} had ships waiting") if kc0 else "", "act" if kc0.get("at_risk_count") else "good"),
                 ("Cargo going to other ports", cr(stake0), f"wharfage at stake, {op0.get('period', '')}", "watch" if stake0 else "good"),
-                ("NMPA schemes in force", str(len(infc0)), "from NMPA's own trade notices; see the Schemes tab", "info"),
+                ("NMPA schemes in force", str(len(infc0)),
+                 (f"{due0} end within 6 months: plan their review (Schemes tab)" if due0 else "from NMPA's own trade notices; see the Schemes tab"),
+                 "watch" if due0 else "info"),
             ])
             if act:
                 b1, b2 = st.columns([0.72, 0.28], vertical_alignment="bottom")
@@ -3121,6 +3125,18 @@ with tabs[5]:
                             f'<b>{cr(sc["blanket_given_up_on_baseline_rs"])} a year better</b> for NMPA: that is the discount a cut for all '
                             f'cargo gives away on the {sc["baseline_tonnes_per_year"] / 1e5:,.2f} lakh t that come anyway. A discount on all '
                             f'cargo only pays off above the break-even row.</div>', unsafe_allow_html=True)
+                gc_ = api_get("/incentive/growth-check", {"cargo": pick_i, "discount_pct": disc}) or {}
+                if gc_.get("available"):
+                    tone_gc = "act" if gc_["share_pct"] < 20 else "watch" if gc_["share_pct"] < 50 else "good"
+                    st.markdown('<div class="ie-cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">' + "".join(
+                        f'<div class="ie-card {t}"><div class="l">{l}</div><div class="v">{v}</div><div class="s">{s_}</div></div>' for l, v, s_, t in [
+                            ("Growth needed to break even", f"{gc_['need_pct']:.1f}% a year", f"a {disc}% discount on all {pick_i}", "info"),
+                            ("How often NMPA's cargo grew that much", f"{gc_['hits']} of {gc_['periods']}",
+                             f"twelve-month periods ({gc_['share_pct']:.0f}%), without this discount", tone_gc),
+                            ("Usual yearly change", f"{gc_['typical_low_pct']:+.0f}% to {gc_['typical_high_pct']:+.0f}%",
+                             f"latest: {gc_['latest_pct']:+.1f}% ({gc_['latest_period']})", "info")]) + "</div>", unsafe_allow_html=True)
+                    st.markdown(f'<div class="ie-take" style="font-size:13.5px">{html.escape(gc_["reading"])}</div>', unsafe_allow_html=True)
+                    _note_md(gc_["method"])
                 with st.expander("What research and other Indian ports show about discounts"):
                     st.markdown(
                         "- **Port charges are a small part of a shipper's total cost**, so overall demand for port services reacts little to "
@@ -3197,6 +3213,14 @@ with tabs[5]:
                     if dd["eligibility"]["blocks"]:
                         st.markdown('<div class="ti-insight"><b>Blocked:</b> ' + " | ".join(html.escape(_ie_txt(b)) for b in dd["eligibility"]["blocks"])
                                     + "</div>", unsafe_allow_html=True)
+                    ig_ = dd.get("integrity") or {}
+                    if ig_.get("checks"):
+                        st.markdown(f'<div class="ti-insight"><b>Checks for gaming:</b> {html.escape(ig_["summary"])}</div>',
+                                    unsafe_allow_html=True)
+                        with st.expander("See each gaming check (a warning is a reason to look, not proof)"):
+                            _htable(pd.DataFrame([{"Check": c["check"], "Result": c["status"], "What we found": c["plain"]}
+                                                  for c in ig_["checks"]]), hide_index=True, width="stretch",
+                                    column_config={"What we found": st.column_config.TextColumn(width="large")})
                     _note_md('<div class="ti-s"><b>Data gaps:</b> ' + " ".join(html.escape(g) for g in dd["data_gaps"])
                                 + "<br><b>Approval route:</b> " + " \u2192 ".join(html.escape(a) for a in dd["approval_route"]) + "</div>",
                                 unsafe_allow_html=True)
@@ -3206,6 +3230,12 @@ with tabs[5]:
                             dd_opt = s1_.radio("Option to put forward", ["Rebate on extra volume", "Blanket discount"], key="dd_opt")
                             dd_by = s2_.text_input("Your name or team", key="dd_by")
                             dd_cond = s3_.text_input("Conditions", key="dd_cond", placeholder="e.g. settlement quarterly")
+                            c1_, c2_ = st.columns(2)
+                            dd_commit = c1_.number_input("Tonnes the customer commits to over the period (0 = none)", min_value=0.0,
+                                                         value=0.0, step=1000.0, key="dd_commit")
+                            dd_claw = c2_.selectbox("If the commitment is missed", ["proportional", "all_or_nothing"], key="dd_claw",
+                                                    format_func=lambda x: {"proportional": "Reduce the rebate in proportion",
+                                                                           "all_or_nothing": "No rebate at all"}[x])
                             if st.button("Save as draft scheme", key="dd_save", type="primary"):
                                 tiers_dd = [{"up_to_pct_above_baseline": dd_t1u, "rebate_pct": dd_t1}, {"up_to_pct_above_baseline": None, "rebate_pct": dd_t2}]
                                 try:
@@ -3215,7 +3245,8 @@ with tabs[5]:
                                         "conditions": dd_cond, "by": dd_by, "tiers": tiers_dd if dd_opt != "Blanket discount" else None,
                                         "success_target_t": dd_tgt or None, "customer": dd["customer"],
                                         "baseline_tonnes": dd["baseline"]["tonnes"], "baseline_label": dd["baseline"]["label"],
-                                        "baseline_detail": dd["baseline"].get("detail", "")})
+                                        "baseline_detail": dd["baseline"].get("detail", ""),
+                                        "commitment_t": dd_commit or None, "clawback_rule": dd_claw})
                                     if r_.ok:
                                         st.success(f"Saved as {r_.json()['id']} (draft). Find it in the scheme register below.")
                                     else:
@@ -3231,6 +3262,91 @@ with tabs[5]:
                     except requests.RequestException:
                         pass
                 _src("NMPA daily vessel reports (customer tonnes, waiting); NMPA Scale of Rates; customer notes from Trade Intelligence")
+
+            # 3b. Ship charges: what a ship pays NMPA, and what NMPA's ship-charge rebates cost
+            _head("Ship charges: what a ship pays to enter and use the port",
+                  insight="Most port discounts, including NMPA's container (35% / 50%) and Cape-size (30%) rebates, are on ship "
+                          "charges, not on the cargo charge. Work out one ship's bill here.",
+                  sub="Port dues (entry fee), pilotage (pilot and tugs, one move in and one out) and berth hire (rent per hour), "
+                      "from NMPA's Scale of Rates in force from 7 May 2026. A foreign-going ship's charges are in US dollars and "
+                      "converted at the RBI reference rate on the day it enters.")
+            v1_, v2_, v3_, v4_, v5_ = st.columns(5)
+            vg_ = v1_.number_input("Ship size (GRT)", min_value=100.0, value=30000.0, step=1000.0, key="vc_grt")
+            vco_ = v2_.radio("Voyage", ["Foreign-going", "Coastal"], key="vc_run") == "Coastal"
+            vk_ = v3_.radio("Ship type", ["dry", "liquid"], key="vc_kind",
+                            format_func=lambda x: {"dry": "Dry / container / general", "liquid": "Tanker / liquid"}[x])
+            vh_ = v4_.number_input("Hours at berth", min_value=1.0, value=36.0, step=1.0, key="vc_hours")
+            vfx_ = v5_.number_input("USD to INR", min_value=1.0, value=88.0, step=0.1, key="vc_fx", disabled=vco_)
+            vcall_ = api_get("/incentive/vessel-charges/call", {"grt": vg_, "coastal": vco_, "kind": vk_, "hours": vh_,
+                                                                "usd_inr": None if vco_ else vfx_})
+            if vcall_:
+                st.markdown(f'<div class="ti-insight">{html.escape(vcall_["plain"])}</div>', unsafe_allow_html=True)
+            vs_ = api_get("/incentive/vessel-charges", {"usd_inr": vfx_}, timeout=90)
+            if vs_:
+                with st.expander("NMPA's own ship-charge rebates: what they cost"):
+                    for k_ in ("container_rebate", "capesize_rebate"):
+                        st.markdown(f'<div class="ti-insight"><b>{html.escape(vs_[k_]["notice"])}</b>: {html.escape(vs_[k_]["plain"])}</div>',
+                                    unsafe_allow_html=True)
+                    inp_ = vs_["inputs"]
+                    st.markdown(f'<div class="ti-s">Ship sizes held: {inp_["ships_with_official_grt"]} from NMPA records, '
+                                f'{inp_["ships_with_public_grt"]} from a public register. To complete: '
+                                + " ".join(html.escape(h) for h in vs_["how_to_complete"]) + "</div>", unsafe_allow_html=True)
+            _src("NMPA Scale of Rates (Chapter II, vessel related charges); NMPA daily vessel reports (calls, hours at berth); "
+                 "NMPA trade notices")
+
+            # 3c. Gaming checks for any customer and cargo
+            with st.expander("Check a customer for gaming before offering a discount"):
+                g1_, g2_, g3_, g4_ = st.columns([0.3, 0.25, 0.22, 0.23])
+                gk_ = api_get("/incentive/key-customers", timeout=60) or {}
+                gcs_ = [c_["customer"] for c_ in gk_.get("customers", [])] or ["MRPL"]
+                gc_ = g1_.selectbox("Customer", gcs_, key="ig_c")
+                gcar_ = [x["cargo"] for x in (api_get("/incentive/proposal/cargos", {"customer": gc_}) or {}).get("cargos", [])]
+                gca_ = g2_.selectbox("Cargo", gcar_ or ["(no priced cargo)"], key="ig_cargo")
+                gs_ = g3_.date_input("From", value=pd.Timestamp("2026-05-01"), key="ig_s")
+                ge_ = g4_.date_input("To", value=pd.Timestamp("2026-10-31"), key="ig_e")
+                if gcar_:
+                    igr_ = api_get("/incentive/integrity", {"cargo": gca_, "start": gs_.isoformat(), "end": ge_.isoformat(),
+                                                            "customer": gc_}, timeout=90)
+                    if igr_:
+                        st.markdown(f'<div class="ti-insight">{html.escape(igr_["summary"])}</div>', unsafe_allow_html=True)
+                        _htable(pd.DataFrame([{"Check": c["check"], "Result": c["status"], "What we found": c["plain"]}
+                                              for c in igr_["checks"]]), hide_index=True, width="stretch",
+                                column_config={"What we found": st.column_config.TextColumn(width="large")})
+                        _src(igr_["source"] + ". " + igr_["note"])
+
+            # 3x. Performance condition from ship data: pay only when the customer is ready
+            rc0 = api_get("/incentive/readiness-condition") or {}
+            if rc0.get("available"):
+                _head("Pay only when the customer is ready",
+                      insight=(f"{rc0['qualifying_pct']:.0f}% of ship calls ({rc0['qualifying_calls']} of {rc0['calls']}, "
+                               f"{rc0['window']}) had no waiting because the customer was not ready. "
+                               "A rebate tied to this condition rewards customers who are ready when their ship arrives, "
+                               "and pays nothing on calls where berth time was lost on the customer side."),
+                      sub=rc0["how"] + " Learned from ports that tie rebates to performance, such as Singapore's limit on port stay.")
+                r1, r2, r3 = st.columns(3)
+                cust_rc = r1.selectbox("Customer", ["All customers"] + rc0["customers"], key="rc_customer")
+                win_rc = r2.selectbox("Period", [3, 6, 12], index=1, format_func=lambda m: f"Last {m} complete months", key="rc_months")
+                mw_rc = r3.number_input("Allowed customer-side waiting (days)", min_value=0.0, max_value=10.0, value=0.0, step=0.5, key="rc_wait",
+                                        help="A call still qualifies if the ship waited up to this many days because the customer was not ready.")
+                rc_ = api_get("/incentive/readiness-condition", params={
+                    "customer": "" if cust_rc == "All customers" else cust_rc, "months": win_rc, "max_wait_days": mw_rc}) or {}
+                if rc_.get("available"):
+                    _cards([
+                        ("Calls that would qualify", f"{rc_['qualifying_calls']} of {rc_['calls']}", f"{rc_['qualifying_pct']:.0f}% of calls \u00b7 {rc_['window']}", "good"),
+                        ("Tonnes on qualifying calls", f"{rc_['qualifying_tonnes_pct'] or 0:.0f}%", f"{rc_['qualifying_tonnes']:,} t of {rc_['tonnes']:,} t (containers excluded)", "info"),
+                        ("Ship-days lost, customer not ready", f"{rc_['ship_days_lost']:,.0f}", "the waiting this condition targets", "watch" if rc_["ship_days_lost"] else "good")])
+                    if cust_rc == "All customers":
+                        _htable(pd.DataFrame([{"Customer": b_["customer"], "Ship calls": int(b_["calls"]),
+                                               "Would qualify": f"{int(b_['qualifying'])} ({b_['qualifying_pct']:.0f}%)",
+                                               "Ship-days lost, not ready": b_["ship_days_lost"]} for b_ in rc_["by_customer"]]))
+                    if rc_["calls_failing"]:
+                        with st.expander("Calls that would not qualify"):
+                            _htable(pd.DataFrame([{"Vessel": c_["vessel"], "Customer": c_["customer"], "Month": c_["month"],
+                                                   "Cargo": c_["cargo"], "Days waited, customer not ready": c_["not_ready_days"]}
+                                                  for c_ in rc_["calls_failing"]]))
+                else:
+                    st.info(rc_.get("reason") or "No ship calls for this choice.")
+                _src(rc0["source"])
 
             # 3a. Rules: tariff versions, who controls each charge, combination rule
             rl = api_get("/incentive/rules")
@@ -3248,6 +3364,34 @@ with tabs[5]:
 
             _flush_notes()
         with it4:
+            # Schemes ending soon, with a review pack
+            ex_ = api_get("/incentive/expiring") or {}
+            due_ = [r for r in ex_.get("rows", []) if r["band"] != "Running"]
+            if ex_.get("available") and ex_.get("rows"):
+                _head("Schemes ending soon: review before they lapse",
+                      insight=((f"{len(due_)} scheme(s) end within {ex_['thresholds']['plan_review_days']} days. " if due_ else
+                                "No scheme ends within six months. ") +
+                               "Each comes with how it is doing against the other major ports, its cost where it can be priced, "
+                               "and a renew / change / stop recommendation."),
+                      sub=(f"'Review now' = ends within {ex_['thresholds']['review_now_days']} days; 'Plan the review' = within "
+                           f"{ex_['thresholds']['plan_review_days']} days. The recommendation follows the evidence: a broad check of a "
+                           "whole cargo group never gives a firm stop, and a relief measure is judged on the disruption, not on extra cargo."))
+                for r in ex_["rows"]:
+                    if r["band"] == "Running":
+                        continue
+                    with st.expander(f"{r['band']}: {r['notice']} \u00b7 ends {pd.Timestamp(r['ends']):%d %b %Y} ({r['days_left']} days)",
+                                     expanded=r["band"] == "Review now"):
+                        st.markdown(f"**What it is:** {r['what']} ({r['cargo']})")
+                        st.markdown(f"**How it is doing:** {r['result']}" + (f". {r['evidence']}" if r.get("evidence") else ""))
+                        if r.get("cost"):
+                            st.markdown(f"**Cost:** {r['cost']}")
+                        st.markdown(f'<div class="ie-take" style="font-size:13.5px"><b>Recommendation:</b> {html.escape(r["recommendation"])}</div>',
+                                    unsafe_allow_html=True)
+                later_ = [r for r in ex_["rows"] if r["band"] == "Running"]
+                if later_:
+                    st.caption("Running beyond six months: " + "; ".join(f"{r['notice']} (to {pd.Timestamp(r['ends']):%d %b %Y})" for r in later_))
+                _src(ex_["source"])
+
             # NMPA's own incentive schemes (from its trade notices)
             nn = api_get("/incentive/nmpa-notices") or {}
             if nn.get("notices"):
@@ -3316,6 +3460,12 @@ with tabs[5]:
                     "sch_cond": "A higher rebate on each block of tonnes above the baseline (slab-wise, as in NMPA's Harit policy). "
                                 "Base rate at billing; higher slabs after Traffic verifies the tonnes.",
                     "sch_stop": "Review every 3 months against the target"},
+                "Rebate only when the customer is ready (performance condition)": {
+                    "sch_scope": "Rebate on extra volume", "sch_blm": "previous_fy",
+                    "sch_cond": "Paid only on ship calls where the ship did not wait at anchorage because the receiver, shipper "
+                                "or cargo was not ready (NMPA daily vessel reports; waiting for a berth never counts against the "
+                                "customer). Calls with customer-side waiting pay the full rate. Settled after verification.",
+                    "sch_stop": "Review after 3 months: share of qualifying calls and ship-days lost, customer not ready"},
                 "Larger ships only (parcel size), like NMPA's Cape-size rebate and Deendayal's salt scheme": {
                     "sch_scope": "Blanket discount", "sch_blm": "same_months_last_year",
                     "sch_cond": "Applies only to vessels carrying at least the parcel size agreed with Marine for the berth (tonnes per call). "
@@ -3434,6 +3584,18 @@ with tabs[5]:
     })
                 pick_s = st.selectbox("Open a scheme", [x["id"] for x in sch["schemes"]], key="sch_pick")
                 xs = next(x for x in sch["schemes"] if x["id"] == pick_s)
+                w1_, w2_, w3_ = st.columns([0.3, 0.3, 0.4], vertical_alignment="bottom")
+                for col_, path_, label_, fn_ in ((w1_, "board-note.docx", "\u2913 Board agenda note (Word, draft)", "Board_agenda_note"),
+                                                 (w2_, "trade-notice.docx", "\u2913 Trade notice (Word, draft)", "Trade_notice")):
+                    try:
+                        _wd = requests.get(f"{API}/incentive/schemes/{pick_s}/{path_}", headers=_auth_headers(), timeout=60)
+                        if _wd.ok:
+                            col_.download_button(label_, _wd.content, file_name=f"{pick_s}_{fn_}_DRAFT.docx",
+                                                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                                 key=f"wd_{path_}_{pick_s}")
+                    except requests.RequestException:
+                        pass
+                w3_.caption("Drafts built from this scheme's figures, for Traffic and Finance to check before the Board meeting.")
                 nxt = sch["next_status"].get(xs["status"], [])
                 h1, h2, h3, h4 = st.columns([0.25, 0.3, 0.3, 0.15], vertical_alignment="bottom")
                 to_ = h1.selectbox("Move to", ["(no change)"] + nxt, key=f"sch_to_{pick_s}")
@@ -3607,6 +3769,97 @@ with tabs[5]:
                 st.markdown("\n".join(f"- {b}" for b in rv["basis"]))
                 st.markdown("- Tariff: NMPA Scale of Rates in force from 1 May 2026 (indexed by 0.65%; validity from 7 May 2026). "
                             "Every rate used is located in this document, with its page number, by the automated checks.")
+            # All discounts together
+            pf_ = api_get("/incentive/portfolio", timeout=90)
+            if pf_:
+                _head("All discounts together: one budget",
+                      insight=pf_["plain"] + " " + pf_["uptake"]["plain"],
+                      sub="Like a household budget: one total limit for every discount, so Finance always knows the total. "
+                          "Spain caps its ports' discounts at 20% of fee income, and at 40% on one fee for one kind of cargo. "
+                          "NMPA's Board sets its own limits (approver role).")
+                if pf_["schemes"]:
+                    _htable(pd.DataFrame([{"Scheme": r["id"], "Cargo": r["cargo"], "Customer": r["customer"], "Status": r["status"],
+                                           "Discount %": r["discount_pct"], "Budget cap": cr(r["budget_cap_rs"]),
+                                           "Cost so far": cr(r["cost_to_date_rs"]), "Could cost (whole period)": cr(r["exposure_rs"]),
+                                           "Bringing extra cargo?": {True: "Yes", False: "Not yet", None: "Not started"}[r["used"]]}
+                                          for r in pf_["schemes"]]), hide_index=True, width="stretch")
+                with st.expander("Board policy: total cap, combining discounts, clawback"):
+                    pol_ = pf_["policy"]
+                    q1_, q2_, q3_ = st.columns(3)
+                    cap_ = q1_.number_input("Total cap, % of wharfage (0 = none)", 0.0, 100.0,
+                                            float(pol_.get("portfolio_cap_pct_of_wharfage") or 0), key="pol_cap")
+                    comb_ = q2_.number_input("Combined ceiling on one cargo, % (0 = no combining)", 0.0, 100.0,
+                                             float(pol_.get("max_combined_benefit_pct") or 0), key="pol_comb")
+                    claw_ = q3_.selectbox("If a commitment is missed", ["proportional", "all_or_nothing"], key="pol_claw",
+                                          index=0 if pol_.get("default_clawback_rule") != "all_or_nothing" else 1)
+                    pref_ = st.text_input("Board approval reference", value=pol_.get("approval_reference", ""), key="pol_ref")
+                    if st.button("Save policy (approver only)", key="pol_save"):
+                        try:
+                            r_ = requests.post(headers=_auth_headers(), url=f"{API}/incentive/policy", timeout=20, json={
+                                "portfolio_cap_pct_of_wharfage": cap_ or None, "max_combined_benefit_pct": comb_ or None,
+                                "allow_combination": bool(comb_), "default_clawback_rule": claw_, "approval_reference": pref_})
+                            st.success("Policy saved.") if r_.ok else st.error(r_.json().get("detail", "Could not save."))
+                        except requests.RequestException:
+                            st.error("Could not save. Is the backend running?")
+                _src(pf_["base_note"] + ". " + " ".join(pf_["limits"]))
+
+            # Every NMPA scheme judged so far (full check where it covers the cargo; simple check for coal and containers)
+            sr_ = api_get("/incentive/scheme-review") or {}
+            if sr_.get("available"):
+                rows_sr = sr_["rows"]
+                judged_sr = [r for r in rows_sr if r.get("available")]
+                _head("Every NMPA scheme, judged so far",
+                      insight=(f"{len(judged_sr)} of {len(rows_sr)} NMPA schemes can be judged with published data so far. "
+                               "Schemes still running update by themselves as the Ministry publishes new months; schemes whose "
+                               "cargo the Ministry does not show separately are marked 'Cannot be measured', not guessed."),
+                      sub=sr_["method"] + f" Ministry data are held to {pd.Timestamp(sr_['latest_month'] + '-01'):%b %Y}.")
+                _htable(pd.DataFrame([{
+                    "Scheme": r["short"], "Notice": r["notice"], "Scheme period": r["scheme_period"],
+                    "Check": r.get("check", "\u2014"),
+                    "Beyond the other ports' trend": (f"{r['extra_pct']:+.1f}%" if r.get("check") == "Full check" else f"{r['extra_pct']:+.1f} points")
+                                                     if r.get("available") and r.get("extra_pct") is not None else "\u2014",
+                    "Result": r["result"], "In plain words": r.get("plain") or "\u2014",
+                    "Notes": r.get("notes") or "\u2014"} for r in rows_sr]))
+                _src(sr_["source"])
+
+            # Did it work? NMPA against the other major ports
+            _head("Did a discount work? Compare with the other major ports",
+                  insight="If NMPA's cargo rose 15% but the same cargo rose 12% at every other major port, only the 3% gap "
+                          "can be credited to the discount.",
+                  sub="Expected without the discount = NMPA's tonnes in the same months last year x the growth at the other "
+                      "major ports. The same sum on earlier months shows NMPA's normal ups and downs: a gap inside that range "
+                      "is not evidence the discount worked.")
+            e1_, e2_, e3_ = st.columns([0.4, 0.3, 0.3])
+            ecs_ = ["Crude oil", "LPG", "POL products (out)", "POL products (in)", "Iron ore exports", "Edible oil",
+                    "Fertilizer (finished)", "Fertilizer raw materials (dry)", "Food grains"]
+            ec_ = e1_.selectbox("Cargo", ecs_, key="ev_c")
+            es_ = e2_.date_input("Discount from", value=pd.Timestamp("2026-03-14"), key="ev_s")
+            ee_ = e3_.date_input("Discount to", value=pd.Timestamp("2026-03-31"), key="ev_e")
+            evr_ = api_get("/incentive/evaluate", {"cargo": ec_, "start": es_.isoformat(), "end": ee_.isoformat()}, timeout=60)
+            if evr_:
+                st.markdown(f'<div class="ti-insight">{html.escape(evr_["plain_answer"])}</div>', unsafe_allow_html=True)
+                if evr_.get("available"):
+                    nr_ = evr_.get("normal_range")
+                    _htable(pd.DataFrame([{"NMPA actual (t)": evr_["nmpa_actual_t"], "Expected without the discount (t)": evr_["expected_without_scheme_t"],
+                                           "Difference (t)": evr_["extra_credited_t"], "Difference %": evr_["extra_credited_pct"],
+                                           "NMPA's normal range %": f'{nr_["low_pct"]:+.0f} to {nr_["high_pct"]:+.0f}' if nr_ else "not enough history"}]),
+                            hide_index=True, width="stretch")
+                for w_ in evr_.get("warnings", []):
+                    st.markdown(f'<div class="ti-s">\u26a0 {html.escape(w_)}</div>', unsafe_allow_html=True)
+                _src(evr_["source"] + ". " + " ".join(evr_.get("limits", [])))
+
+            # Settlement of one scheme
+            sch2_ = (api_get("/incentive/schemes") or {}).get("schemes", [])
+            live_ = [x["id"] for x in sch2_ if x.get("status") in ("Approved", "Active", "Completed")]
+            if live_:
+                with st.expander("Year-end settlement of a scheme (commitment, shortfall, clawback)"):
+                    ps_ = st.selectbox("Scheme", live_, key="set_pick")
+                    se_ = api_get(f"/incentive/schemes/{ps_}/settlement", timeout=60)
+                    if se_:
+                        st.markdown(f'<div class="ti-insight">{html.escape(se_["plain"])}</div>', unsafe_allow_html=True)
+                        st.markdown(f'<div class="ti-s">Rule: {html.escape(se_["clawback_rule_label"])}. Settled: '
+                                    f'{html.escape(se_["settlement_mode"])}. {html.escape(se_["status_label"])}</div>', unsafe_allow_html=True)
+
             op_ = api_get("/incentive/other-ports") or {}
             if op_.get("available"):
                 _head("How other major ports design schemes",

@@ -730,7 +730,8 @@ def create_scheme(cargo: str, scope: str, discount_pct: float, start: str, end: 
                   customers: str = "", conditions: str = "", by: str = "", baseline_method: str = "same_months_last_year",
                   baseline_years: int = 3, contractual_t: float | None = None, tiers: list[dict] | None = None,
                   success_target_t: float | None = None, stop_rule: str = "", customer: str = "",
-                  baseline_tonnes: float | None = None, baseline_label: str = "", baseline_detail: str = "") -> dict:
+                  baseline_tonnes: float | None = None, baseline_label: str = "", baseline_detail: str = "",
+                  commitment_t: float | None = None, clawback_rule: str = "", settlement: str = "") -> dict:
     """Save a scenario as a DRAFT scheme with its eligibility check, its baseline (version 1) and, for a rebate, its marginal
     slabs. Nothing is offered to customers and no billing changes. A draft with blocks cannot move to review."""
     from backend.app.services import incentive_rules as ir
@@ -747,7 +748,10 @@ def create_scheme(cargo: str, scope: str, discount_pct: float, start: str, end: 
         customers = customer + (", " + customers if customers else "")     # the review gate re-checks this customer's identity
     custs = [c.strip() for c in customers.replace(";", ",").split(",") if c.strip()]
     rows = _load_schemes()
-    elig = ir.check_eligibility(cargo, start, end, custs, rows, [r["cargo"] for r in get_revenue()["cargos"]])
+    elig = ir.check_eligibility(cargo, start, end, custs, rows, [r["cargo"] for r in get_revenue()["cargos"]],
+                                discount_pct=discount_pct)
+    if clawback_rule and clawback_rule not in ("proportional", "all_or_nothing"):
+        raise ValueError("clawback_rule must be 'proportional' or 'all_or_nothing'")
     if customer and baseline_tonnes:
         # from the deal desk: the customer's own baseline (traced tonnes in NMPA daily reports), as shown in the proposal
         bl = {"method": "customer_traced", "label": baseline_label or "Customer's traced tonnes (NMPA daily reports)",
@@ -767,6 +771,7 @@ def create_scheme(cargo: str, scope: str, discount_pct: float, start: str, end: 
                "baselines": [{"version": 1, "at": now, "by": by, **bl, "frozen": False}],
                "tiers": tiers or [], "success_target_t": success_target_t, "stop_rule": stop_rule,
                "customer": customer, "data_version": data_version(),
+               "commitment_t": commitment_t, "clawback_rule": clawback_rule, "settlement": settlement,
                "eligibility": elig,
                "rate_rs_per_t": sc["rate_rs_per_t"], "tariff_version": TARIFF_VERSION,
                "budget_cap_rs": budget_cap_rs, "customers": customers, "conditions": conditions,
@@ -815,7 +820,8 @@ def update_scheme(sid: str, status: str | None = None, approval_reference: str |
                 from backend.app.services import incentive_rules as ir
                 custs = [c.strip() for c in rec.get("customers", "").replace(";", ",").split(",") if c.strip()]
                 elig = ir.check_eligibility(rec["cargo"], rec["start"], rec["end"], custs, rows,
-                                            [r["cargo"] for r in get_revenue()["cargos"]], exclude_id=rec["id"])
+                                            [r["cargo"] for r in get_revenue()["cargos"]], exclude_id=rec["id"],
+                                            discount_pct=rec.get("discount_pct"))
                 rec["eligibility"] = elig
                 if not elig["eligible"]:
                     raise ValueError("cannot go to review: " + " | ".join(elig["blocks"]))
@@ -840,6 +846,20 @@ def update_scheme(sid: str, status: str | None = None, approval_reference: str |
 
 
 def scheme_results(rec: dict) -> dict:
+    """Observed cargo during the scheme months against the baseline, plus a peer-port check (did the cargo rise more than
+    other major ports explain?) from incentive_evaluation."""
+    out = _scheme_results(rec)
+    if out.get("months_held"):
+        try:
+            from backend.app.services import incentive_evaluation as iev
+            if rec["cargo"] in iev.CARGO_GROUP:
+                out["peer_check"] = iev.evaluate(rec["cargo"], rec["start"], rec["end"], out.get("estimated_discount_cost_rs"))
+        except Exception as e:                       # the register must still load if a comparison cannot be made
+            out["peer_check"] = {"available": False, "plain_answer": f"Peer-port check not available: {e}"}
+    return out
+
+
+def _scheme_results(rec: dict) -> dict:
     """Observed cargo during the scheme months against the baseline recorded at the draft stage: for a customer scheme, that
     customer's traced tonnes in NMPA daily reports; otherwise the cargo's tonnes in NMPA monthly statements."""
     if rec.get("customer"):
@@ -1201,7 +1221,8 @@ def market_context(cargo: str, months: list[str]) -> dict[str, Any]:
 def amend_scheme(sid: str, changes: dict, reason: str, by: str = "") -> dict:
     """Approved or active terms can only change through an amendment: the old terms are kept, the approval reference is
     cleared and the scheme goes back to Traffic review for re-approval."""
-    allowed = {"discount_pct", "tiers", "end", "budget_cap_rs", "conditions", "success_target_t", "stop_rule"}
+    allowed = {"discount_pct", "tiers", "end", "budget_cap_rs", "conditions", "success_target_t", "stop_rule",
+               "commitment_t", "clawback_rule", "settlement"}
     bad = set(changes) - allowed
     if bad:
         raise ValueError(f"cannot amend {sorted(bad)}; the cargo, customer, start and baseline stay as approved")
@@ -1417,6 +1438,25 @@ SCHEME_PATTERNS = [
      "Not among NMPA's notices. Paradip discounts one cargo moved through a specific facility."),
     ("Transshipment rate", "NMPA Scale of Rates 2.5.3 and 4.2 (transhipment charges); 50% foreign + 50% coastal rate for coastal transshipment",
      "Deendayal charges 75% of wharfage on cargo landed only for reshipment; NMPA has its own transhipment charges."),
+    ("Annual volume discount or loyalty bonus", None,
+     "Not among NMPA's notices. Rotterdam scales its discount with each line's yearly tonnes; Chennai (NCCS 2026-27) adds a "
+     "loyalty bonus of up to 10% and long-term commitment MoUs. For NMPA: a retention offer for key customers at risk, priced "
+     "in the deal desk against the chance of losing the cargo."),
+    ("Settlement after the period", "NMPA/TM/IOF-Exp-Rebate/26-27 (rebate released after FY 2026-27, after verification)",
+     "Rotterdam pays its transhipment discount after the year; Valencia applies bonuses provisionally and regularises at year end. "
+     "Settling after the period, against a recorded commitment, lets a missed commitment reduce the rebate (see Settlement)."),
+    ("Portfolio cap on all discounts", None,
+     "Not in NMPA's notices. Spain caps each Port Authority's bonuses at 20% of its fee income and 40% on one fee for one "
+     "traffic. For NMPA: a Board-set total cap and stacking ceiling (data/incentive_policy.json), shown under Portfolio."),
+    ("Data-sharing discount", None,
+     "Not among NMPA's notices. Rotterdam gives 5% off for sharing location data. For NMPA: a small discount for customers who "
+     "share their cargo plans two to three months ahead, which also improves the forecasts."),
+    ("Network or double-call discount", None,
+     "Not among NMPA's notices. Antwerp-Bruges discounts ships calling at both its ports. NMPA has one port, so this applies only "
+     "through agreements with other ports on a route."),
+    ("Behaviour verified from tracking data", None,
+     "Not among NMPA's notices. Long Beach checks ship speed from tracking data before giving lower dockage. For NMPA: reward "
+     "customers whose ships do not wait because the customer was not ready, checked from the daily reports."),
 ]
 
 

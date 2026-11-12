@@ -163,3 +163,69 @@ Five tabs, each answering one question: **Start here** (what to do this week), *
 (who and what is at risk, and why), **Plan a discount** (calculator, customer proposal, rules) and **Schemes** (NMPA's
 schemes in force, scheme register, past results, other major ports for reference). The register states which cargo and
 discount from *Plan a discount* its designs use.
+
+## What's new (November 2026): did it work, stopping tricks, ship charges, one budget
+
+Think of the port as a shop and a discount as a sale. The Incentive Engine already worked out what a sale costs. These
+additions answer the next questions: **did the sale actually work, is anyone cheating it, and what do all our sales cost
+together?** Every answer is written in plain sentences on screen.
+
+| What | Where in the dashboard | What it tells you |
+|---|---|---|
+| **Did a discount work?** | Schemes → *Did a discount work? Compare with the other major ports* | If NMPA's cargo rose 15% but the same cargo rose 12% at every other major port, only the 3% gap is credited to the discount. It also shows NMPA's **normal ups and downs**: a gap inside that range is not evidence the discount worked. Each scheme in the register gets this check automatically. |
+| **Checks for gaming** | Plan a discount → deal desk (shown with every proposal and in its PDF), and *Check a customer for gaming* | Six checks: holding cargo back before a discount starts; squeezing cargo into the last month; moving cargo between related companies; switching coastal/foreign labels; moving cargo from a private (PPP) berth onto an NMPA berth; a baseline that is too easy to beat. A warning is a reason to look, not proof. |
+| **Ship charges** | Plan a discount → *Ship charges: what a ship pays* | A ship's bill from NMPA's Scale of Rates: entry fee (port dues), pilot and tugs (pilotage), berth rent (berth hire). Also what NMPA's own container (35% / 50%) and Cape-size (30%) rebates cost, once ship sizes are known (see below). |
+| **One budget for all discounts** | Schemes → *All discounts together: one budget* | What every approved and active scheme could cost, against the port's wharfage income, and how many schemes are actually bringing extra cargo. The Board can set a total cap and a ceiling for combining discounts (approver role only). Until it does, nothing changes: discounts cannot be combined, as before. |
+| **Year-end settlement** | Deal desk → *Save as draft scheme* (record the tonnes the customer promises), then Schemes → *Year-end settlement* | Like a loyalty card: if the customer misses its promise, the rebate is reduced in proportion, or not paid at all, whichever rule was agreed. If the discount was already given on each bill, the tool shows how much to recover. |
+| **"Please don't leave" offer** | Deal desk options | A discount on all of a customer's cargo to keep it. The tool shows the break-even: e.g. a 10% offer is worth it only if the chance of losing the cargo without it is above about 11%. |
+| **More ideas from other ports** | Schemes → *How other major ports design schemes* | Now 28 schemes, including Rotterdam, Antwerp, Valencia, Long Beach and Chennai's 2026-27 scheme, each with its source. |
+
+### One thing only NMPA can give: each ship's size
+
+Ship charges depend on a ship's size (its **GRT**), and NMPA's daily reports do not contain it. The GRT is printed on every
+port-dues bill. Put it in `data/vessel_gt.csv` (one row per ship: name, IMO number if known, GRT, bill reference) and the
+container and Cape-size rebate costs work themselves out. Sizes from NMPA's bills always win over any other source.
+
+### Public data, fetched with one script
+
+```
+python scripts/fetch_public_incentive_data.py vessel-gt     ship sizes from Wikidata (a free public register; well-known ships only)
+python scripts/fetch_public_incentive_data.py fx            US dollar to rupee rates (ECB rates, marked as estimates)
+python scripts/fetch_public_incentive_data.py fx --rbi-file rates.csv    RBI/FBIL reference rates you downloaded (official)
+python scripts/fetch_public_incentive_data.py other-ports   copies of other ports' scheme documents, for reference
+python scripts/fetch_public_incentive_data.py all --dry-run see what would be fetched, without saving anything
+```
+
+Ship sizes from Wikidata are matched by name, so they are marked "planning only". Once at least 8 ships have both a known
+size and a length in the daily reports, the tool can also **estimate** the size of other ships from their length, and labels
+it as an estimate. Only sizes from NMPA's bills can support an official proposal.
+
+### Related companies
+
+`data/customer_groups.csv` lists customers that belong together, each with its evidence: for example Paradeep Phosphates and
+Mangalore Chemicals & Fertilizers (merged October 2025). Add a row only when there is evidence: a filing, a notice or NMPA's
+confirmation.
+
+## Merged additions (12 November 2026)
+
+- **Schemes → Every NMPA scheme, judged so far.** One table of NMPA's schemes and how each is doing against the other
+  major ports. The full check ("Did a discount work?", just below it) is used wherever it covers the cargo; coal and
+  containers, which it does not cover yet, get a simple check, labelled as such. Schemes still running update as the
+  Ministry publishes new months; schemes whose cargo the Ministry does not show separately say "Cannot be measured".
+- **Plan a discount → Pay only when the customer is ready.** From the daily vessel reports: how many ship calls would
+  qualify for a rebate paid only when the ship did not wait because the customer was not ready (waiting for a berth
+  never counts against the customer). A matching template is in the scheme register.
+
+## Decision aids (12 November 2026)
+
+- **Plan a discount → under the "What if…" table: growth check.** A discount on all cargo pays for itself only if
+  customers bring discount ÷ (1 − discount) more cargo a year (10% → 11.1%). The cards show how often NMPA's cargo of
+  that type grew that much in a year without the discount (every twelve-month period since 2022), and its usual yearly
+  change. Example: LPG grew 11.1% in 5 of 35 periods, so a 10% discount on all LPG is a long shot.
+- **Schemes → Schemes ending soon: review before they lapse.** Every scheme in force (and every approved scheme in the
+  register) ending within six months, with how it is doing against the other major ports, its cost where it can be
+  priced, and a renew / change / stop recommendation. A broad check of a whole cargo group never gives a firm stop.
+  The Start here card "NMPA schemes in force" says how many need their review planned.
+- **Schemes → Scheme register → open a scheme → Board agenda note / Trade notice (Word, draft).** Drafts built from the
+  scheme's own figures: purpose, background, proposal, cost and break-even, safeguards, legal basis (Section 27(1)),
+  resolution sought; and a trade notice in NMPA's usual form. For Traffic and Finance to check before the Board meeting.

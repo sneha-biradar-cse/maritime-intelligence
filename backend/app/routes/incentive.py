@@ -62,13 +62,15 @@ def post_scheme(cargo: str = Body(...), scope: str = Body(...), discount_pct: fl
                 contractual_t: float | None = Body(None), tiers: list[dict] | None = Body(None),
                 success_target_t: float | None = Body(None), stop_rule: str = Body(""), customer: str = Body(""),
                 baseline_tonnes: float | None = Body(None), baseline_label: str = Body(""), baseline_detail: str = Body(""),
+                commitment_t: float | None = Body(None), clawback_rule: str = Body(""), settlement: str = Body(""),
                 user: dict | None = Depends(auth.current_user)):
     auth.require(user, auth.ACTION_ROLES["create_scheme"], "create a draft scheme")
     by = auth.actor(user, by)
     try:
         return ie.create_scheme(cargo, scope, discount_pct, start, end, budget_cap_rs, customers, conditions, by,
                                 baseline_method, baseline_years, contractual_t, tiers, success_target_t, stop_rule,
-                                customer, baseline_tonnes, baseline_label, baseline_detail)
+                                customer, baseline_tonnes, baseline_label, baseline_detail, commitment_t, clawback_rule,
+                                settlement)
     except KeyError:
         raise HTTPException(status_code=404, detail=f"Unknown cargo '{cargo}'")
     except ValueError as e:
@@ -95,9 +97,11 @@ def get_rules():
 
 
 @router.get("/eligibility", summary="Check a proposed benefit before saving it: tariff version, charge control, identity, combination")
-def get_eligibility(cargo: str = Query(...), start: str = Query(...), end: str = Query(...), customers: str = Query("")):
+def get_eligibility(cargo: str = Query(...), start: str = Query(...), end: str = Query(...), customers: str = Query(""),
+                    discount_pct: float | None = Query(None, ge=0, le=100)):
     custs = [c.strip() for c in customers.replace(";", ",").split(",") if c.strip()]
-    return ir.check_eligibility(cargo, start, end, custs, ie._load_schemes(), [r["cargo"] for r in ie.get_revenue()["cargos"]])
+    return ir.check_eligibility(cargo, start, end, custs, ie._load_schemes(), [r["cargo"] for r in ie.get_revenue()["cargos"]],
+                                discount_pct=discount_pct)
 
 
 @router.get("/baseline", summary="Baseline tonnes for a cargo and months by a stated method (missing months block it)")
@@ -267,3 +271,122 @@ def get_nmpa_notices():
 @router.get("/tariff-comparison-voc", summary="Published wharfage: NMPA vs VOC (Tuticorin), same year 2025-26")
 def get_tariff_comparison_voc():
     return ie.get_tariff_comparison_voc()
+
+
+# ── Improvements (Nov 2026): did it work, is it gamed, ship charges, one budget, settlement ─────────────────────
+from backend.app.services import incentive_evaluation as iev      # noqa: E402
+from backend.app.services import incentive_integrity as iig       # noqa: E402
+from backend.app.services import incentive_portfolio as ipf       # noqa: E402
+from backend.app.services import vessel_charges as vch            # noqa: E402
+
+
+@router.get("/evaluate", summary="Did a discount work? NMPA against the other major ports over the same months")
+def get_evaluate(cargo: str = Query(...), start: str = Query(...), end: str = Query(...),
+                 rebate_cost_rs: float | None = Query(None, ge=0)):
+    try:
+        return iev.evaluate(cargo, start, end, rebate_cost_rs)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No peer-port comparison for '{cargo}'. Cargos: {sorted(iev.CARGO_GROUP)}")
+
+
+@router.get("/integrity", summary="Checks for gaming: holding back, timing, related companies, relabelling, berth shift, easy baseline")
+def get_integrity(cargo: str = Query(...), start: str = Query(...), end: str = Query(...), customer: str = Query(""),
+                  baseline_t: float | None = Query(None, ge=0)):
+    try:
+        return iig.check(cargo, start, end, customer or None, baseline_t)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"Unknown cargo '{cargo}'")
+
+
+@router.get("/vessel-charges", summary="Ship charges (port dues, pilotage, berth hire): inputs held and NMPA's ship-charge rebates priced")
+def get_vessel_charges(usd_inr: float | None = Query(None, gt=0)):
+    return vch.summary(usd_inr)
+
+
+@router.get("/vessel-charges/call", summary="Ship charges for one call, from the Scale of Rates")
+def get_vessel_call(grt: float = Query(..., gt=0), coastal: bool = Query(False), kind: str = Query("dry"),
+                    hours: float = Query(24, ge=0), usd_inr: float | None = Query(None, gt=0), ballast: bool = Query(False)):
+    try:
+        return vch.call_cost(grt, coastal, kind, hours, usd_inr, ballast)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
+@router.get("/portfolio", summary="All discounts together: total exposure against the port's income and the Board's cap; uptake")
+def get_portfolio():
+    return ipf.portfolio()
+
+
+@router.get("/policy", summary="Board policy for discounts: total cap, stacking ceiling, clawback rule")
+def get_policy():
+    return {**ipf.policy(), "clawback_rules": ipf.CLAWBACK_RULES}
+
+
+@router.post("/policy", summary="Set the Board policy (approver only)")
+def post_policy(changes: dict = Body(...), user: dict | None = Depends(auth.current_user)):
+    auth.require(user, auth.ACTION_ROLES["set_policy"], "set the incentive policy")
+    try:
+        return ipf.save_policy(changes, auth.actor(user, ""))
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
+@router.get("/schemes/{sid}/settlement", summary="Year-end settlement: rebate earned, commitment, shortfall, clawback")
+def get_settlement(sid: str):
+    rec = next((r for r in ie._load_schemes() if r["id"] == sid), None)
+    if rec is None:
+        raise HTTPException(status_code=404, detail=f"Unknown scheme '{sid}'")
+    return ipf.settlement(rec)
+
+
+@router.get("/scheme-review", summary="Every NMPA scheme judged so far against the other major ports")
+def get_scheme_review():
+    from backend.app.services import incentive_scheme_review as sr
+    return sr.get_scheme_review()
+
+
+@router.get("/readiness-condition", summary="Calls that would qualify for a rebate tied to customer readiness")
+def readiness_condition(customer: str | None = None, months: int = 6, max_wait_days: float = 0.0):
+    from backend.app.services import incentive_scheme_review as sr
+    return sr.readiness_condition(customer=customer or None, months=months, max_wait_days=max_wait_days)
+
+
+# ---- Decision aids: growth check, schemes ending soon, Board note and trade notice drafts
+@router.get("/growth-check", summary="How often NMPA's cargo grew enough in a year for a discount on all cargo to pay for itself")
+def get_growth_check(cargo: str, discount_pct: float):
+    from backend.app.services import incentive_decision_aids as da
+    try:
+        return da.growth_check(cargo, discount_pct)
+    except (KeyError, ValueError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/expiring", summary="Schemes in force and approved schemes, with days left and a review pack")
+def get_expiring():
+    from backend.app.services import incentive_decision_aids as da
+    return da.expiring_schemes()
+
+
+_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+
+@router.get("/schemes/{sid}/board-note.docx", summary="Draft Board agenda note (Word) for a scheme in the register")
+def get_board_note(sid: str):
+    from fastapi import Response
+    from backend.app.services import incentive_decision_aids as da
+    try:
+        data = da.board_note_docx(sid)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No scheme {sid}")
+    return Response(data, media_type=_DOCX, headers={"Content-Disposition": f'attachment; filename="{sid}_Board_agenda_note_DRAFT.docx"'})
+
+
+@router.get("/schemes/{sid}/trade-notice.docx", summary="Draft trade notice (Word) for a scheme in the register")
+def get_trade_notice(sid: str):
+    from fastapi import Response
+    from backend.app.services import incentive_decision_aids as da
+    try:
+        data = da.trade_notice_docx(sid)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No scheme {sid}")
+    return Response(data, media_type=_DOCX, headers={"Content-Disposition": f'attachment; filename="{sid}_Trade_notice_DRAFT.docx"'})
