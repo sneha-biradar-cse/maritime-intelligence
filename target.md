@@ -3,7 +3,7 @@
 **Owner:** Sneha Biradar
 **Project:** Maritime Port Intelligence Platform (YellowSense) for New Mangalore Port Authority (NMPA)
 **My module:** Trade Intelligence and Incentive Engine (teammates own Cargo Forecasting and Vessel Intelligence)
-**Last updated:** 10-11-2026
+**Last updated:** 12-11-2026
 
 ---
 
@@ -23,7 +23,7 @@ would really cost, using only NMPA's own public documents.
 | 4 | Discount calculator and scenarios based on real tonnes, not guesses | Done |
 | 5 | Scheme register that follows NMPA's own way of designing and approving schemes | Done |
 | 6 | Data refreshed automatically with one command (can run weekly) | Done |
-| 7 | All automated tests passing | Done (257 tests) |
+| 7 | All automated tests passing | Done (283 tests) |
 | 8 | Demo to NMPA's team | Pending |
 | 9 | Estimates turned into checked figures with NMPA's billing data | Pending NMPA data |
 | 10 | Individual logins for NMPA officers (pilot use) | Built; waiting for the pilot decision |
@@ -50,6 +50,7 @@ Tracking with daily branches starts today. What already exists in the project on
 - Current container royalty per TEU at Berth 14
 - Vessel charge rate for green-cargo ships (mentioned in the Harit policy, no rate given)
 - A nodal officer for data and follow-up
+- Ship sizes (GRT) of the ships calling at Berths 14 and 16, to price the container and Cape-size rebates
 
 **Waiting on publication:**
 - NMPA October 2026 container and Traffic & Performance statements
@@ -62,21 +63,25 @@ Tracking with daily branches starts today. What already exists in the project on
 
 ## 5. This week (10-11-2026 to 16-11-2026)
 
-- [ ] Check the new "Plan a discount" and "Schemes" tabs on screen and fix anything that looks off
+- [x] Check the new "Plan a discount" and "Schemes" tabs on screen and fix anything that looks off
 - [ ] Rehearse the 10-minute demo using `DEMO_SCRIPT_NMPA.md`
 - [ ] Send the data request to NMPA (list in section 4)
 - [ ] Run the weekly refresh on Monday (`python scripts\refresh_all.py`)
 - [ ] Add the remaining five major ports' scheme designs
 - [ ] Create a new branch every day, named `feature_name_date`
 
-## 6. Today: 10-11-2026
+## 6. Today: 12-11-2026
 
-**Branch:** `incentive_engine_ui_10-11-2026`
+**Branch:** `incentive_engine_upgrade_12-11-2026`
 
-- [x] Split "Proposals & schemes" into two tabs: "Plan a discount" and "Schemes"
-- [x] Fix the missing test package (`pypdf`) and the update script's import path
-- [x] Create `target.md`
-- [ ] Check the new tabs on screen
+- [x] "Did it work?": every NMPA scheme judged against the other major ports (Schemes tab)
+- [x] "Pay only when the customer is ready": rebate condition from the daily vessel reports, plus a register template
+- [x] Merged the team's upgrade: ship charges, one budget for all discounts, gaming checks, stricter evaluation
+- [x] Schemes ending soon, with a review pack and a Start here alert
+- [x] Board agenda note and trade notice drafts (Word) from any scheme in the register
+- [x] Growth check in the discount calculator ("how often has this cargo grown that much?")
+- [x] 283 automated tests passing
+- [ ] Check the new sections on screen
 
 ## 7. Daily log
 
@@ -85,3 +90,4 @@ One line per day: date, branch name, work done.
 | Date | Branch | Work done |
 |---|---|---|
 | 10-11-2026 | incentive_engine_ui_10-11-2026 | Two-tab layout ("Plan a discount" and "Schemes"); two setup fixes; target.md created |
+| 12-11-2026 | incentive_engine_upgrade_12-11-2026 | Did it work? (all schemes); customer-readiness condition; merged team upgrade; schemes ending soon; Board note and trade notice drafts; growth check; 283 tests |
