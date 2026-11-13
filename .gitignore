@@ -36,3 +36,7 @@ tools/poppler/
 
 # Documents downloaded by the harvester for reading (re-downloadable; large)
 nmpa_public_data/harvested/
+
+# NMPA billing uploaded by Finance: stays on this computer
+data/finance_billing.csv
+data/finance_billing_uploaded_by.txt

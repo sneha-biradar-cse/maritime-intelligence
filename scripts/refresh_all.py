@@ -41,6 +41,8 @@ def main(argv: list[str]) -> int:
         codes["Daily reports"] = step(f"2. NMPA daily vessel reports from {start} to {date.today()}",
                                       ["scripts/download_daily_reports.py", "--from", start.isoformat(), "--to",
                                        date.today().isoformat()] + (["--dry-run"] if dry else []))
+    codes["Competitor watch"] = step("2b. Competitor scheme watch (Cochin, VOC Tuticorin, Mormugao notice pages)",
+                                     ["scripts/watch_competitor_notices.py"] + (["--dry-run"] if dry else []))
     if dry:
         print("\nDry run: nothing downloaded or changed. Run without --dry-run to do it.")
         return 0

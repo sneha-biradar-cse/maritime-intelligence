@@ -229,3 +229,27 @@ confirmation.
 - **Schemes → Scheme register → open a scheme → Board agenda note / Trade notice (Word, draft).** Drafts built from the
   scheme's own figures: purpose, background, proposal, cost and break-even, safeguards, legal basis (Section 27(1)),
   resolution sought; and a trade notice in NMPA's usual form. For Traffic and Finance to check before the Board meeting.
+
+## Finance check and competitor watch (13 November 2026)
+
+- **What we earn → Check our estimates against NMPA's bills.** Finance (role "finance" in pilot mode) downloads the
+  template, fills one row per month, cargo and charge (month, cargo, charge, tonnes, amount_rs) and uploads it. The
+  section then shows, cargo by cargo, our estimate against the bill, the difference, and why: tonnes (statements vs
+  billed) and rate per tonne (ours vs billed). Each month uses the Scale of Rates in force then where the engine holds it
+  (2025-26 rates for crude, LPG and iron ore). The file stays on this computer (data/finance_billing.csv is not uploaded
+  to GitHub). A file with mistakes is refused with the line and the reason.
+- **Schemes → Competitor watch.** Every week (step 2b of scripts\refresh_all.py, or on its own:
+  python scripts\watch_competitor_notices.py) the public notice pages of Cochin, VOC Tuticorin and Mormugao are read
+  and notices about rebates, concessions, discounts, incentives, waivers, priority berthing or tariff changes are kept.
+  The first reading of each page is the starting point; after that, new notices are listed here and on Start here.
+  Pages that cannot be read are named. The pages are in data/competitor_sources.csv and can be changed there.
+
+## Berth room, billing check and competitor watch (13 November 2026)
+
+- **Plan a discount → under the growth check: "Is there room at the berths?"** For the chosen cargo, the berths that carry
+  80% of its ships (daily reports), how often each had a ship in the last 12 months, how busy it would be with the extra
+  cargo the discount needs, and its busiest month. 'Room' below 65%, 'busy' above 80%: rules of thumb until NMPA's own
+  berth norms are shared. Where a berth is nearly full in its busiest month, a discount works best in the quiet months.
+- **What we earn → Check against NMPA's bills** and **Schemes → Competitor watch** (built with another tool, reviewed and
+  tested): Finance uploads billed amounts and sees each estimate against the bill; the weekly refresh reads the notice
+  pages of Cochin, VOC Tuticorin and Mormugao (data/competitor_sources.csv) and lists new incentive or tariff notices.

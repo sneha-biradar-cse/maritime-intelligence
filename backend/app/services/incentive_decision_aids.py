@@ -390,3 +390,63 @@ def trade_notice_docx(sid: str) -> bytes:
     x.append(_para(f"Draft prepared on {today} from scheme {rec['id']} in the YellowSense Incentive Engine; to be issued only "
                    "after the Board's approval, with the Board Resolution number and date filled in.", italic=True, size=18))
     return _docx("".join(x))
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 4. Berth capacity check: is there room at this cargo's berths for the extra cargo a discount needs?
+# ═══════════════════════════════════════════════════════════════════
+ROOM_BELOW_PCT = 65.0        # rule of thumb for multi-user berths, until NMPA's own berth norms are held
+BUSY_ABOVE_PCT = 80.0
+
+
+def _verdict(pct: float) -> str:
+    return "Room" if pct < ROOM_BELOW_PCT else "Some room" if pct <= BUSY_ABOVE_PCT else "Busy"
+
+
+@_ttl_cache(seconds=600)
+def berth_check(cargo: str, extra_pct: float) -> dict[str, Any]:
+    """The berths this cargo uses (daily reports), how often each had a ship in the last 12 months, and how busy they
+    would be if this cargo grew by extra_pct (extra ship-days in proportion to this cargo's share of the berth's use)."""
+    if cargo not in ie.CARGO:
+        raise KeyError(cargo)
+    occ = ie._berth_occupancy()
+    family = ie.CARGO[cargo].get("family")
+    fam = occ["fam_berths"].get(tuple(family), {}) if family else {}
+    if not fam:
+        return {"available": False, "cargo": cargo, "reason": "This cargo was not recorded at any berth in the daily reports."}
+    months = sorted(occ["days"])[-12:]
+    report_days = sum(occ["days"][m] for m in months)
+    total_use = {}                                               # ship-records per berth, all cargos
+    for f, berths in occ["fam_berths"].items():
+        for b, n in berths.items():
+            total_use[b] = total_use.get(b, 0) + n
+    ranked = sorted(fam.items(), key=lambda kv: -kv[1])
+    cover, main = 0, []
+    for b, n in ranked:                                          # the berths carrying 80% of this cargo's ship-days
+        main.append(b); cover += n
+        if cover >= 0.8 * sum(fam.values()):
+            break
+    rows = []
+    for b in main:
+        busy_days = sum(occ["occ"].get((b, m), 0) for m in months)
+        now = busy_days / report_days * 100 if report_days else 0.0
+        peak_m = max(months, key=lambda m: occ["occ"].get((b, m), 0) / max(occ["days"][m], 1))
+        peak = occ["occ"].get((b, peak_m), 0) / max(occ["days"][peak_m], 1) * 100
+        share = fam[b] / total_use[b] if total_use.get(b) else 1.0
+        after = min(100.0, now * (1 + share * extra_pct / 100))
+        rows.append({"berth": b, "cargo_share_pct": round(share * 100), "busy_now_pct": round(now, 1),
+                     "busy_after_pct": round(after, 1), "peak_month": pd.Timestamp(peak_m + "-01").strftime("%b %Y"),
+                     "peak_pct": round(peak, 1), "verdict_now": _verdict(now), "verdict_after": _verdict(after)})
+    worst = max(rows, key=lambda r: r["busy_after_pct"])
+    plain = (f"{cargo} uses berth(s) {', '.join(r['berth'] for r in rows)}. With {extra_pct:.1f}% more {cargo}, the busiest of them "
+             f"(berth {worst['berth']}) would have a ship on about {worst['busy_after_pct']:.0f}% of days, against "
+             f"{worst['busy_now_pct']:.0f}% now: {worst['verdict_after'].lower()}.")
+    return {
+        "available": True, "cargo": cargo, "extra_pct": extra_pct, "rows": rows, "verdict": worst["verdict_after"],
+        "plain": plain, "months": f"{pd.Timestamp(months[0] + '-01'):%b %Y} to {pd.Timestamp(months[-1] + '-01'):%b %Y}",
+        "thresholds": {"room_below_pct": ROOM_BELOW_PCT, "busy_above_pct": BUSY_ABOVE_PCT},
+        "method": ("Busy = share of daily reports in the last 12 months on which the berth had a ship. Extra cargo adds ship-days "
+                   "in proportion to this cargo's share of the berth's use. 'Room' below 65%, 'busy' above 80%: common rules of "
+                   "thumb for multi-user berths, to be replaced by NMPA's own berth capacity norms when shared."),
+        "source": "NMPA daily vessel position reports (berths occupied each day)",
+    }

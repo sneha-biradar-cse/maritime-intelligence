@@ -49,3 +49,17 @@ def test_board_note_and_trade_notice(monkeypatch):
             assert must in notice, must
     finally:
         (ie._schemes_path()).unlink(missing_ok=True)
+
+
+def test_berth_check():
+    r = da.berth_check("LPG", 11.1)
+    assert r["available"] and r["rows"]
+    occ = ie._berth_occupancy()
+    fam = occ["fam_berths"][tuple(ie.CARGO["LPG"]["family"])]
+    assert sum(fam[x["berth"]] for x in r["rows"]) >= 0.8 * sum(fam.values())          # berths carrying 80% of LPG
+    for x in r["rows"]:
+        assert x["busy_after_pct"] >= x["busy_now_pct"] and 0 <= x["busy_now_pct"] <= 100
+        assert x["verdict_after"] == da._verdict(x["busy_after_pct"])
+    assert da._verdict(64.9) == "Room" and da._verdict(70) == "Some room" and da._verdict(80.1) == "Busy"
+    assert da.berth_check("LPG", 0)["rows"][0]["busy_after_pct"] == r["rows"][0]["busy_now_pct"]
+    assert not da.berth_check("Crude oil out of ISPRL", 11.1)["available"]              # no berth record: say so, never guess

@@ -390,3 +390,35 @@ def get_trade_notice(sid: str):
     except KeyError:
         raise HTTPException(status_code=404, detail=f"No scheme {sid}")
     return Response(data, media_type=_DOCX, headers={"Content-Disposition": f'attachment; filename="{sid}_Trade_notice_DRAFT.docx"'})
+
+
+# ---- Finance check: our wharfage estimates against NMPA's bills
+@router.get("/finance-check", summary="Our wharfage estimates against NMPA's billed amounts (after Finance uploads them)")
+def get_finance_check():
+    from backend.app.services import finance_check as fck
+    return fck.compare()
+
+
+@router.post("/finance-billing", summary="Upload NMPA's billing (CSV text) for the finance check (Finance only)")
+def post_finance_billing(csv_text: str = Body(..., embed=True), by: str = Body(""), user: dict | None = Depends(auth.current_user)):
+    from backend.app.services import finance_check as fck
+    auth.require(user, auth.ACTION_ROLES["finance_upload"], "upload NMPA's billing data")
+    r = fck.save(csv_text, auth.actor(user, by))
+    if not r["saved"]:
+        raise HTTPException(status_code=422, detail=r["problems"])
+    return r
+
+
+@router.get("/competitor-watch", summary="New incentive and tariff notices at competitor ports (Cochin, VOC Tuticorin, Mormugao)")
+def get_competitor_watch():
+    from backend.app.services import competitor_watch as cw
+    return cw.get_watch()
+
+
+@router.get("/berth-check", summary="Room at this cargo's berths for the extra cargo a discount needs")
+def get_berth_check(cargo: str, extra_pct: float):
+    from backend.app.services import incentive_decision_aids as da
+    try:
+        return da.berth_check(cargo, extra_pct)
+    except KeyError as e:
+        raise HTTPException(status_code=400, detail=f"Unknown cargo {e}")

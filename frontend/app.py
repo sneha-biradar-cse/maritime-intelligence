@@ -2648,6 +2648,10 @@ with tabs[5]:
             stake0 = sum(o.get("wharfage_at_stake_rs") or 0 for o in op0.get("cargos", []))
             infc0 = [x for x in nn0.get("notices", []) if x["status"] == "In force"]
             ex0 = api_get("/incentive/expiring") or {}
+            cw0 = api_get("/incentive/competitor-watch") or {}
+            if cw0.get("new"):
+                st.info(f"{len(cw0['new'])} new incentive or tariff notice(s) at competitor ports ("
+                        + ", ".join(sorted({r['port'] for r in cw0['new']})) + "). See Schemes \u2192 Competitor watch.")
             due0 = (ex0.get("review_now", 0) or 0) + (ex0.get("plan_review", 0) or 0)
             _cards([
                 (f"Wharfage earned, {rv['period']}", cr(t0["revenue_rs"]),
@@ -2821,6 +2825,52 @@ with tabs[5]:
             cwf = api_get("/incentive/customer-wharfage", timeout=30)
 
             _flush_notes()
+            # Finance check: our estimates against NMPA's bills
+            fk_ = api_get("/incentive/finance-check") or {}
+            _head("Check our estimates against NMPA's bills",
+                  insight=(f"Our wharfage estimates match NMPA's bills to {fk_['accuracy_pct']:.1f}% "
+                           f"({fk_['months']}, {len(fk_['rows'])} cargos)." if fk_.get("available") else
+                           "Every money figure here is an estimate until it is checked against NMPA's bills. When Finance "
+                           "uploads one year of billed wharfage by cargo, this section shows how close each estimate is, and why."),
+                  sub=fk_.get("method") or "")
+            if fk_.get("available"):
+                _cards([
+                    ("Accuracy of our estimates", f"{fk_['accuracy_pct']:.1f}%", f"{fk_['months']}", "good" if fk_["accuracy_pct"] >= 90 else "watch"),
+                    ("Billed by NMPA", cr(fk_["billed_total_rs"]), "wharfage, cargos compared", "info"),
+                    ("Our estimate", cr(fk_["estimate_total_rs"]), "same cargos and months", "info")])
+                _htable(pd.DataFrame([{
+                    "Cargo": r["cargo"], "Months": r["months"],
+                    "Billed": cr(r["billed_rs"]), "Our estimate": cr(r["estimate_rs"]),
+                    "Difference": f"{r['amount_difference_pct']:+.1f}%",
+                    "Tonnes: statements vs billed": f"{r['tonnes_difference_pct']:+.1f}%" if r["tonnes_difference_pct"] is not None else "\u2014",
+                    "Rate per tonne: ours vs billed": (f"\u20b9{r['estimate_rate']:,.2f} vs \u20b9{r['billed_rate']:,.2f}"
+                                                        if r["estimate_rate"] and r["billed_rate"] else "\u2014"),
+                    "Rates used": r["rate_basis"]} for r in fk_["rows"]]))
+                if fk_.get("other_charges"):
+                    st.caption("Also uploaded, not yet compared: " + "; ".join(f"{o['charge'].replace('_', ' ')} {cr(o['amount_rs'])}" for o in fk_["other_charges"]))
+                if fk_.get("uploaded_by"):
+                    st.caption(f"Uploaded by {fk_['uploaded_by']}. The file stays on this computer (not uploaded to GitHub).")
+            with st.expander("Upload NMPA's billing (Finance)" if fk_.get("uploaded") else "How Finance can upload NMPA's billing", expanded=False):
+                st.markdown("One row per **month, cargo and charge**: `month` (e.g. 2026-05), `cargo` (one of the names below), "
+                            "`charge` (wharfage, port_dues, pilotage, berth_hire or other), `tonnes` billed and `amount_rs` billed.")
+                st.download_button("\u2913 Template (CSV)", (fk_.get("template") or "month,cargo,charge,tonnes,amount_rs\n"),
+                                   file_name="NMPA_billing_template.csv", mime="text/csv", key="fk_tpl")
+                st.caption("Cargo names: " + "; ".join(fk_.get("cargos", [])))
+                up_ = st.file_uploader("Billing file (CSV)", type=["csv"], key="fk_upload")
+                if up_ is not None and st.button("Check and save", key="fk_save"):
+                    try:
+                        rr_ = requests.post(f"{API}/incentive/finance-billing",
+                                            json={"csv_text": up_.getvalue().decode("utf-8-sig"), "by": ""},
+                                            headers=_auth_headers(), timeout=120)
+                        if rr_.ok:
+                            st.success(f"Saved {rr_.json()['rows']} rows ({rr_.json()['months']}). Refresh the page to see the comparison.")
+                        else:
+                            det_ = rr_.json().get("detail", rr_.text)
+                            st.error("Not saved:\n\n" + ("\n".join(f"- {x}" for x in det_) if isinstance(det_, list) else str(det_)))
+                    except requests.RequestException as e_:
+                        st.error(f"Could not reach the backend: {e_}")
+            _src("NMPA Finance billing (uploaded); NMPA monthly commodity statements; NMPA Scale of Rates")
+
         with it2:
             # 1d. Protect key customers
             kc = api_get("/incentive/key-customers", timeout=60)
@@ -3137,6 +3187,19 @@ with tabs[5]:
                              f"latest: {gc_['latest_pct']:+.1f}% ({gc_['latest_period']})", "info")]) + "</div>", unsafe_allow_html=True)
                     st.markdown(f'<div class="ie-take" style="font-size:13.5px">{html.escape(gc_["reading"])}</div>', unsafe_allow_html=True)
                     _note_md(gc_["method"])
+                # Is there room at this cargo's berths for the extra cargo the discount needs?
+                bc_ = api_get("/incentive/berth-check", {"cargo": pick_i, "extra_pct": round(disc / (100 - disc) * 100, 1)}) or {}
+                if bc_.get("available"):
+                    tone_bc = {"Room": "good", "Some room": "watch", "Busy": "act"}
+                    st.markdown(f"**Is there room at the berths?** {bc_['verdict']} \u00b7 last 12 months, {bc_['months']}")
+                    st.markdown('<div class="ie-cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">' + "".join(
+                        f'<div class="ie-card {tone_bc[r["verdict_after"]]}"><div class="l">Berth {html.escape(r["berth"])} '
+                        f'({r["cargo_share_pct"]}% {html.escape(pick_i)})</div><div class="v">{r["busy_now_pct"]:.0f}% \u2192 {r["busy_after_pct"]:.0f}%</div>'
+                        f'<div class="s">days with a ship, now \u2192 with the extra cargo \u00b7 busiest {r["peak_pct"]:.0f}% ({r["peak_month"]})</div></div>'
+                        for r in bc_["rows"][:3]) + "</div>", unsafe_allow_html=True)
+                    st.markdown(f'<div class="ie-take" style="font-size:13.5px">{html.escape(bc_["plain"])} Where a berth is nearly full in its '
+                                f'busiest month, a discount works best in the quiet months.</div>', unsafe_allow_html=True)
+                    _note_md(bc_["method"])
                 with st.expander("What research and other Indian ports show about discounts"):
                     st.markdown(
                         "- **Port charges are a small part of a shipper's total cost**, so overall demand for port services reacts little to "
@@ -3859,6 +3922,37 @@ with tabs[5]:
                         st.markdown(f'<div class="ti-insight">{html.escape(se_["plain"])}</div>', unsafe_allow_html=True)
                         st.markdown(f'<div class="ti-s">Rule: {html.escape(se_["clawback_rule_label"])}. Settled: '
                                     f'{html.escape(se_["settlement_mode"])}. {html.escape(se_["status_label"])}</div>', unsafe_allow_html=True)
+
+            # Competitor watch: new incentive and tariff notices at Cochin, VOC Tuticorin and Mormugao
+            cw_ = api_get("/incentive/competitor-watch") or {}
+            n_new_cw = len(cw_.get("new", []))
+            _head("Competitor watch: new schemes at Cochin, VOC Tuticorin and Mormugao",
+                  insight=((f"{n_new_cw} new incentive or tariff notice(s) at competitor ports in the last {cw_['recent_days']} days."
+                            if n_new_cw else f"No new incentive or tariff notices at competitor ports in the last {cw_['recent_days']} days.")
+                           + f" Last checked: {pd.Timestamp(cw_['last_run']):%d %b %Y}." if cw_.get("available") else
+                           "Not checked yet on this computer. It runs with the weekly refresh (scripts\\refresh_all.py)."),
+                  sub=("Reads the competitor ports' public notice pages every week and keeps notices about rebates, concessions, "
+                       "discounts, incentives, waivers, priority berthing or tariff changes. The first reading of a page is the "
+                       "starting point, so only notices that appear after it are reported as new. The pages are listed in "
+                       "data/competitor_sources.csv and can be changed there."))
+            if cw_.get("available"):
+                if n_new_cw:
+                    _htable(pd.DataFrame([{"Port": r["port"], "Notice": r["title"], "Kind": r["kind"],
+                                           "Date on the notice": r["date_on_page"] or "\u2014", "First seen": r["first_seen"],
+                                           "Link": r["url"]} for r in cw_["new"]]))
+                failed_cw = [p_ for p_ in cw_["pages"] if not p_["ok"]]
+                if failed_cw:
+                    st.warning("Could not be read last time: " + "; ".join(f"{p_['port']} ({p_['page']})" for p_ in failed_cw)
+                               + ". Check the address in data/competitor_sources.csv.")
+                empty_cw = [p_ for p_ in cw_["pages"] if p_["ok"] and not p_["found"]]
+                if empty_cw:
+                    st.caption("Read, but no incentive or tariff notices found (the page may load its list with JavaScript): "
+                               + "; ".join(f"{p_['port']} ({p_['page']})" for p_ in empty_cw))
+                with st.expander(f"All {len(cw_['all'])} incentive and tariff notices recorded at competitor ports"):
+                    _htable(pd.DataFrame([{"Port": r["port"], "Notice": r["title"], "Kind": r["kind"],
+                                           "Date on the notice": r["date_on_page"] or "\u2014", "First seen": r["first_seen"]}
+                                          for r in cw_["all"]]))
+            _src(cw_.get("source") or "Public notice pages of the competitor ports")
 
             op_ = api_get("/incentive/other-ports") or {}
             if op_.get("available"):
