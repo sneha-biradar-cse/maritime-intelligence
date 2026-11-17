@@ -253,3 +253,113 @@ confirmation.
 - **What we earn → Check against NMPA's bills** and **Schemes → Competitor watch** (built with another tool, reviewed and
   tested): Finance uploads billed amounts and sees each estimate against the bill; the weekly refresh reads the notice
   pages of Cochin, VOC Tuticorin and Mormugao (data/competitor_sources.csv) and lists new incentive or tariff notices.
+- **Plan a discount → Share a fixed budget by extra cargo** (as at Incheon): the Board fixes one amount; customers that
+  grew (against the same months a year earlier, daily reports) share it in proportion to their extra tonnes, with no
+  customer paid more than a set share of the wharfage rate per extra tonne. What is not earned stays with NMPA, so the
+  total can never exceed the budget. A matching template is in the scheme register. Customer names are as written in
+  the daily reports until NMPA confirms them.
+- **Schemes → Rebate claims.** Each claim goes Submitted → Verified → Approved → Paid (or Rejected, with a reason),
+  recording who did each step and when. Traffic submits; Traffic or Finance verifies (from NMPA's statements and bills);
+  the Approver approves; Finance marks it paid with the payment or credit note reference. The same scheme, customer and
+  period cannot be claimed twice; amounts can only go down along the way; with logins, the person who submits cannot
+  verify or approve; approval is refused if it would take a register scheme over its Board-approved budget. Claims stay
+  on this computer (data/incentive_claims.json, never uploaded to GitHub).
+- **Schemes → Monthly settlement list (for Finance).** Choose a month: the container calls at Berth 14 that qualify for
+  NMPA's container rebate (from 3 Nov 2026), the Berth 16 calls to check for the Cape-size rebate (only above 80,000
+  GRT), and each exporter's iron ore tonnes so far (that rebate is paid after 31 Mar 2027). Calls come straight from
+  the daily reports. An amount is shown only where the ship's GRT is held; otherwise 'apply on the bill', because the
+  bill carries the GRT. Download the list as a CSV for billing.
+
+## Public data added (14 November 2026)
+
+- **NMPA berth capacity** (data/nmpa_berth_capacity.csv, from NMPA's "Berth Capacity as on 31-3-2025", usable and rated
+  capacity for every berth and the SPM). The berth check now uses two checks and the stricter decides: days with a ship
+  (daily reports) and estimated tonnes against NMPA's usable capacity (official tonnes per cargo spread across berths by
+  ship-days; estimated only where the cargos priced here make up at least 75% of the berth's use). It names the berths
+  with room, e.g. the SPM for crude oil.
+- **The weekly refresh now also** rebuilds ship stays at berths from the daily reports (step 5; it had stopped at
+  14 Sep 2026) and fetches public ship sizes from Wikidata (step 6, name match, planning only) and USD-INR rates (step 6b),
+  so ship-charge rebates are priced where a size is found. NMPA's own GRTs (data/vessel_gt.csv) always win.
+- **Older daily reports (April to August 2025)** would give full FY 2025-26 baselines per exporter. They can be fetched
+  with `python scripts\download_daily_reports.py --from 2025-04-01 --to 2025-08-31`, once NMPA permits automated
+  download (its website asks programs not to crawl it).
+- **NMPA's published handling cost** (data/nmpa_cost_reference.csv, from NMPA's budget document RE 2023-24 / BE 2024-25):
+  cargo handling & storage expenditure per tonne, about Rs 18.21 (RE 2023-24). In Plan a discount → Optional: costs, the
+  button "Use NMPA's published average" fills the cost box. It includes fixed costs (salaries), so the true cost of an
+  extra tonne is lower: a cautious upper bound. Newer budget documents: `python scripts\fetch_nmpa_cost_reference.py --url <link>`.
+- **Schemes → Ship turnaround against the other major ports** (data/major_ports_turnaround.csv, the Ministry's Lok Sabha
+  reply, 2021-22 to 2025-26): New Mangalore was 3rd of 12 in 2025-26 (43.23 hours, the same as NMPA's own March 2026
+  statement); this year so far (45.54 hours to Sep 2026) it would rank about 5th. Update with
+  `python scripts\fetch_turnaround_benchmark.py --url <page with the table>`.
+- **Back-filling older daily reports** (direct mode): NMPA's reports have a fixed address
+  (`/sites/default/files/dailyvessel/DD-MM-YYYY.pdf`) and are online back to at least December 2024. With NMPA's
+  written OK: `python scripts\download_daily_reports.py --direct --from 2025-04-01 --to 2025-08-31`, then
+  `python scripts\update_trade_data.py`. One request per missing day, a pause between requests; only real PDFs are
+  saved; every date is logged (downloaded / already held / not on the site). The iron ore base then becomes the full
+  FY 2025-26, and each exporter's extra tonnes and the rebate building up appear in Schemes and the settlement list.
+- **Schemes → Rebate claims → Who approves what (to be confirmed by NMPA).** Reference documents (NMPA's delegation of
+  powers 2021, decision-making procedures, officers' duties, the MPA Act 2021, Ministry delegation orders) and an
+  approval route in data/approval_matrix.csv. Nothing in it is used until NMPA confirms it (confirmed_by_nmpa = yes, with
+  the date and the limit). Older delegation limits are not copied in, and general financial powers are not taken to
+  decide who approves incentive claims. When confirmed, the claim's approval step shows the authority for the amount.
+- **Scheme history** (data/nmpa_incentive_notices.csv, now with a source for every row): the Cape-size rebate has run
+  without a break since 3 Apr 2021 (trial; extended 2022, 2023, 2025); the container rebate since at least January 2023
+  (enhanced to 35%/50% on 3 Nov 2026); NMPA's 2023 trade notice on performance norms (incentive and penalty) for dry bulk
+  vessels. The scheme reviews say what their checks really measure in the light of this history.
+- **NMPA's Citizen's Charter 2024-25** (nmpa_public_data/reference/): service standards (berth allotment 30 min, pilotage
+  120 min, 16,000 t per ship berth-day) are shown next to the turnaround comparison, with NMPA's actual output (19,229 t,
+  above the standard). Claims show days in each step; the Charter's 5-day payment standard (suppliers) is a reference only.
+
+## Confirm customer names (Customers & cargo, last section)
+
+One list of the engine's name merges and proposals, biggest cargo first: spelling merges already applied (data/customer_aliases.csv,
+inferred from spelling), company renames and mergers with documents (data/customer_identity_proposals.csv), and possible
+matches the engine found (initials or whole words, e.g. ERM / E. Ramamurthy Minerals). Each item shows the cargo, tonnes,
+ships and months behind it. Traffic marks Same / Different / Not sure and presses Save: this changes no figure. Pressing
+"Apply confirmed decisions" then updates the name list (a dated backup is kept first); "Not sure" is never applied.
+"Full list for NMPA to fill in (CSV)" gives the same list to answer offline. Decisions are kept on this computer
+(data/customer_name_decisions.json, never uploaded to GitHub).
+- **Schemes → Monthly settlement list → Prepare a claim.** Pick a line (a container or Cape-size call, or an iron ore exporter)
+  and press "Prepare claim": the "New claim" form in Rebate claims opens with the scheme, claimant (the ship's agent for ship-charge
+  rebates, the exporter for iron ore), period, tonnes and amount where priced, and a note of where each detail came from. Nothing
+  is submitted: the officer checks the form against the customer's claim letter and NMPA's bill, corrects it, then submits.
+- **Start here → Prepare the brief (PDF).** One page for the Chairman or a Board meeting, made only when you press the button
+  (nothing is sent): the picture, this week's actions, key customers at risk, NMPA schemes ending within six months, rebate
+  claims, cargo going to other ports and the turnaround rank, and berths near or beyond NMPA's usable capacity. It is marked
+  "for discussion: nothing in it is a decision".
+- **Schemes → Did each scheme pay for itself?** (after "Every NMPA scheme, judged so far"). For each scheme: what it gave up,
+  what the extra cargo it really brought earned (above what the market explains; with and without NMPA's published handling
+  cost), and the net. A verdict is never firmer than the scheme review behind it ("Indicative only" or "Not yet" otherwise), and
+  a cost the engine cannot work out is shown as not priced, never guessed. Relief measures are flagged: judge them on keeping
+  cargo in a crisis, not on profit.
+- **Board agenda note (Word), now with the engine's evidence:** earlier NMPA schemes for the same cargo with their net-benefit
+  verdict (Background); what each extra tonne keeps after the discount and after NMPA's published handling cost (Financial
+  implications); whether the cargo's berths have room, and their busiest month (Safeguards); and the approval route, shown
+  as "to be confirmed by NMPA" until NMPA confirms it. Still a draft: officers edit and decide.
+- **Plan a discount → Compare scheme designs.** For the chosen cargo and discount, and one assumption of extra cargo
+  (slider), four designs side by side: discount on all cargo, rebate on extra cargo only, shared budget pool, and rebate
+  only when the customer is ready. Each shows its cost to NMPA in a year, the net for NMPA (after NMPA's published handling
+  cost), when it pays for itself, what customers must do, and its main risk. The officer chooses; nothing is decided here.
+- **Customers & cargo → Prepare a call sheet.** Pick a key customer and press Prepare: one page for the Traffic officer
+  before a call. At a glance (cargo, share, trend, risk), cargo month by month, waiting on the customer's side, NMPA schemes
+  they can use now (with eligibility cautions, e.g. KIOCL's own arrangement for the iron ore rebate), the names they appear
+  under, follow-up so far, and suggested talking points. Made only on request; the points are suggestions, not commitments.
+
+## NMPA circulars and trade notices (Schemes)
+
+Add a new NMPA circular (title, date, link): it is sorted as incentive or concession, tariff or charges, rules and
+procedures, weather and safety, traffic and statistics, or tenders and land, and shows the part of the platform it affects
+with a suggested next step (for example, a new rebate: add it to the scheme register). Officers mark each one done with
+what was done; Start here shows how many are waiting. Automatic reading of NMPA's circulars page (weekly refresh, step 7)
+starts only after the Approver records NMPA's written permission, because NMPA's website asks programs not to read it
+automatically; the first reading is recorded as the starting point. Kept on this computer (data/nmpa_circulars.json).
+
+## NMPA notices added (17 November 2026)
+
+Five official NMPA notices are now held (nmpa_public_data/nmpa_notices/, read by OCR): the container vessel rebate of
+2023 to 2026 (notices 1/2/2014-DTM (C)/2023-1, 2023-3, 2023-4: 25% for feeders on berth hire and port dues, 25% for mainline
+vessels on port dues, berth hire and pilotage, plus 15% for a new international service other than Colombo) and the coastal
+container free-storage scheme of 2019 to 2022 (1 day to 7 days). The monthly settlement list now applies the container
+rebate in force on each call's date (25% to 2 Nov 2026, 35%/50% from 3 Nov 2026), so earlier months show their qualifying
+calls; claims can be made under a scheme in force or ended within the last 12 months. The 02.11.2026 notice does not repeat
+the 15% for new services: confirm with NMPA whether it still applies.

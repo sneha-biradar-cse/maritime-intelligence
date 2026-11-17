@@ -40,3 +40,23 @@ nmpa_public_data/harvested/
 # NMPA billing uploaded by Finance: stays on this computer
 data/finance_billing.csv
 data/finance_billing_uploaded_by.txt
+data/incentive_claims.json
+data/incentive_claims.tmp
+data/customer_name_decisions.json
+data/customer_aliases.backup-*.csv
+data/nmpa_circulars.json
+data/automated_access.json
+
+# From Bhaskar's repository
+backend/app/services/audit_log.json
+data/sor_watch_manifest.json
+data/daily_vessel_position/*.pdf
+.streamlit/*
+!.streamlit/config.toml
+.env
+.env.*
+*.log
+logs/
+~$*
+!.env.example
+data/ais/

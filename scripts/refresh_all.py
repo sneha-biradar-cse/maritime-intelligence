@@ -4,6 +4,8 @@ One command for the monthly (or weekly) refresh. In order:
   2. NMPA daily vessel reports since the last one held   (scripts/download_daily_reports.py --from <next day> --to <today>)
   3. Read and check everything new, refresh all figures  (scripts/update_trade_data.py; all-or-nothing)
   4. Rebuild the Excel workbook of daily reports         (scripts/export_daily_reports_excel.py)
+  5. Rebuild ship stays at berths                         (backend/app/services/vessel_stay_duration.py)
+  6. Public ship sizes and USD-INR rates                  (scripts/fetch_public_incentive_data.py vessel-gt, fx)
 Then restart the backend so the dashboard shows the new data.
 
 Usage (PowerShell, from the project folder, venv active):
@@ -55,6 +57,13 @@ def main(argv: list[str]) -> int:
     codes["Update"] = step("3. Read, check and refresh everything (all-or-nothing)", ["scripts/update_trade_data.py"])
     if codes["Update"] in (0, 1):
         codes["Excel"] = step("4. Rebuild the Excel workbook", ["scripts/export_daily_reports_excel.py"])
+        codes["Ship stays"] = step("5. Rebuild ship stays at berths from the daily reports (berth times, departures)",
+                                   ["-m", "backend.app.services.vessel_stay_duration"])
+        codes["Public data"] = step("6. Public ship sizes (Wikidata, name match, planning only), for pricing ship charges",
+                                    ["scripts/fetch_public_incentive_data.py", "vessel-gt"])
+        codes["Exchange rates"] = step("6b. USD-INR reference rates", ["scripts/fetch_public_incentive_data.py", "fx"])
+        codes["NMPA circulars"] = step("7. NMPA circulars and trade notices (only if NMPA's permission is recorded)",
+                                       ["scripts/watch_nmpa_circulars.py"])
     print("\n=== Summary ===")
     for k, v in codes.items():
         print(f"  {k:16} {'OK' if v == 0 else ('done, see notes above' if v == 1 else 'FAILED - nothing was changed by this step')}")

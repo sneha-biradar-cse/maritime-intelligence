@@ -57,26 +57,41 @@ former.
 
 ---
 
-## Q3 — We're missing AIS and currently download vessel data by hand. What should we actually ask for?
+## Q3 — We're missing live AIS. What should we actually ask for?
 
-**Where we are today.** Our "live vessel" screen is a fixed, scripted 25-ship list — not live, not
-historical. Getting anything real today means looking up vessels one at a time by hand.
+**Where we are today.** Our live-tracking screen is still a fixed, scripted fleet list, not real AIS. But
+we no longer rely on looking vessels up by hand: we built a real historical archive from NMPA's own
+public Daily Vessel Position reports (Traffic Department "Proceedings of the Operation Meeting") and used
+it to compute the platform's first genuinely real vessel-stay and berth-occupancy numbers.
 
-**Why we shouldn't just buy commercial AIS.** MarineTraffic/Spire-grade AIS is a paid subscription, and
-most of what it would show — ships already inside NMPA's harbour limits — is redundant with data the
-port already collects via its own Vessel Traffic Management System (VTMS) / Port Control.
+**How we built the historical archive.** NMPA's public "Daily Vessel Position" page only displays that
+day's report, with no visible archive or bulk-download option. Its PDF link, however, follows a
+predictable, date-based path — and we confirmed the same path resolves for past dates too, meaning a year
+of history was already sitting on NMPA's own server, simply not linked from the page itself. We built a
+collector that fetches each date directly and recovered roughly a year of daily reports, which we've
+since parsed into structured records (arrivals, berthings, sailings, anchorage waits with stated reasons)
+to link each vessel's actual stay duration. Coverage isn't complete — about 76% of calendar days
+resolved, closer to 88% of working days once Sundays (which the report doesn't appear to cover) are
+accounted for — so this is a self-built stopgap, not a substitute for sanctioned access.
+
+**Why we still shouldn't just buy commercial AIS.** MarineTraffic/Spire-grade AIS is a paid subscription,
+and most of what it would show — ships already inside NMPA's harbour limits — is redundant with data the
+port already collects via its own Vessel Traffic Management System (VTMS) / Port Control, and largely
+redundant with what our own archive now already recovers from NMPA's public reports.
 
 **The actual ask, reframed.** Not "give us AIS," but: can Port Control / VTMS export the vessel-call log
-it already keeps — vessel name/IMO, ETA/ATA, berth assigned, ATB, ATD, cargo type and quantity. Even a
-periodic bulk CSV/Excel extract (not live streaming) would be transformative for real stay-duration and
-berth-occupancy modeling.
+it already keeps directly — vessel name/IMO, ETA/ATA, berth assigned, ATB, ATD, cargo type and quantity?
+That would both fill the ~12-24% gap in our self-built archive and remove our dependency on scraping a
+page never designed for bulk historical access.
 
-**Secondary ask.** 2–3 years of historical vessel-call data (redacted if needed) to backtest a real
-turnaround-time model and validate it against NMPA's own committed performance standard — 37-hour
-average vessel turnaround, 7-hour average pre-berthing time (SOR Annexure-II).
+**Secondary ask.** 2–3 years of historical vessel-call data (redacted if needed) to extend what we've
+already built and validate it further against NMPA's own committed performance standard — 37-hour average
+vessel turnaround, 7-hour average pre-berthing time (SOR Annexure-II). Our own measured median so far,
+from the self-built archive, is already close to that standard — worth showing them directly.
 
-**Ask them:** Does Port Control / VTMS maintain a per-vessel call log? Could a historical bulk extract be
-shared for a student/research project? Who's the right department?
+**Ask them:** Does Port Control / VTMS maintain a per-vessel call log we could get official bulk access
+to, instead of us scraping the public reports? Could a historical extract predating our archive (pre
+August 2025) be shared? Who's the right department?
 
 ---
 
@@ -108,15 +123,25 @@ a Smart Port / digital cell we should be talking to?
 - **Port cost estimator** — real SOR-derived tariff data, not yet checked against a real invoice.
 - **Berth/facility routing** — real `berths.csv`/`berth_capacity.csv` NMPA data; our own audit caught and
   fixed a substring-matching bug that had silently misrouted crude/LPG/coal/containers to Berth 1.
+- **Vessel stay duration & real call spacing — self-built from NMPA's own public Daily Vessel Position
+  reports** (see Q3): ~1 year of daily reports collected and parsed, vessel identities resolved across
+  reporting inconsistencies, and each call's berthing-to-sailing duration linked from real timestamps
+  where available. High-confidence median stay duration measured so far: within a few hours of NMPA's own
+  37-hour turnaround standard (SOR Annexure-II).
 - **NMPA Circulars & Trade Notices** — not yet built, but confirmed scrapable from the public site with
   no NMPA dependency.
 
 ## Project Status, Part B — What's blocked, and why
 
-- **Vessel stay duration / berth occupancy prediction — BLOCKED.** Only monthly aggregated tonnage
-  exists in our data; no per-vessel dwell-time signal. Solvable only via the Q3 vessel-call-log ask.
-- **Real-time AIS — BLOCKED.** Cost (paid subscription) and redundancy (NMPA's own VTMS already has it).
-  Solvable via Q3, or relabeled honestly as simulated.
+- **Vessel stay duration / berth occupancy — PARTIALLY SOLVED, self-built.** No longer blocked: see Part
+  A. What's missing is completeness, not the mechanism — about 12-24% of days aren't recoverable from the
+  public page alone, and roughly a quarter of linked calls have no confirmed departure event yet
+  (vessel may still be in port, or its sailing fell in a gap). Official bulk access (Q3) would close both
+  gaps and extend history further back than August 2025.
+- **Real-time AIS — BLOCKED, though partially superseded.** True live tracking is still not solved (cost
+  of commercial AIS, redundant with NMPA's own VTMS) — but our self-built archive already recovers most of
+  the *value* we originally wanted AIS for (real stay/occupancy data), just not live, and not with vessel
+  position at sea.
 - **Trade intelligence (lanes/prices/"opportunities") — BLOCKED, but not on NMPA.** No
   origin/destination or price dataset exists; currently randomly generated per request. Solvable via
   DGCIS/World Bank, independent of this visit.
@@ -131,7 +156,8 @@ a Smart Port / digital cell we should be talking to?
 ## Cheat sheet — what to literally ask on the day
 
 **Must-ask**
-1. Does Port Control / VTMS keep a per-vessel call log? Could a historical bulk extract be shared?
+1. Does Port Control / VTMS keep a per-vessel call log we could get official bulk/API access to — to
+   replace our own scraped archive and fill its ~12-24% coverage gaps?
 2. Is there a digital transformation / Smart Port / PCS1x integration point we should be talking to?
 3. Could billing/operations sanity-check a handful of our cost estimates against a real invoice?
 

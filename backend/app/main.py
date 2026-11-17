@@ -12,6 +12,15 @@ app = FastAPI(
     version="3.1.0",
 )
 
+@app.on_event("startup")
+def _warm_vessel_intel() -> None:
+    """Build the Vessel Intelligence caches in the background so the first
+    request to the tab is fast (call stitching + backtests take a few seconds)."""
+    import threading
+    from backend.app.services import vi_features
+    threading.Thread(target=vi_features.warm_up, daemon=True).start()
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

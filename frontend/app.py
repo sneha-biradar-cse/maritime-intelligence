@@ -587,90 +587,351 @@ with tabs[1]:
     st.markdown('<div class="ys-content">', unsafe_allow_html=True)
     st.markdown("""
     <div class="sec-header">
-      <span class="sec-title">New Mangalore Port (NMPA) Vessel Intelligence Engine</span>
+      <span class="sec-title">Vessel Intelligence — New Mangalore Port</span>
       <span class="sec-tag">Module 1</span>
-      <div class="sec-sub">NMPA AIS tracking, ETA predictions, berth queueing, delay probability & route risk scoring</div>
+      <div class="sec-sub">For the berth planner and Traffic Department: who is expected, waiting and alongside; when berths free up;
+      where queues will form; and how today compares with NMPA's own monthly performance figures.</div>
     </div>""", unsafe_allow_html=True)
 
-    st.caption("⚠ The fleet tracker, per-ship ETAs, and risk scores below are illustrative demo data — no real AIS/vessel-tracking feed exists in this project. For a real, backtested prediction, see the **Vessel Call Forecast (ML)** panel further down this tab.")
+    def vi_get(path, params=None, timeout=45):
+        try:
+            r = requests.get(f"{API}{path}", params=params, timeout=timeout)
+            r.raise_for_status()
+            return r.json()
+        except Exception as e:
+            print(f"API GET Error ({path}): {e}")
+            return None
 
-    v_data = api_get("/vessels/") or {"vessels": []}
-    alerts_data = api_get("/vessels/congestion-alerts") or {"alerts": []}
-    vessels = v_data.get("vessels", [])
-    alerts = alerts_data.get("alerts", [])
+    VI_CLASS_LABELS = {
+        "dry_bulk_conventional": "Dry bulk (conv.)", "dry_bulk_mechanical": "Dry bulk (mech.)", "break_bulk": "Break bulk",
+        "liquid_bulk": "Liquid bulk", "container": "Container", "cruise": "Cruise", "non_cargo": "Non-cargo", "unknown": "Unknown",
+    }
+    VI_CLASS_COLORS = {
+        "Dry bulk (conv.)": "#78716C", "Dry bulk (mech.)": "#374151", "Break bulk": "#0891B2", "Liquid bulk": "#D97706",
+        "Container": "#2563EB", "Cruise": "#7C3AED", "Non-cargo": "#A8A29E", "Unknown": "#D6D3D1",
+    }
+    ACCOUNT_LABELS = {"port": "Port account", "non_port": "Other than port", "excluded": "Non-cargo", "unknown": "Not stated"}
 
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Total Vessels Tracked", len(vessels))
-    c2.metric("High Risk Vessels", len([v for v in vessels if v.get("route_risk", 0) > 0.7]))
-    c3.metric("Vessels < 48h ETA", len([v for v in vessels if v.get("hours_to_arrival", 999) < 48]))
-    c4.metric("Avg Delay Probability", f"{sum(v.get('delay_prob',0) for v in vessels)/max(len(vessels),1):.0%}")
+    def fmt_dt(s):
+        if not s:
+            return "—"
+        try:
+            return datetime.fromisoformat(s).strftime("%d %b %H:%M")
+        except ValueError:
+            return s
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    col_l, col_r = st.columns([3, 2])
+    dates_meta = vi_get("/vessels/intel/report-dates") or {"dates": [], "latest": None}
+    vi_dates = list(reversed(dates_meta.get("dates", [])))
 
-    with col_l:
-        if vessels:
-            df_v = pd.DataFrame(vessels)
-            show_cols = ["name", "flag", "commodity", "destination_name", "hours_to_arrival",
-                         "speed_kn", "delay_prob", "route_risk", "status"]
-            df_show = df_v[show_cols].copy()
-            df_show.columns = ["Vessel", "Flag", "Commodity", "Destination", "ETA (hrs)",
-                                "Speed (kn)", "Delay Prob", "Route Risk", "Status"]
-            df_show = df_show.sort_values("ETA (hrs)")
-            st.markdown('<div class="panel"><div class="panel-title">Vessel Tracker — 25 Active Vessels</div>', unsafe_allow_html=True)
-            st.dataframe(df_show, **_W_DF, height=380,
-                         column_config={
-                             "Delay Prob": st.column_config.ProgressColumn("Delay Prob", min_value=0, max_value=1, format="%.0%"),
-                             "Route Risk": st.column_config.ProgressColumn("Route Risk", min_value=0, max_value=1, format="%.2f"),
-                         })
+    if not vi_dates:
+        st.error("No Daily Vessel Position reports found. Run `python scripts/update_vessel_intel_data.py` to download and parse them.")
+    else:
+        top_l, top_r = st.columns([3, 1])
+        with top_r:
+            vi_as_of = st.selectbox("As of NMPA report", vi_dates, index=0, key="vi_as_of",
+                                    help="Replay the tab exactly as it would have looked on an earlier report day.")
+        board = vi_get("/vessels/intel/board", {"as_of": vi_as_of}) or {}
+        lin = board.get("lineage", {})
+        with top_l:
+            age = lin.get("data_age_days")
+            cov = lin.get("coverage", {})
+            st.markdown(
+                f'<div style="padding:10px 14px; background:#F0FDF4; border:1px solid #BBF7D0; border-left:4px solid #059669; border-radius:10px; font-size:12.5px;">'
+                f'<b style="color:#065F46;">REAL DATA</b> · NMPA Daily Vessel Position report of <b>{vi_as_of}</b> '
+                f'(as of ~{lin.get("report_reference_time", "10:00")[:5]} IST) · archive {lin.get("archive", {}).get("first")} → {lin.get("archive", {}).get("last")} '
+                f'· {cov.get("published_days", 0)} reports, {cov.get("coverage_excl_sundays_pct", 0)}% of working days'
+                + (f' · <span style="color:#B45309;"><b>latest report is {age} days old</b> — run scripts/update_vessel_intel_data.py</span>' if age and age > 2 else "")
+                + '</div>', unsafe_allow_html=True)
+
+        sm = board.get("summary", {})
+        m1, m2, m3, m4, m5, m6 = st.columns(6)
+        m1.metric("Alongside (cargo)", sm.get("alongside_cargo", 0), f"{sm.get('berths_occupied_cargo', 0)}/{sm.get('berths_total', 0)} berths", delta_color="off")
+        m2.metric("At anchorage", sm.get("waiting_total", 0), f"{sm.get('waiting_port_account', 0)} port a/c", delta_color="off")
+        m3.metric("Longest port wait", f"{sm.get('longest_port_account_wait_h', 0):.0f} h")
+        m4.metric("Due in 72 h", sm.get("expected_next_72h", 0), f"{sm.get('expected_total', 0)} expected", delta_color="off")
+        m5.metric("Programmed berthings", sm.get("programmed_berthings", 0), f"{sm.get('programmed_sailings', 0)} sailings", delta_color="off")
+        m6.metric("Alerts", sm.get("alerts", 0))
+
+        for a in board.get("alerts", [])[:6]:
+            css = {"high": "alert-high", "medium": "alert-medium", "info": "alert-low"}.get(a["severity"], "alert-medium")
+            st.markdown(f'<div class="alert-card {css}" style="padding:10px 14px; margin-bottom:8px;"><div class="alert-desc" style="margin:0; color:#1C1917;">'
+                        f'<b>{a["type"].replace("_", " ").title()}</b> — {a["message"]}</div></div>', unsafe_allow_html=True)
+
+        def vi_imo_cell(r):
+            """IMO from data/reference/vessel_imo_lookup.csv (name + LOA match)."""
+            if r.get("imo"):
+                return r["imo"]
+            return "check: same name" if r.get("imo_match") in ("ambiguous", "loa_mismatch") else "—"
+
+        vt_board, vt_arr, vt_plan, vt_wait, vt_perf, vt_method = st.tabs([
+            "Port Call Board", "Arrivals & ETA", "Berth Plan", "Waiting & Delays", "Performance vs NMPA", "Data & Method",
+        ])
+
+        # ── F1 Port Call Board ────────────────────────────────────────────
+        with vt_board:
+            st.markdown('<div class="panel"><div class="panel-title">Alongside — departure forecast</div>', unsafe_allow_html=True)
+            al = board.get("alongside", [])
+            if al:
+                df_al = pd.DataFrame([{
+                    "Berth": a["berth"] or "—", "Vessel": a["vessel"], "IMO": vi_imo_cell(a), "Cargo": a["cargo"] or "—",
+                    "Class": VI_CLASS_LABELS.get(a["cargo_class"], a["cargo_class"]),
+                    "Hours alongside": a["hours_alongside"], "Handled (t)": a["qty_handled_t"], "Balance (t)": a["qty_balance_t"],
+                    "Last 24h (t)": a["qty_day_t"], "NMPA ETD": a["nmpa_etd"] or "—",
+                    "NMPA programme sailing": fmt_dt(a.get("programme_sailing")),
+                    "Predicted departure": fmt_dt(a["predicted_departure"]), "Forecast basis": a["forecast_method"],
+                    "Receiver / shipper": a["receiver"] or "—",
+                } for a in al])
+                st.dataframe(df_al, **_W_DF, hide_index=True, height=min(420, 40 + 35 * len(df_al)))
+                st.caption("Departure forecast = NMPA's own ETD (date) plus a time-of-day offset learned from past sailings; if no ETD is printed, "
+                           "remaining balance ÷ handling rate, then the typical stay. Backtest in 'Data & Method'.")
             st.markdown('</div>', unsafe_allow_html=True)
 
-            # ETA chart
-            top_eta = df_v.nsmallest(15, "hours_to_arrival")
-            fig_eta = px.bar(top_eta, x="hours_to_arrival", y="name", orientation="h",
-                             color="commodity", color_discrete_map=COMMODITY_COLORS,
-                             title="Next 15 Arrivals — Hours to Port",
-                             labels={"hours_to_arrival": "Hours to Arrival", "name": ""})
-            fig_eta.update_layout(**PLOTLY_THEME, height=380)
-            fig_eta.update_yaxes(autorange="reversed")
-            st.plotly_chart(fig_eta, **_W_CHART)
+            st.markdown('<div class="panel"><div class="panel-title">Waiting at anchorage / scheduled tankers</div>', unsafe_allow_html=True)
+            wt = board.get("waiting", [])
+            if wt:
+                df_wt = pd.DataFrame([{
+                    "Vessel": w["vessel"], "IMO": vi_imo_cell(w), "List": w["list"], "Cargo": w["cargo"] or "—",
+                    "Class": VI_CLASS_LABELS.get(w["cargo_class"], w["cargo_class"]),
+                    "Arrived": fmt_dt(w["arrival"]), "Waiting (h)": w["waiting_h"],
+                    "Reason (NMPA)": w["reason_raw"] or "—", "Account": ACCOUNT_LABELS.get(w["account"], w["account"]),
+                    "Target berth": w["target_berth"] or "—",
+                    "Programmed berthing": (f"{fmt_dt(w['programme_berthing']['at'])} @ B{w['programme_berthing']['berth']}" if w.get("programme_berthing") else "—"),
+                    "Likely more wait (h, median / p80)": (f"{w['expected_more_wait_h']:.0f} / {w['expected_more_wait_p80_h']:.0f}"
+                                                           if w.get("expected_more_wait_h") is not None else "—"),
+                } for w in wt])
+                st.dataframe(df_wt, **_W_DF, hide_index=True)
+                st.caption("Account follows NMPA's monthly report: 'Port account' = want of berth / tide; 'Other than port' = receiver or shipper "
+                           "not ready, laycan, customs, legal holds. 'Likely more wait' = what past vessels that had already waited this long "
+                           "for the same kind of reason went on to wait.")
+            else:
+                st.info("No vessels waiting in this report.")
+            st.markdown('</div>', unsafe_allow_html=True)
 
-    with col_r:
-        st.markdown('<div class="panel"><div class="panel-title">Congestion Alerts</div>', unsafe_allow_html=True)
-        if alerts:
-            for a in alerts[:6]:
-                sev = a.get("severity", "Medium")
-                css_class = f"alert-{sev.lower()}"
-                badge_class = f"badge-{sev[:4].lower()}"
-                st.markdown(f"""
-                <div class="alert-card {css_class}">
-                  <div class="alert-title">{a['vessel']}</div>
-                  <div class="alert-desc">{a['message']}</div>
-                  <div class="alert-meta">
-                    <span><b>Commodity:</b> {a['commodity']}</span>
-                    <span><b>ETA:</b> {a['hours_to_arrival']}h</span>
-                    <span><b>Risk:</b> {a['route_risk']:.2f}</span>
-                    <span class="badge {badge_class}">{sev}</span>
-                  </div>
-                </div>""", unsafe_allow_html=True)
-        else:
-            st.info("No active congestion alerts.")
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('<div class="panel"><div class="panel-title">Vessels expected</div>', unsafe_allow_html=True)
+            ex = board.get("expected", [])
+            if ex:
+                df_ex = pd.DataFrame([{
+                    "Vessel": e["vessel"], "IMO": vi_imo_cell(e), "Cargo": e["cargo"] or "—", "Class": VI_CLASS_LABELS.get(e["cargo_class"], e["cargo_class"]),
+                    "Declared ETA": fmt_dt(e["declared_eta"]),
+                    "Likely window (p10–p90)": f"{fmt_dt(e['eta_p10'])} – {fmt_dt(e['eta_p90'])}" if e.get("eta_p10") else "—",
+                    "Qty (t)": round(e["qty_t"]) if e.get("qty_t") else None, "Draft (m)": e["draft_m"], "LOA (m)": e["loa_m"],
+                    "Preferred berths": ", ".join(e["berth_prefs"] or []) or "—",
+                    "Berthing fit": e["berthing_fit"].replace("_", " "),
+                    "P(wait > 24 h)": e["p_wait_over_threshold"],
+                    "Programmed": (f"{fmt_dt(e['programme_berthing']['at'])} @ B{e['programme_berthing']['berth']}" if e.get("programme_berthing") else "—"),
+                } for e in ex])
+                st.dataframe(df_ex, **_W_DF, hide_index=True,
+                             column_config={"P(wait > 24 h)": st.column_config.ProgressColumn("P(wait > 24 h)", min_value=0, max_value=1, format="%.2f")})
+            st.markdown('</div>', unsafe_allow_html=True)
 
-        if vessels:
-            df_risk = pd.DataFrame(vessels)
-            fig_risk = px.scatter(df_risk, x="delay_prob", y="route_risk",
-                                  size="capacity_mt", color="commodity",
-                                  color_discrete_map=COMMODITY_COLORS,
-                                  hover_name="name",
-                                  title="Route Risk vs Delay Probability",
-                                  labels={"delay_prob": "Delay Probability", "route_risk": "Route Risk Score"})
-            fig_risk.add_hline(y=0.7, line_dash="dash", line_color="#DC2626", annotation_text="High Risk Threshold")
-            fig_risk.add_vline(x=0.35, line_dash="dash", line_color="#D97706", annotation_text="High Delay")
-            fig_risk.update_layout(**PLOTLY_THEME, height=300)
-            st.plotly_chart(fig_risk, **_W_CHART)
+            prog = board.get("programme", [])
+            if prog:
+                with st.expander(f"NMPA berthing programme in this report ({len(prog)} movements)"):
+                    st.dataframe(pd.DataFrame([{"Time": fmt_dt(p["at"]), "Event": p["event"].replace("_", " "),
+                                                "Vessel": p["vessel"], "Berth": p["berth"] or "—"} for p in prog]),
+                                 **_W_DF, hide_index=True)
 
-    # ── Vessel Call Forecast (real ML, replaces the synthetic ETA above) ──
+            with st.expander("Trace a vessel — every source row behind a port call"):
+                call_opts = {}
+                for row in al + wt:
+                    if row.get("call_id"):
+                        call_opts[f"{row['vessel']} ({row['call_id']})"] = row["call_id"]
+                if call_opts:
+                    pick = st.selectbox("Port call", list(call_opts.keys()), key="vi_call_pick")
+                    cd = vi_get(f"/vessels/intel/calls/{call_opts[pick]}") or {}
+                    if cd:
+                        st.json({k: cd[k] for k in ["call_id", "status", "cargo", "cargo_class", "arrival_dt", "arrival_precision",
+                                                    "first_berth_dt", "first_berth_basis", "depart_dt", "depart_basis", "berths",
+                                                    "wait_h", "wait_port_h", "wait_non_port_h", "wait_main_reason", "at_berth_h",
+                                                    "declared_eta", "eta_error_h", "flags"] if k in cd}, expanded=False)
+                        st.dataframe(pd.DataFrame(cd.get("observations", [])), **_W_DF, hide_index=True)
+                        if cd.get("movements"):
+                            st.dataframe(pd.DataFrame(cd["movements"]), **_W_DF, hide_index=True)
+
+        # ── F2 Arrivals & ETA ─────────────────────────────────────────────
+        with vt_arr:
+            arr = vi_get("/vessels/intel/arrivals", {"as_of": vi_as_of, "days": 7}) or {}
+            eta = vi_get("/vessels/intel/eta-accuracy", {"as_of": vi_as_of}) or {}
+            if arr.get("days"):
+                rows = []
+                for d in arr["days"]:
+                    for cls, v in d["by_cargo_class"].items():
+                        rows.append({"Date": d["date"], "Class": VI_CLASS_LABELS.get(cls, cls), "Expected arrivals": v})
+                if rows:
+                    fig_arr = px.bar(pd.DataFrame(rows), x="Date", y="Expected arrivals", color="Class", color_discrete_map=VI_CLASS_COLORS,
+                                     title="Expected arrivals per day (probability-weighted from declared ETAs)")
+                    fig_arr.update_layout(**PLOTLY_THEME, height=320)
+                    st.plotly_chart(fig_arr, **_W_CHART)
+            de, ce = eta.get("declared_eta", {}), eta.get("bias_corrected_eta", {})
+            if de:
+                e1, e2, e3, e4 = st.columns(4)
+                e1.metric("Arrivals checked", de.get("n"))
+                e2.metric("Declared ETA within ±24 h", f"{de.get('within_24h_pct')}%")
+                e3.metric("Median ETA error", f"{de.get('median_abs_h')} h")
+                e4.metric("Expected lists that arrived", f"{eta.get('expected_lists_matched_to_an_arrival_pct')}%")
+                st.info(eta.get("verdict", ""))
+                hist = pd.DataFrame(eta.get("error_histogram_days", []))
+                if not hist.empty:
+                    hist["Arrival vs declared ETA"] = hist["days"].map(lambda d: f"{d:+d} d" if abs(d) < 5 else (">= +5 d" if d > 0 else "<= -5 d"))
+                    fig_h = px.bar(hist, x="Arrival vs declared ETA", y="calls", title="How late or early ships arrive vs their declared ETA")
+                    fig_h.update_traces(marker_color=GOLD)
+                    fig_h.update_layout(**PLOTLY_THEME, height=280)
+                    st.plotly_chart(fig_h, **_W_CHART)
+                with st.expander("ETA accuracy by agent (internal — commercially sensitive)"):
+                    st.dataframe(pd.DataFrame(eta.get("by_agent", [])), **_W_DF, hide_index=True)
+
+        # ── F4 Berth Plan ────────────────────────────────────────────────
+        with vt_plan:
+            plan = vi_get("/vessels/intel/berth-plan", {"as_of": vi_as_of, "horizon_h": 72}) or {}
+            st.caption(plan.get("lineage", {}).get("method", ""))
+            gantt = []
+            for b in plan.get("berths", []):
+                for t in b["timeline"]:
+                    if t.get("start") and t.get("end"):
+                        gantt.append({"Berth": f"B{b['berth']}" if b["berth"] != "SPM" else "SPM", "Vessel": t["vessel"],
+                                      "Start": t["start"], "End": t["end"],
+                                      "Kind": "Alongside" if t["kind"] == "alongside" else ("Planned (NMPA programme / queue)")})
+            if gantt:
+                gdf = pd.DataFrame(gantt)
+                order = [f"B{b}" if b != "SPM" else "SPM" for b in [x["berth"] for x in plan["berths"]]]
+                fig_g = px.timeline(gdf, x_start="Start", x_end="End", y="Berth", color="Kind", text="Vessel",
+                                    color_discrete_map={"Alongside": "#374151", "Planned (NMPA programme / queue)": GOLD},
+                                    category_orders={"Berth": order})
+                fig_g.add_vline(x=plan.get("report_time"), line_dash="dash", line_color="#DC2626")
+                fig_g.update_layout(**PLOTLY_THEME, height=520, title="Berth occupancy — now and next 72 h")
+                fig_g.update_xaxes(range=[pd.to_datetime(plan.get("report_time")) - pd.Timedelta(hours=24),
+                                          pd.to_datetime(plan.get("report_time")) + pd.Timedelta(hours=96)])
+                st.plotly_chart(fig_g, **_W_CHART)
+            cf = plan.get("conflicts", [])
+            if cf:
+                for c in cf:
+                    css = "alert-high" if c["severity"] == "high" else "alert-medium"
+                    st.markdown(f'<div class="alert-card {css}" style="padding:10px 14px;"><div class="alert-desc" style="margin:0;color:#1C1917;">{c["message"]}</div></div>',
+                                unsafe_allow_html=True)
+            else:
+                st.success("No berth conflicts forecast in the next 72 h.")
+            seq = plan.get("sequenced", [])
+            if seq:
+                st.dataframe(pd.DataFrame([{"Vessel": s["vessel"], "Status": s["kind"], "Berth": s["berth"], "Ready": fmt_dt(s["ready"]),
+                                            "Predicted start": fmt_dt(s["start"]), "Predicted wait (h)": s["predicted_wait_h"],
+                                            "Service (h)": s["service_h"], "Slot basis": s["slot_basis"], "Note": s.get("note") or ""} for s in seq]),
+                             **_W_DF, hide_index=True)
+            ns = plan.get("not_sequenced", [])
+            if ns:
+                st.caption("Not placed: " + "; ".join(f"{n['vessel']} — {n['why']}" for n in ns))
+
+        # ── F9 Waiting & Delays ──────────────────────────────────────────
+        with vt_wait:
+            wa = vi_get("/vessels/intel/waiting", {"as_of": vi_as_of, "months": 12}) or {}
+            mon = pd.DataFrame(wa.get("monthly", []))
+            if not mon.empty:
+                fig_w = go.Figure()
+                fig_w.add_bar(x=mon["month"], y=mon["avg_port_account_days"], name="Port account", marker_color="#DC2626")
+                fig_w.add_bar(x=mon["month"], y=mon["avg_other_days"], name="Other than port account", marker_color="#F59E0B")
+                fig_w.update_layout(**PLOTLY_THEME, barmode="stack", height=320,
+                                    title="Average pre-berthing detention per cargo call (days) — split as in NMPA's monthly report")
+                st.plotly_chart(fig_w, **_W_CHART)
+            w1, w2 = st.columns(2)
+            with w1:
+                br = pd.DataFrame(wa.get("by_reason", []))
+                if not br.empty:
+                    fig_r = px.bar(br.head(8), x="vessel_days", y="reason", orientation="h", title="Vessel-days waited, by stated reason",
+                                   labels={"vessel_days": "Vessel-days", "reason": ""})
+                    fig_r.update_traces(marker_color=GOLD_DARK)
+                    fig_r.update_layout(**PLOTLY_THEME, height=320)
+                    fig_r.update_yaxes(autorange="reversed", title="")
+                    st.plotly_chart(fig_r, **_W_CHART)
+            with w2:
+                bb = pd.DataFrame(wa.get("want_of_berth_by_berth", []))
+                if not bb.empty:
+                    fig_b = px.bar(bb.head(10), x="berth", y="port_account_vessel_days", title="Port-account waiting by berth (vessel-days)",
+                                   labels={"berth": "Berth", "port_account_vessel_days": "Vessel-days"})
+                    fig_b.update_traces(marker_color="#DC2626")
+                    fig_b.update_layout(**PLOTLY_THEME, height=320)
+                    fig_b.update_xaxes(type="category")
+                    st.plotly_chart(fig_b, **_W_CHART)
+            bc = pd.DataFrame(wa.get("by_cargo_class", []))
+            if not bc.empty:
+                bc["cargo_class"] = bc["cargo_class"].map(lambda c: VI_CLASS_LABELS.get(c, c))
+                bc = bc.rename(columns={"cargo_class": "Cargo class", "calls": "Cargo calls", "median_wait_h": "Median wait (h)",
+                                        "avg_wait_days": "Average wait (days)", "share_port_account_pct": "Port-account share of waiting (%)"})
+                st.dataframe(bc, **_W_DF, hide_index=True)
+            with st.expander("Other-than-port waiting by receiver / shipper (internal — commercially sensitive)"):
+                st.dataframe(pd.DataFrame(wa.get("non_port_waiting_by_receiver", [])), **_W_DF, hide_index=True)
+
+        # ── F8 Performance vs NMPA ───────────────────────────────────────
+        with vt_perf:
+            perf = vi_get("/vessels/intel/performance", {"as_of": vi_as_of}) or {}
+            st.caption(perf.get("how_to_read", ""))
+            for rec in perf.get("reconciliation", [])[-2:]:
+                st.markdown(f"**{rec['month']}** — DVP coverage {rec['dvp_coverage_pct']}% of days")
+                rdf = pd.DataFrame(rec["rows"])
+                rdf["cargo_class"] = rdf["cargo_class"].map(lambda c: VI_CLASS_LABELS.get(c, c.replace("_", " ").title()))
+                rdf = rdf.rename(columns={"cargo_class": "Class", "metric": "Metric", "official": "NMPA official",
+                                          "dvp_derived": "Rebuilt from daily reports", "difference": "Difference", "verdict": "Verdict"})
+                st.dataframe(rdf[["Class", "Metric", "NMPA official", "Rebuilt from daily reports", "Difference", "Verdict"]],
+                             **_W_DF, hide_index=True, height=420)
+            if not perf.get("reconciliation"):
+                st.warning("No official monthly report overlaps the daily archive yet — download NMPA 'Operational Performance' PDFs "
+                           "into nmpa_public_data/operational_performance/ (scripts/update_vessel_intel_data.py does this).")
+            ds = pd.DataFrame(perf.get("dvp_series", []))
+            os_ = pd.DataFrame(perf.get("official_series", []))
+            if not ds.empty:
+                fig_p = go.Figure()
+                fig_p.add_scatter(x=ds["month"], y=ds["pre_berthing_total_days"], name="Rebuilt — total", mode="lines+markers", line=dict(color=GOLD))
+                fig_p.add_scatter(x=ds["month"], y=ds["pre_berthing_port_account_days"], name="Rebuilt — port account", mode="lines+markers", line=dict(color="#DC2626"))
+                if not os_.empty and "pre_berthing_total_days" in os_:
+                    fig_p.add_scatter(x=os_["month"], y=os_["pre_berthing_total_days"], name="NMPA official — total", mode="markers",
+                                      marker=dict(size=12, symbol="diamond", color="#1C1917"))
+                if not os_.empty and "pre_berthing_port_account_days" in os_:
+                    fig_p.add_scatter(x=os_["month"], y=os_["pre_berthing_port_account_days"], name="NMPA official — port account", mode="markers",
+                                      marker=dict(size=12, symbol="diamond-open", color="#991B1B"))
+                fig_p.update_layout(**PLOTLY_THEME, height=340, title="Average pre-berthing detention (days): rebuilt monthly vs NMPA official")
+                st.plotly_chart(fig_p, **_W_CHART)
+            files = perf.get("official_files", [])
+            st.caption("Official reports loaded: " + (", ".join(f"{f['file']} ({f['status']})" for f in files) or "none"))
+
+        # ── Data & Method ────────────────────────────────────────────────
+        with vt_method:
+            ov = vi_get("/vessels/intel/overview", {"as_of": vi_as_of}) or {}
+            for card in ov.get("model_cards", []):
+                st.markdown(f'<div class="rec-card"><div class="rec-action">{card["feature"]} '
+                            f'<span class="badge badge-low" style="margin-left:8px;">{card["status"]}</span></div>'
+                            f'<div class="rec-rationale"><b>{card["headline"]}</b><br>{card["verdict"]}</div></div>', unsafe_allow_html=True)
+            bt = vi_get("/vessels/intel/departure-backtest", {"as_of": vi_as_of}) or {}
+            if bt.get("all_points"):
+                st.markdown("**Departure forecast backtest** (mean absolute error, hours)")
+                st.dataframe(pd.DataFrame([{"Method": bt["methods"][k], "Vessel-days": v["n"], "Mean error (h)": v["mae_h"],
+                                            "Within 12 h (%)": v["within_12h_pct"]} for k, v in bt["all_points"].items()]),
+                             **_W_DF, hide_index=True)
+                st.caption(bt.get("note", ""))
+            dq = vi_get("/vessels/intel/data-quality") or {}
+            if dq:
+                q1, q2, q3, q4 = st.columns(4)
+                q1.metric("Reports in archive", dq["archive"]["published_days"])
+                q2.metric("Working-day coverage", f"{dq['archive']['coverage_excl_sundays_pct']}%")
+                q3.metric("Port calls stitched", dq["port_calls"]["total"])
+                q4.metric("Expected lists → arrival", f"{dq['linking']['matched_to_arrival_pct']}%")
+                with st.expander("Waiting-reason → account mapping (edit data/reference/vessel_intel_reference.json)"):
+                    st.dataframe(pd.DataFrame(dq.get("waiting_reason_mapping", [])), **_W_DF, hide_index=True)
+                ic = dq.get("imo_coverage") or {}
+                if ic:
+                    with st.expander(f"Ship identity — IMO numbers for {ic['share_pct']}% of cargo calls "
+                                     f"({ic['distinct_ships_with_imo']} ships; edit {ic['file']})"):
+                        st.caption("NMPA's daily reports print ship names only. IMO numbers come from a curated lookup "
+                                   "(each checked against public registries and the IMO check digit) and are matched on "
+                                   "name + length overall, so two ships with the same name get different IMOs. "
+                                   "'needs_review' = same name but the size doesn't match any looked-up ship.")
+                        st.json({"by_match": ic["by_match"], "needs_review": ic["needs_review"]})
+                        st.dataframe(pd.DataFrame(ic["next_to_look_up"]), **_W_DF, hide_index=True)
+                with st.expander("Data-quality flags and gaps"):
+                    st.json({"flags": dq["port_calls"]["flags"], "missing_working_days": dq["missing_working_days"],
+                             "unclassified_cargo_texts": dq["unclassified_cargo_texts"],
+                             "vessel_name_review_queue": dq["vessel_name_review_queue"], "reference_version": dq["reference_version"]})
+            st.caption("Update the data: `python scripts/update_vessel_intel_data.py` (downloads new NMPA reports, parses them, "
+                       "rebuilds port calls), then POST /vessels/intel/refresh or restart the API.")
+
+    # ── Vessel Call Forecast (real ML, monthly counts — complements the per-call views above) ──
     st.markdown("---")
     st.markdown('<div class="panel"><div class="panel-title">Vessel Call Forecast (ML) — real, backtested</div>', unsafe_allow_html=True)
     st.caption("Not a per-ship ETA — no AIS data exists for that. This predicts how many vessels are expected to call per month for a commodity, from real historical patterns in data/port_cargo_monthly.csv.")
@@ -1067,241 +1328,258 @@ with tabs[2]:
                 "The forecast above is unvalidated model extrapolation, not a measured-accuracy prediction."
             )
 
-        # ── NMPA Port Cost Estimator ──
+        # ── NMPA Port Cost & Tariff Calculator ──
+        # Every number here comes from the NMPA SOR 2026-27, a real past
+        # vessel call in NMPA's Daily Vessel Position reports, or the user.
+        # Missing inputs (e.g. GRT) are reported as missing, never guessed.
         st.markdown("---")
         st.markdown(
-            '<div class="panel"><div class="panel-title">NMPA Port Cost Estimator</div>',
+            '<div class="panel"><div class="panel-title">NMPA Port Cost & Tariff Calculator</div>',
             unsafe_allow_html=True
         )
-
         st.caption(
-            "Estimate known NMPA tariff components from cargo quantity, trade type, "
-            "cargo flow, vessel GRT, berth time and storage period. "
-            "This is a tariff-based estimate, not a complete invoice."
+            "Rates: NMPA Indexed SOR w.e.f. 01-05-2026. Inputs: real vessel calls from NMPA's "
+            "Daily Vessel Position reports. Checked against SOR 2022 and NMPA's 2023-24 income (see below)."
         )
 
+        def _cost_post(payload):
+            try:
+                r = requests.post(f"{API}/cost/calculate", json=payload, timeout=15)
+                body = r.json()
+                if r.status_code != 200:
+                    d = body.get("detail")
+                    return None, (d.get("message") or d.get("error")) if isinstance(d, dict) else str(d)
+                return body, None
+            except Exception as exc:
+                return None, str(exc)
+
+        # ---- start from a real past call ----
+        pc_q = st.text_input(
+            "Find a real past call (vessel, cargo, berth or receiver)",
+            key="cost_pc_q", placeholder="e.g. IOF, LPG, KIOCL, SPM",
+        )
+        pc_list = api_get("/cost/past-calls", {"q": pc_q, "limit": 400}) or {}
+        pc_calls = pc_list.get("calls", [])
+        pc_labels = {
+            c["id"]: (
+                f"{c['berthing_date']} · {c['vessel']} · "
+                f"{'SPM' if c['berth'] == 'SPM' else 'B' + str(c['berth']) if c['berth'] else '—'} · "
+                f"{c['cargo_raw']} · {c['quantity']:,.0f} t"
+            )
+            for c in pc_calls
+        }
+        pc_id = st.selectbox(
+            "Past call (newest first)", list(pc_labels), format_func=pc_labels.get,
+            key="cost_pc_id", index=0 if pc_labels else None,
+        )
+        pc = api_get(f"/cost/past-calls/{pc_id}") if pc_id else None
+        pc_in = (pc or {}).get("calculator_inputs", {})
+        if pc:
+            c = pc["call"]
+            st.caption(
+                f"**{c['vessel']}** · berthed {c['berthing_date']} · Berth {c['berth'] or '—'} · run **{c['run_raw'] or '?'}** · "
+                f"LOA {c['loa_m'] or '—'} m · {c['receiver_shipper'] or '—'} — quantity **{(c['quantity'] or 0):,.0f}** "
+                f"({c['quantity_basis']}); berth hours **{c['berth_hours'] or 0:,.2f}** ({c['berth_hours_confidence']}). "
+                "GRT is not in NMPA's daily reports — enter it from the tonnage certificate."
+            )
+        sfx = f"_{pc_id}" if pc_id else ""
+
+        flows = ["import", "export", "coastal", "transhipment"]
+        vtypes = {
+            "dry_bulk": "Dry bulk", "liquid": "POL / liquid tanker", "hazardous": "Hazardous cargo / chemicals",
+            "container": "Container", "general_cargo": "General cargo / break bulk", "roro": "RoRo / RoPax",
+            "other": "Other cargo vessel", "bunkering_at_berth": "Calling only for bunkering at berth",
+            "barge_tug_craft": "Barge / tug / small craft", "bunker_barge": "Bunker barge",
+            "fishing_service_boat": "Fishing / service boat",
+        }
+        berths = [""] + [str(i) for i in range(1, 17)] + ["SPM"]
+        pc_berth = (pc_in.get("berth") or "").upper()
+        pc_berth = pc_berth if pc_berth in berths else "".join(ch for ch in pc_berth.split("(")[0] if ch.isdigit())
+
         cost_col1, cost_col2, cost_col3 = st.columns(3)
-
         with cost_col1:
-            cost_cargo_type = st.selectbox(
-                "Cargo Type",
-                [
-                    "Crude Oil",
-                    "POL Products",
-                    "LPG / LNG / Gas",
-                    "Edible Oil",
-                    "Fertilizer",
-                    "Coal",
-                    "Iron Ore",
-                    "Iron / Steel",
-                    "Limestone",
-                    "Cement / Construction Material",
-                    "Raw Cashew Nuts",
-                    "Cashew Kernels",
-                    "Food Grains",
-                    "Bentonite / Clay / Sand",
-                    "Break Bulk",
-                    "Plant & Machinery",
-                    "Other Cargo",
-                    "Container",
-                ],
-                key="cost_cargo_type",
-            )
-            cost_quantity = st.number_input(
-                "Cargo Quantity (MT)",
-                min_value=0.0,
-                value=10000.0,
-                step=100.0,
-                key="cost_quantity",
-            )
-            cost_trade = st.selectbox(
-                "Trade Type",
-                ["Coastal", "Foreign"],
-                key="cost_trade",
-            )
-
+            cost_cargo_type = st.text_input("Commodity (any name, NMPA code or SOR code)",
+                                            value=pc_in.get("cargo_type", ""), key="cost_cargo" + sfx)
+            cost_quantity = st.number_input("Quantity (MT, or CBM / units where the SOR says so)", min_value=0.0,
+                                            value=pc_in.get("cargo_quantity_mt"), step=100.0, key="cost_qty" + sfx)
+            cost_flow = st.selectbox("Cargo flow", flows, index=flows.index(pc_in.get("cargo_flow", "import")),
+                                     format_func={"import": "Unloaded / Import (foreign cargo)",
+                                                  "export": "Loaded / Export (foreign cargo)",
+                                                  "coastal": "Coastal cargo", "transhipment": "Transhipment"}.get,
+                                     key="cost_flow" + sfx)
+            cost_trade = st.selectbox("Cargo trade (transhipment only)", ["foreign", "coastal"], format_func=str.title,
+                                      key="cost_trade" + sfx, disabled=cost_flow != "transhipment")
+            cost_party = st.text_input("Receiver / shipper", value=pc_in.get("receiver_shipper") or "",
+                                       key="cost_party" + sfx, help="Needed for the KIOCL / UPCL rules.")
         with cost_col2:
-            cost_flow = st.selectbox(
-                "Cargo Flow",
-                ["UNLOADED", "LOADED"],
-                format_func=lambda x: "Unloaded / Import" if x == "UNLOADED" else "Loaded / Export",
-                key="cost_flow",
-            )
-            cost_vessel_type = st.selectbox(
-                "Vessel Type",
-                [
-                    "Dry Bulk",
-                    "Liquid Tanker",
-                    "Container",
-                    "General Cargo",
-                    "RoRo / RoPax",
-                    "Other",
-                ],
-                key="cost_vessel_type",
-            )
-            cost_grt = st.number_input(
-                "Vessel GRT",
-                min_value=0.0,
-                value=30000.0,
-                step=1000.0,
-                key="cost_grt",
-                help="Gross Registered Tonnage used for berth-hire calculation.",
-            )
-
+            cost_vrun = st.selectbox("Vessel status (Customs / DGS)", ["foreign", "coastal"],
+                                     index=0 if pc_in.get("vessel_trade_type", "foreign") == "foreign" else 1,
+                                     format_func={"foreign": "Foreign-going (US$ rates)", "coastal": "Coastal (₹ rates)"}.get,
+                                     key="cost_vrun" + sfx)
+            cost_vessel_type = st.selectbox("Vessel type (berth hire class)", list(vtypes),
+                                            index=list(vtypes).index(pc_in.get("vessel_type", "dry_bulk")),
+                                            format_func=vtypes.get, key="cost_vtype" + sfx)
+            cost_grt = st.number_input("Vessel GRT (from tonnage certificate)", min_value=0.0, value=None, step=1.0,
+                                       key="cost_grt" + sfx, placeholder="required for vessel charges")
+            cost_berth = st.selectbox("Berth", berths, index=berths.index(pc_berth) if pc_berth in berths else 0,
+                                      format_func=lambda b: "— not set —" if not b else ("SPM (MRPL)" if b == "SPM" else f"Berth {b}"),
+                                      key="cost_berth" + sfx)
+            cost_berth_hours = st.number_input("Berth hours (all fast → all lines cast off)", min_value=0.0,
+                                               value=pc_in.get("berth_hours"), step=1.0, key="cost_bh" + sfx)
+            cost_usd_inr = st.number_input("USD → INR (RBI reference, vessel entry day)", min_value=0.0, value=None,
+                                           step=0.01, format="%.4f", key="cost_usd" + sfx,
+                                           placeholder="needed for foreign vessels")
         with cost_col3:
-            cost_berth_hours = st.number_input(
-                "Berth Occupancy / Hire Hours",
-                min_value=0.0,
-                value=24.0,
-                step=1.0,
-                key="cost_berth_hours",
-                help="Use actual berth hours when available. Later this can be replaced by a predicted vessel-stay value.",
-            )
-            cost_storage_days = st.number_input(
-                "Storage Days",
-                min_value=0,
-                value=0,
-                step=1,
-                key="cost_storage_days",
-            )
-            st.markdown("<br>", unsafe_allow_html=True)
+            cost_storage_days = st.number_input("Days in transit storage", min_value=0, value=0, step=1, key="cost_sd" + sfx)
+            cost_holidays = st.number_input("Customs holidays / non-working days in free period", min_value=0, value=0,
+                                            step=1, key="cost_hol" + sfx)
+            cost_storage_category = st.selectbox("Storage category", ["bulk", "break_bulk", "salvaged", "not_shipped"],
+                                                 format_func={"bulk": "Bulk", "break_bulk": "Break bulk",
+                                                              "salvaged": "Salvaged goods (export)",
+                                                              "not_shipped": "Export cargo not shipped"}.get,
+                                                 key="cost_cat" + sfx)
+            cost_anch = st.number_input("Anchorage hours after sailing", min_value=0.0, value=0.0, step=1.0, key="cost_anch" + sfx)
+            cost_tug = st.number_input("Tug hours hired on request", min_value=0.0, value=0.0, step=1.0, key="cost_tug" + sfx)
+            cost_shifts = st.number_input("Shiftings at vessel's request", min_value=0, value=0, step=1, key="cost_shift" + sfx)
+            cost_annual_volume = st.number_input("Annual volume (MT) — cement band only", min_value=0.0, value=None,
+                                                 step=10000.0, key="cost_annual" + sfx)
 
-        if st.button(
-            "Calculate NMPA Port Cost",
-            type="primary",
-            key="calculate_port_cost",
-        ):
-            cargo_type_map = {
-                "Crude Oil": "crude_spm",
-                "POL Products": "pol_products",
-                "LPG / LNG / Gas": "lpg_lng_gas",
-                "Edible Oil": "edible_oil",
-                "Fertilizer": "fertilizer",
-                "Coal": "thermal_coal",
-                "Iron Ore": "iron_ore_fines_lumps",
-                "Limestone": "limestone",
-                "Raw Cashew Nuts": "raw_cashew",
-                "Cashew Kernels": "cashew_kernels",
-                "Bentonite / Clay / Sand": "bentonite_clay",
-                "Plant & Machinery": "plant_machinery",
-                "Break Bulk": "bagged_cargo",
-                "Other Cargo": "bagged_cargo",
-            }
+        if cost_cargo_type:
+            cost_match = api_get("/cost/match", {"name": cost_cargo_type})
+            if cost_match and cost_match.get("code"):
+                match_text = f"Matched to **{cost_match['code']}** — {cost_match['item']} ({cost_match['method']})"
+                if cost_match.get("needs_review"):
+                    st.warning(match_text + " — confirm the SOR line. " + (cost_match.get("ambiguity") or ""))
+                else:
+                    st.caption(match_text)
+            elif cost_match:
+                st.warning(cost_match.get("message", "This entry cannot be priced by wharfage."))
 
-            vessel_type_map = {
-                "Dry Bulk": "dry_bulk",
-                "Liquid Tanker": "liquid",
-                "Container": "container",
-                "General Cargo": "general_cargo",
-                "RoRo / RoPax": "roro",
-                "Other": "other",
-            }
-
-            flow_map = {
-                "UNLOADED": "import",
-                "LOADED": "export",
-                "COASTAL": "coastal",
-                "Unloaded / Import": "import",
-                "Loaded / Export": "export",
-                "Coastal": "coastal",
-            }
-
-            selected_trade_type = "foreign" if flow_map[cost_flow] in ("import", "export") else "coastal"
-
-            cost_payload = {
-                "cargo_type": cargo_type_map[cost_cargo_type],
-                "cargo_quantity_mt": cost_quantity,
-                "trade_type": selected_trade_type,
-                "cargo_flow": flow_map[cost_flow],
-                "vessel_type": vessel_type_map[cost_vessel_type],
-                "vessel_grt": cost_grt,
-                "berth_hours": cost_berth_hours,
+        if st.button("Calculate NMPA Port Cost", type="primary", key="calculate_port_cost"):
+            trade = "foreign" if cost_flow in ("import", "export") else "coastal" if cost_flow == "coastal" else cost_trade
+            cost_result, cost_err = _cost_post({
+                "cargo_type": cost_cargo_type,
+                "cargo_quantity_mt": cost_quantity or 0,
+                "trade_type": trade,
+                "vessel_trade_type": cost_vrun,
+                "cargo_flow": cost_flow,
+                "vessel_type": cost_vessel_type,
+                "vessel_grt": cost_grt or None,
+                "berth": cost_berth or None,
+                "berth_hours": cost_berth_hours or 0,
                 "storage_days": cost_storage_days,
-            }
+                "excluded_days_in_free_period": cost_holidays,
+                "cargo_category": cost_storage_category,
+                "annual_volume_mt": cost_annual_volume or None,
+                "usd_inr_rate": cost_usd_inr or None,
+                "receiver_shipper": cost_party or None,
+                "anchorage_hours": cost_anch,
+                "tug_hire_hours": cost_tug,
+                "shifting_count": cost_shifts,
+            })
 
-            cost_result = api_post("/cost/calculate", cost_payload)
-
-            if cost_result and not cost_result.get("detail"):
+            if cost_err:
+                st.error(f"Cost calculation error: {cost_err}")
+            elif cost_result:
                 breakdown = cost_result.get("breakdown", {})
+                vessel_keys = ("port_dues", "pilotage", "berth_hire", "anchorage", "tug_hire", "shifting")
+                m1, m2, m3, m4 = st.columns(4)
+                wh = breakdown.get("wharfage", {})
+                m1.metric("Wharfage", f"₹{wh['amount']:,.2f}" if wh.get("amount") is not None else "—")
+                m2.metric("Vessel related", f"₹{sum((breakdown[k].get('amount') or 0) for k in vessel_keys if breakdown.get(k, {}).get('status') == 'calculated'):,.2f}")
+                m3.metric("Total known cost", f"₹{cost_result['total_known_cost']:,.2f}",
+                          f"bill ₹{cost_result['bill_total_rounded']:,} + GST", delta_color="off")
+                m4.metric("Estimate", "Complete" if cost_result["is_complete"] else "Partial")
 
-                wharfage = breakdown.get("wharfage", {})
-                berth_hire = breakdown.get("berth_hire", {})
+                for ex in cost_result.get("exceptions", []):
+                    (st.warning if ex["scope"] == "note" else st.error)(ex["message"])
+                if cost_result.get("missing_grt_components"):
+                    st.warning("Not in the total: " + ", ".join(cost_result["missing_grt_components"]) + " — enter the vessel's GRT.")
+                if cost_result.get("unconverted_usd_components"):
+                    st.warning(f"US$ {cost_result['unconverted_usd_total']:,.2f} of foreign-vessel charges is not in the ₹ "
+                               "total. Enter the RBI USD→INR reference rate for the vessel's entry day.")
+                for note in cost_result.get("notes", []):
+                    st.info(note)
+
+                labels = {"wharfage": "Wharfage", "transit_storage": "Transit storage", "port_dues": "Port dues",
+                          "pilotage": "Pilotage", "berth_hire": "Berth hire", "anchorage": "Anchorage",
+                          "tug_hire": "Tug hire", "shifting": "Shifting", "bunkering_facility": "Bunkering facility"}
+                status_labels = {"calculated": "Calculated", "needs_exchange_rate": "Needs USD→INR rate",
+                                 "needs_grt": "Needs GRT", "not_billed_by_nmpa": "Not billed by NMPA",
+                                 "not_applicable": "Not applicable", "rate_unavailable": "Rate not published"}
+                st.dataframe(pd.DataFrame([
+                    {
+                        "Component": labels.get(k, k),
+                        "SOR Ref": comp.get("sor_reference"),
+                        "Status": status_labels.get(comp.get("status"), comp.get("status")),
+                        "Currency": comp.get("currency") or comp.get("reference_currency"),
+                        "Amount (US$)": comp.get("amount_usd"),
+                        "Amount (₹)": comp.get("amount"),
+                        "Reference only": comp.get("reference_amount"),
+                        "Detail": comp.get("message") or comp.get("note") or "",
+                    }
+                    for k, comp in breakdown.items()
+                ]), **_W_DF, hide_index=True)
+
+                if wh.get("sor_code"):
+                    st.caption(f"Wharfage: SOR {wh['sor_code']} — {wh['sor_item']} | {wh['chargeable_units']:,.1f} "
+                               f"chargeable {wh['unit']} × ₹{wh['rate_per_mt']:,.2f} ({wh['trade_type']} cargo)")
                 storage = breakdown.get("transit_storage", {})
-                cst1, cst2, cst3, cst4 = st.columns(4)
+                rule = storage.get("free_days_rule", {})
+                if rule.get("status") == "configured":
+                    st.caption(f"Storage: free period **{rule['free_storage_days']}"
+                               f"{' + ' + str(rule['extended_by_non_working_days']) if rule.get('extended_by_non_working_days') else ''} days** — "
+                               f"{rule['basis']} (SOR {rule['sor_reference']}); chargeable days **{storage.get('chargeable_days', 0):g}**.")
+                if storage.get("slabs"):
+                    st.dataframe(pd.DataFrame(storage["slabs"]), **_W_DF, hide_index=True)
+                st.caption(f"Tariff: **{cost_result['tariff']['name']}**, effective {cost_result['tariff']['effective_from']} "
+                           f"to {cost_result['tariff']['effective_to']}. Taxes extra (SOR 1.2(v)); bill rounded up to the next rupee (SOR 1.2(ix)).")
 
-                cst1.metric(
-                    "Wharfage / Box Charge",
-                    f"₹{wharfage.get('amount', 0) or 0:,.2f}",
-                )
+        # ── Checked against past data ──
+        validation = api_get("/cost/validation")
+        if validation:
+            vs = validation["summary"]
+            with st.expander(
+                f"🔎 Checked against past data — rates {vs['sor_items_consistent']}/{vs['sor_items_checked']} consistent "
+                f"with SOR 2022 · NMPA income {vs['income_lines_consistent']}/{vs['income_lines_checked']} lines explained · "
+                f"past calls cover {vs['calls_tonnage_coverage_pct']}% of reported tonnage"
+            ):
+                sor_chk = validation["past_tariff"]
+                st.markdown("**1 · Every rate vs the SOR general revision of Dec 2022.** NMPA indexes the SOR each "
+                            "1 May, so every item must move by the same few factors: "
+                            + ", ".join(f"{n} items × {f}" for f, n in sor_chk["factor_counts"].items())
+                            + (". No outliers." if not sor_chk["outliers"] else f". **{len(sor_chk['outliers'])} outliers — check.**"))
+                st.dataframe(pd.DataFrame(sor_chk["items"]), **_W_DF, hide_index=True, height=240)
+                inc = validation["past_revenue"]
+                st.markdown("**2 · NMPA's own income (Revised Estimate 2023-24) ÷ tonnage handled vs the SOR band.**")
+                st.dataframe(pd.DataFrame([
+                    {"Line": c["line"], "Income (₹ Cr)": c["income_rs_crore"], "Tonnage (lakh t)": c["tonnes_lakh"],
+                     "Realised ₹/t": c["realised_rs_per_tonne"],
+                     "SOR band ₹/t": f"{c['sor_band_rs_per_tonne'][0]} – {c['sor_band_rs_per_tonne'][1]}",
+                     "Result": "Inside band" if c["inside_band"] else "Outside band (expected)" if c["result"] == "consistent" else "Outside band",
+                     "Why": c.get("explanation") or c["band_basis"]}
+                    for c in inc["cargo_lines"]
+                ]), **_W_DF, hide_index=True)
+                st.dataframe(pd.DataFrame(inc["vessel_ratio_checks"]), **_W_DF, hide_index=True)
+                st.caption(inc["caveat"])
+                pcal = validation["past_calls"]
+                st.markdown(f"**3 · Tonnage of individual past calls vs NMPA's monthly traffic statement** "
+                            f"({pcal['months_compared'][0]} → {pcal['months_compared'][-1]}): "
+                            f"{pcal['calls_total_tonnes']:,} t vs {pcal['official_total_tonnes']:,} t reported "
+                            f"({pcal['coverage_pct']}%). Calls never exceed the official figure.")
+                st.dataframe(pd.DataFrame(pcal["by_group"]), **_W_DF, hide_index=True)
+                st.caption("Sources: " + " · ".join(
+                    f"[{s['title']}]({s['url']})" if s.get("url") else s["title"]
+                    for s in {s["title"]: s for s in sor_chk["sources"] + inc["sources"]}.values()))
 
-                cst2.metric(
-                    "Berth Hire",
-                    f"₹{berth_hire.get('amount', 0) or 0:,.2f}",
-                )
-
-                cst3.metric(
-                    "Transit Storage",
-                    f"₹{storage.get('amount', 0) or 0:,.2f}",
-                )
-
-                cst4.metric(
-                    "Total Known Cost",
-                    f"₹{cost_result.get('total_known_cost', 0) or 0:,.2f}",
-                )
-
-                breakdown_rows = [
-                    {
-                        "Cost Component": "Wharfage / Container Box Charge",
-                        "Amount (₹)": wharfage.get("amount", 0) or 0,
-                    },
-                    {
-                        "Cost Component": "Berth Hire",
-                        "Amount (₹)": berth_hire.get("amount", 0) or 0,
-                    },
-                    {
-                        "Cost Component": "Transit Storage",
-                        "Amount (₹)": storage.get("amount", 0) or 0,
-                    },
-                ]
-
-                # Include any additional components returned by the backend.
-                for key, label in [
-                    ("reefer_electricity", "Reefer Electricity / Monitoring"),
-                    ("additional_charges", "Additional Known Charges"),
-                ]:
-                    if key in cost_result:
-                        breakdown_rows.append({
-                            "Cost Component": label,
-                            "Amount (₹)": cost_result.get(key, 0),
-                        })
-
-                st.dataframe(
-                    pd.DataFrame(breakdown_rows),
-                    **_W_DF,
-                    hide_index=True,
-                )
-
-                tariff_name = cost_result.get(
-                    "tariff_name",
-                    "NMPA Indexed Schedule of Rates",
-                )
-                effective_from = cost_result.get("effective_from", "01-05-2026")
-                effective_to = cost_result.get("effective_to", "30-04-2027")
-
-                st.caption(
-                    f"Tariff reference: **{tariff_name}** | "
-                    f"Effective: **{effective_from} to {effective_to}**"
-                )
-
-                st.info(
-                    "Known tariff components only. Final port billing may also depend on "
-                    "components not included in this estimator, such as pilotage, port dues, "
-                    "demurrage, labour/handling, crane charges, equipment charges, taxes, "
-                    "special cargo conditions, or other applicable SOR items."
-                )
-
-            elif cost_result and cost_result.get("detail"):
-                st.error(f"Cost calculation error: {cost_result['detail']}")
+        # ── Coming soon ──
+        coming_soon = (api_get("/cost/coming-soon") or {}).get("components", [])
+        if coming_soon:
+            with st.expander("🚧 Coming soon — SOR charges without published rates"):
+                st.caption("The 2026-27 SOR lists these charges but prints their rates as '*' or refers to "
+                           "another tariff. They are never estimated.")
+                for item in coming_soon:
+                    st.markdown(f"- **{item['label']}** (SOR {item['sor_reference']}) — *Coming soon*. {item['reason']}")
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -2647,6 +2925,24 @@ with tabs[5]:
             ch0 = (t0["revenue_rs"] / t0["revenue_prev_rs"] - 1) * 100 if t0["revenue_prev_rs"] else None
             stake0 = sum(o.get("wharfage_at_stake_rs") or 0 for o in op0.get("cargos", []))
             infc0 = [x for x in nn0.get("notices", []) if x["status"] == "In force"]
+            b1_, b2_ = st.columns([1, 3])
+            if b1_.button("Prepare the brief (PDF)", key="ie_brief_go",
+                          help="One page for the Chairman or a Board meeting: actions, customers at risk, schemes ending, claims, "
+                               "other ports, busy berths. Made only when you press this; nothing is sent."):
+                try:
+                    r_ = requests.get(f"{API}/incentive/brief.pdf", headers=_auth_headers(), timeout=120)
+                    r_.raise_for_status()
+                    st.session_state["ie_brief_pdf"] = r_.content
+                except requests.RequestException as e_:
+                    st.error(f"Could not prepare the brief: {e_}")
+            if st.session_state.get("ie_brief_pdf"):
+                b2_.download_button("\u2913 Download the one-page brief", st.session_state["ie_brief_pdf"],
+                                    file_name=f"NMPA_incentive_brief_{pd.Timestamp.now():%Y-%m-%d}.pdf", mime="application/pdf",
+                                    key="ie_brief_dl")
+            nc0 = api_get("/incentive/nmpa-circulars") or {}
+            if nc0.get("open"):
+                st.markdown(f'<div class="ie-take" style="font-size:14.5px"><b>NMPA circulars:</b> {nc0["open"]} to look at '
+                            f'(Schemes tab).</div>', unsafe_allow_html=True)
             ex0 = api_get("/incentive/expiring") or {}
             cw0 = api_get("/incentive/competitor-watch") or {}
             if cw0.get("new"):
@@ -2936,6 +3232,24 @@ with tabs[5]:
                             st.error("Could not save. Is the backend running?")
                 _src("NMPA daily vessel reports (customer tonnes, waiting); NMPA Scale of Rates; customer notes from Trade Intelligence")
 
+            # Customer call sheet: one page for the officer before calling a customer (made on request; nothing is sent)
+            if kc and kc.get("rows"):
+                cs1, cs2, cs3 = st.columns([3, 1, 2])
+                cust_cs = cs1.selectbox("Prepare a call sheet for", [r["customer"] for r in kc["rows"]], key="cs_cust",
+                                        help="One page: cargo trend, waiting on their side, schemes they can use, names, follow-up so far, "
+                                             "and suggested talking points. Made only when you press the button.")
+                if cs2.button("Prepare", key="cs_go"):
+                    try:
+                        r_ = requests.get(f"{API}/incentive/customer-sheet.pdf", params={"customer": cust_cs},
+                                          headers=_auth_headers(), timeout=120)
+                        r_.raise_for_status()
+                        st.session_state["cs_pdf"] = (cust_cs, r_.content)
+                    except requests.RequestException as e_:
+                        st.error(f"Could not prepare the call sheet: {e_}")
+                if st.session_state.get("cs_pdf") and st.session_state["cs_pdf"][0] == cust_cs:
+                    cs3.download_button(f"\u2913 Call sheet: {cust_cs}", st.session_state["cs_pdf"][1],
+                                        file_name=f"call_sheet_{cust_cs.replace(' ', '_')}.pdf", mime="application/pdf", key="cs_dl")
+
             # 2. Cargo lost to other ports - a statistical gap that starts a commercial review, not a discount
             op = api_get("/incentive/opportunities", timeout=30)
             if op and op.get("available") and op["cargos"]:
@@ -3095,6 +3409,74 @@ with tabs[5]:
                                     f"*Design features worth noting:* {x['design_features']}")
 
             _flush_notes()
+            # Confirm customer names (Traffic): one list, biggest cargo first; nothing changes until an officer applies
+            nm_ = api_get("/incentive/customer-names") or {}
+            if nm_.get("items"):
+                _head("Confirm customer names",
+                      insight=(f"{nm_['decided']} of {nm_['total']} checked. The list starts with the names behind the most cargo, so a "
+                               f"few minutes cover most tonnes. Every customer figure depends on these names."),
+                      sub=nm_.get("rule", ""))
+                kinds_ = {"All": None, "Spelling merges": "spelling", "Company renames and mergers": "identity", "Possible matches": "candidate"}
+                f1, f2, f3 = st.columns([2, 1, 1])
+                kind_sel = f1.radio("Show", list(kinds_), horizontal=True, key="nm_kind")
+                pend_only = f2.checkbox("Not yet checked only", value=True, key="nm_pending")
+                who_nm = f3.text_input("Your name (demo mode only)", key="nm_by")
+                shown_ = [it for it in nm_["items"] if (kinds_[kind_sel] in (None, it["kind"])) and not (pend_only and it["decision"])][:10]
+                labels_ = {"same": "Same", "different": "Different", "not_sure": "Not sure"}
+                for it in shown_:
+                    e_ = it["evidence"]
+                    names_nm = " \u00b7 ".join(it["names"])
+                    ev_txt = (f"{e_.get('tonnes_12m', 0):,} t in the last 12 months \u00b7 {e_.get('ships', 0)} ship(s) \u00b7 "
+                              f"{e_.get('cargo', '') or 'cargo not stated'} \u00b7 {e_.get('months', '')}")
+                    if e_.get("other"):
+                        o_ = e_["other"]
+                        ev_txt += f"<br>Other name: {o_.get('tonnes_12m', 0):,} t \u00b7 {o_.get('ships', 0)} ship(s) \u00b7 {o_.get('cargo', '')}"
+                    st.markdown(f'<div class="ie-take" style="font-size:14px"><b>{html.escape(it["question"])}</b><br>'
+                                f'Names: {html.escape(names_nm)}<br>{ev_txt}<br>'
+                                f'<span style="color:#6B7585">Basis: {html.escape(it["basis"])}'
+                                + (" (applied in the figures now)" if it["applied_now"] else "") + '</span>'
+                                + (f'<br><b>Recorded:</b> {labels_[it["decision"]["choice"]]} by {html.escape(it["decision"]["by"])}'
+                                   f' on {it["decision"]["at"][:10]}' + (" (applied)" if it["decision"].get("applied") else "")
+                                   if it["decision"] else "") + '</div>', unsafe_allow_html=True)
+                    d1, d2, d3 = st.columns([3, 3, 1])
+                    ch_nm = d1.radio("Decision", list(labels_), format_func=labels_.get, horizontal=True, key=f"nm_c_{it['id']}",
+                                     label_visibility="collapsed")
+                    keep_nm = (d2.selectbox("Count under", it["names"], index=len(it["names"]) - 1, key=f"nm_k_{it['id']}",
+                                            label_visibility="collapsed") if it["kind"] != "spelling" and ch_nm == "same" else "")
+                    if d3.button("Save", key=f"nm_s_{it['id']}"):
+                        try:
+                            r_ = requests.post(f"{API}/incentive/customer-names/decide", headers=_auth_headers(), timeout=60,
+                                               json={"item_id": it["id"], "choice": ch_nm, "keep_name": keep_nm, "by": who_nm})
+                            if r_.ok:
+                                st.rerun()
+                            else:
+                                st.error(r_.json().get("detail", r_.text) if r_.status_code != 403 else "Only Traffic can confirm customer names.")
+                        except requests.RequestException as e_:
+                            st.error(f"Could not reach the backend: {e_}")
+                if not shown_:
+                    st.success("Nothing left to check in this view.")
+                a1, a2 = st.columns(2)
+                if nm_.get("to_apply"):
+                    if a1.button(f"Apply {nm_['to_apply']} confirmed decision(s) to the figures", key="nm_apply", type="primary"):
+                        try:
+                            r_ = requests.post(f"{API}/incentive/customer-names/apply", headers=_auth_headers(), timeout=120,
+                                               json={"by": who_nm})
+                            if r_.ok:
+                                st.success(r_.json().get("message", "Applied."))
+                                st.rerun()
+                            else:
+                                st.error("Only Traffic can apply customer name decisions." if r_.status_code == 403 else r_.text)
+                        except requests.RequestException as e_:
+                            st.error(f"Could not reach the backend: {e_}")
+                else:
+                    a1.caption("No confirmed change waiting to be applied.")
+                csv_nm = pd.DataFrame([{"item": it["id"], "question": it["question"], "names": " | ".join(it["names"]),
+                                        "tonnes_last_12_months": it["evidence"].get("tonnes_12m", 0), "basis": it["basis"],
+                                        "decision (same / different / not sure)": "", "count under (name)": "", "checked by": ""}
+                                       for it in nm_["items"]]).to_csv(index=False)
+                a2.download_button("\u2913 Full list for NMPA to fill in (CSV)", csv_nm, file_name="customer_names_to_confirm.csv",
+                                   mime="text/csv", key="nm_csv")
+
         with it3:
             _head("Discount calculator",
                   insight="Compare a discount on all cargo with a rebate on extra cargo only.",
@@ -3112,7 +3494,14 @@ with tabs[5]:
                 low_pct = st.number_input("If customers bring this much more cargo (%)", 0.0, 100.0, 2.0, 0.5, key="inc_low",
                                           help="A what-if, not a prediction")
                 with st.expander("Optional: costs and a target"):
-                    cost_t = st.number_input("Extra port cost per extra tonne (\u20b9)", 0.0, 1000.0, 0.0, 1.0, key="inc_cost",
+                    cref_ = api_get("/incentive/cost-reference") or {}
+                    if cref_.get("available"):
+                        st.caption(cref_["plain"])
+                        if st.button(f"Use NMPA's published average (\u20b9{cref_['suggested_rs_per_t']:.2f} per tonne)", key="inc_cost_ref"):
+                            st.session_state["inc_cost"] = float(cref_["suggested_rs_per_t"])
+                            st.rerun()
+                    st.session_state.setdefault("inc_cost", 0.0)
+                    cost_t = st.number_input("Extra port cost per extra tonne (\u20b9)", min_value=0.0, max_value=1000.0, step=1.0, key="inc_cost",
                                              help="Leave 0 if not known; results are then wharfage receipts, not profit")
                     fixed = st.number_input("Fixed cost of running the scheme (\u20b9)", 0.0, 1e10, 0.0, 100000.0, key="inc_fixed")
                     tgt = st.number_input("Target: extra tonnes a year", 0.0, 1e8, 0.0, 10000.0, key="inc_target",
@@ -3190,16 +3579,28 @@ with tabs[5]:
                 # Is there room at this cargo's berths for the extra cargo the discount needs?
                 bc_ = api_get("/incentive/berth-check", {"cargo": pick_i, "extra_pct": round(disc / (100 - disc) * 100, 1)}) or {}
                 if bc_.get("available"):
-                    tone_bc = {"Room": "good", "Some room": "watch", "Busy": "act"}
+                    tone_bc = {"Room": "good", "Some room": "watch", "Busy": "act"}  # stricter of days-with-a-ship and NMPA capacity
                     st.markdown(f"**Is there room at the berths?** {bc_['verdict']} \u00b7 last 12 months, {bc_['months']}")
                     st.markdown('<div class="ie-cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">' + "".join(
                         f'<div class="ie-card {tone_bc[r["verdict_after"]]}"><div class="l">Berth {html.escape(r["berth"])} '
                         f'({r["cargo_share_pct"]}% {html.escape(pick_i)})</div><div class="v">{r["busy_now_pct"]:.0f}% \u2192 {r["busy_after_pct"]:.0f}%</div>'
-                        f'<div class="s">days with a ship, now \u2192 with the extra cargo \u00b7 busiest {r["peak_pct"]:.0f}% ({r["peak_month"]})</div></div>'
+                        f'<div class="s">days with a ship, now \u2192 with the extra cargo \u00b7 busiest {r["peak_pct"]:.0f}% ({r["peak_month"]})'
+                        + (f'<br>NMPA usable capacity: {r["capacity_used_pct"]:.0f}% \u2192 {r["capacity_used_after_pct"]:.0f}% used' if r.get("capacity_used_pct") is not None else "")
+                        + f' \u00b7 <b>{r["verdict_after"]}</b></div></div>'
                         for r in bc_["rows"][:3]) + "</div>", unsafe_allow_html=True)
                     st.markdown(f'<div class="ie-take" style="font-size:13.5px">{html.escape(bc_["plain"])} Where a berth is nearly full in its '
                                 f'busiest month, a discount works best in the quiet months.</div>', unsafe_allow_html=True)
                     _note_md(bc_["method"])
+                # Compare scheme designs side by side (the officer chooses; nothing is decided here)
+                st.markdown("**Compare scheme designs** for this cargo and discount")
+                xp_ = st.slider("Extra cargo expected (% of the last 12 months)", 0, 30, 5, 1, key="cmp_extra",
+                                help="One assumption for all designs. Try a few values: the order of the designs can change.")
+                cd_ = api_get("/incentive/compare-designs", {"cargo": pick_i, "discount_pct": disc, "extra_pct": xp_}) or {}
+                if cd_.get("rows"):
+                    _htable(pd.DataFrame([{"Design": x["design"], "Cost to NMPA in a year": cr(x["cost_rs"]),
+                                           "Net for NMPA in a year": cr(x["net_rs"]), "Pays for itself": x["pays_when"],
+                                           "Customers must": x["customers_must"], "Main risk": x["main_risk"]} for x in cd_["rows"]]))
+                    st.caption(f"Extra cargo assumed: {cd_['extra_t']:,} t a year. " + cd_["note"])
                 with st.expander("What research and other Indian ports show about discounts"):
                     st.markdown(
                         "- **Port charges are a small part of a shipper's total cost**, so overall demand for port services reacts little to "
@@ -3411,6 +3812,37 @@ with tabs[5]:
                     st.info(rc_.get("reason") or "No ship calls for this choice.")
                 _src(rc0["source"])
 
+            # Shared budget pool (Incheon model): a fixed amount shared among customers by their extra cargo
+            _head("Share a fixed budget by extra cargo",
+                  insight=("The Board fixes one amount; customers who grow share it in proportion to their extra tonnes. "
+                           "The total paid can never exceed the amount approved, and what is not earned stays with NMPA."),
+                  sub="Modelled on Incheon Port's incentive programmes, where each programme has a fixed budget shared by volume.")
+            p1, p2, p3 = st.columns(3)
+            cargo_pl = p1.selectbox("Cargo", cargos_, index=cargos_.index(pick_i) if pick_i in cargos_ else 0, key="pool_cargo")
+            amt_pl = p2.number_input("Budget (\u20b9 crore)", min_value=0.1, max_value=100.0, value=2.0, step=0.5, key="pool_amt")
+            cap_pl = p3.slider("Most per extra tonne (% of wharfage)", 10, 100, 50, 5, key="pool_cap",
+                               help="No customer is paid more than this share of the wharfage rate for each extra tonne.")
+            pl_ = api_get("/incentive/pool-simulation", {"cargo": cargo_pl, "pool_crore": amt_pl, "cap_pct": cap_pl}) or {}
+            if pl_.get("available"):
+                _cards([
+                    ("Budget approved", cr(pl_["pool_rs"]), "the most NMPA can pay", "info"),
+                    ("Would have been paid", cr(pl_["paid_rs"]), f"{pl_['customers_rewarded']} customer(s) that grew", "good"),
+                    ("Stays with NMPA", cr(pl_["unspent_rs"]), "not earned by extra cargo", "info")])
+                st.markdown(f"**If this pool had run in {pl_['period']}** (against {pl_['compared_with']}): extra {cargo_pl} "
+                            f"{pl_['extra_total_t']:,} t; {pl_['customers_falling']} customer(s) handled less and get nothing.")
+                rows_pl = [r for r in pl_["rows"] if r["extra_t"] > 0]
+                if rows_pl:
+                    _htable(pd.DataFrame([{"Customer": r["customer"], "A year earlier (t)": f"{r['prev_t']:,}", "This period (t)": f"{r['cur_t']:,}",
+                                           "Extra (t)": f"{r['extra_t']:,}", "Share of extra": f"{r['share_pct']:.1f}%",
+                                           "Would receive": cr(r["pay_rs"]), "Per extra tonne": f"\u20b9{r['pay_per_extra_t_rs']:,.2f}",
+                                           "Note": "At the per-tonne limit" if r["capped"] else "\u2014"} for r in rows_pl]))
+                st.caption("Customer names are as written in NMPA's daily reports; joint or variant entries (e.g. two companies on one "
+                           "line) count separately until NMPA confirms the names. Two months only can be compared with a year earlier "
+                           "so far, so this is an illustration; the same rule applies to any period.")
+                _note_md(pl_["method"])
+            else:
+                st.info(pl_.get("reason") or "Not available for this cargo.")
+
             # 3a. Rules: tariff versions, who controls each charge, combination rule
             rl = api_get("/incentive/rules")
             if rl:
@@ -3488,12 +3920,20 @@ with tabs[5]:
                                     f'against {io_["since_scheme_prev_t"]:,} t a year earlier. Each extra tonne earns NMPA '
                                     f'\u20b9{io_["rate_rs_per_t"] - io_["rebate_per_extra_t_rs"]:.2f} after the \u20b9{io_["rebate_per_extra_t_rs"]:.2f} rebate.</div>',
                                     unsafe_allow_html=True)
-                        _htable(pd.DataFrame([{"Exporter (as written)": e["customer"], "2026-27 to date (t)": e["fy2026_27_to_date_t"],
-                                                    "Sep 2025 to Mar 2026 (t, partial base)": e["sep2025_mar2026_t"], "Status": e["status"]}
-                                                   for e in io_["exporters"]]), hide_index=True, width="stretch",
+                        base_col = f"FY 2025-26 base, {io_.get('base_months', 'held months')} (t" + ("" if io_.get("base_complete") else ", partial") + ")"
+                        rows_io = []
+                        for e in io_["exporters"]:
+                            r_io = {"Exporter (as written)": e["customer"], "2026-27 to date (t)": e["fy2026_27_to_date_t"],
+                                    base_col: e.get("fy2025_26_base_t", e["sep2025_mar2026_t"])}
+                            if io_.get("same_months_compared"):
+                                r_io["Extra vs a year earlier (t)"] = e.get("extra_vs_same_months_t")
+                                r_io["Rebate building (\u20b9)"] = e.get("rebate_building_rs")
+                            r_io["Status"] = e["status"]
+                            rows_io.append(r_io)
+                        _htable(pd.DataFrame(rows_io), hide_index=True, width="stretch",
                                      column_config={"Status": st.column_config.TextColumn(width="large"),
                                         "2026-27 to date (t)": st.column_config.NumberColumn(format="localized"),
-                                                    "Sep 2025 to Mar 2026 (t, partial base)": st.column_config.NumberColumn(format="localized")})
+                                                    base_col: st.column_config.NumberColumn(format="localized")})
                         _note_md('<div class="ti-s">' + " ".join(html.escape(x) for x in io_["limits"]) + "</div>", unsafe_allow_html=True)
                         _src(io_["source"])
 
@@ -3523,6 +3963,13 @@ with tabs[5]:
                     "sch_cond": "A higher rebate on each block of tonnes above the baseline (slab-wise, as in NMPA's Harit policy). "
                                 "Base rate at billing; higher slabs after Traffic verifies the tonnes.",
                     "sch_stop": "Review every 3 months against the target"},
+                "Shared budget pool (as at Incheon): a fixed amount shared by extra cargo": {
+                    "sch_scope": "Rebate on extra volume", "sch_blm": "same_months_last_year",
+                    "sch_cond": "A fixed budget, approved by the Board, is shared among customers in proportion to their extra tonnes "
+                                "against the same months last year; no customer receives more than 50% of the wharfage rate per extra "
+                                "tonne. What is not earned stays with NMPA, so the total can never exceed the budget. Settled after "
+                                "the period, on verification.",
+                    "sch_stop": "Review after 3 months: extra tonnes and the share of the budget earned"},
                 "Rebate only when the customer is ready (performance condition)": {
                     "sch_scope": "Rebate on extra volume", "sch_blm": "previous_fy",
                     "sch_cond": "Paid only on ship calls where the ship did not wait at anchorage because the receiver, shipper "
@@ -3761,6 +4208,222 @@ with tabs[5]:
             else:
                 _note_md('<div class="ti-s">No schemes yet.</div>', unsafe_allow_html=True)
 
+            # Rebate claims: submitted -> verified -> approved -> paid (or rejected), with an audit trail
+            cl_ = api_get("/incentive/claims") or {}
+            def _claim_post(path_, body_):
+                try:
+                    r_ = requests.post(f"{API}{path_}", headers=_auth_headers(), json=body_, timeout=30)
+                    if r_.ok:
+                        return r_.json(), None
+                    det_ = r_.json().get("detail") if r_.headers.get("content-type", "").startswith("application/json") else r_.text
+                    return None, det_ if isinstance(det_, str) else str(det_)
+                except requests.RequestException as e_:
+                    return None, f"Could not reach the backend: {e_}"
+            cnt_ = cl_.get("count", {})
+            _head("Rebate claims",
+                  insight=(f"{cl_.get('waiting', 0)} claim(s) waiting; {cnt_.get('Paid', 0)} paid; {cnt_.get('Rejected', 0)} rejected. "
+                           "Each claim goes Submitted \u2192 Verified \u2192 Approved \u2192 Paid, with who did each step and when."
+                           if cl_.get("claims") else
+                           "No claims yet. When a customer claims a rebate (for example the iron ore rebate after March 2027), it is "
+                           "recorded here and followed to payment, so nothing is paid twice or missed."),
+                  sub=cl_.get("rules", ""))
+            if cl_.get("claims"):
+                paid_tot = sum(c.get("paid_rs") or 0 for c in cl_["claims"])
+                _cards([("Waiting", str(cl_.get("waiting", 0)), "submitted, verified or approved", "watch" if cl_.get("waiting") else "good"),
+                        ("Paid", cr(paid_tot), f"{cnt_.get('Paid', 0)} claim(s)", "info"),
+                        ("Rejected", str(cnt_.get("Rejected", 0)), "with the reason recorded", "info")])
+                _htable(pd.DataFrame([{"Scheme": b["scheme_name"], "Reference": b["scheme_ref"], "Claims": b["claims"],
+                                       "Claimed": cr(b["claimed_rs"]), "Approved": cr(b["approved_rs"]), "Paid": cr(b["paid_rs"]),
+                                       "Budget left": cr(b["budget_left_rs"]) if b["budget_left_rs"] is not None else "No budget held"}
+                                      for b in cl_["by_scheme"]]))
+                _htable(pd.DataFrame([{"Claim": c["id"], "Customer": c["customer"], "Scheme": c["scheme_ref"],
+                                       "Period": f"{c['period_from']} to {c['period_to']}", "Claimed": cr(c["claimed_rs"]),
+                                       "Verified": cr(c["verified_rs"]), "Approved": cr(c["approved_rs"]), "Paid": cr(c["paid_rs"]),
+                                       "Status": c["status"], "Last step by": c["history"][-1]["by"],
+                                       "Days in this step": ("\u2014" if c["status"] in ("Paid", "Rejected") else
+                                                             (pd.Timestamp.now() - pd.Timestamp(c["history"][-1]["at"])).days)}
+                                      for c in cl_["claims"]]))
+                st.caption("For reference only: NMPA's Citizen's Charter sets 5 days from receipt of bills in Finance to e-payment for "
+                           "suppliers and contractors. It sets no standard for rebate claims; NMPA can set one.")
+            ar_ = api_get("/incentive/approval-route") or {}
+            with st.expander("Who approves what (to be confirmed by NMPA)"):
+                st.markdown(ar_.get("rule", ""))
+                if ar_.get("rows"):
+                    _htable(pd.DataFrame([{"Decision": r["decision"], "Authority": r["authority"] or "Not set",
+                                           "Up to (\u20b9)": r["up_to_rs"] or "\u2014",
+                                           "Confirmed by NMPA": ("Yes, " + r["confirmed_on"]) if r["confirmed"] else "No: to confirm",
+                                           "Basis": r["basis"], "Note": r["note"]} for r in ar_["rows"]]))
+                if ar_.get("references"):
+                    st.markdown("**Reference documents** (starting points only):")
+                    for r_ in ar_["references"]:
+                        st.markdown(f"- [{r_['title']}]({r_['url']}){' (' + r_['date'] + ')' if r_['date'] else ''}: {r_['covers']}. *{r_['status']}*")
+                st.caption("NMPA fills in data/approval_matrix.csv (authority, limit, confirmed_by_nmpa = yes, confirmed_on). Until then, "
+                           "the platform records who approved each claim but does not apply any limit.")
+            pre_ = st.session_state.pop("clm_prefill", None)
+            if pre_:
+                for k_, v_ in pre_.items():
+                    st.session_state[k_] = v_
+            with st.expander("New claim (Traffic)", expanded=bool(pre_)):
+                if pre_:
+                    st.info("Prepared from the monthly settlement list. Check every field against the customer's claim letter and "
+                            "NMPA's bill, correct anything that differs, then submit.")
+                opts_ = cl_.get("schemes", [])
+                if not opts_:
+                    st.info("No scheme is open for claims.")
+                else:
+                    k1, k2 = st.columns(2)
+                    refs_ = [o["ref"] for o in opts_]
+                    if st.session_state.get("clm_scheme") not in refs_:
+                        st.session_state.pop("clm_scheme", None)
+                    sch_ref_ = k1.selectbox("Scheme", refs_, format_func=lambda r: f"{r}: {next(o['name'] for o in opts_ if o['ref'] == r)[:60]}",
+                                            key="clm_scheme")
+                    sch_ = next(o for o in opts_ if o["ref"] == sch_ref_)
+                    cust_ = k2.text_input("Customer", key="clm_cust")
+                    k3, k4 = st.columns(2)
+                    pf_ = k3.date_input("Period from", key="clm_from")
+                    pt_ = k4.date_input("Period to", key="clm_to")
+                    k5, k6 = st.columns(2)
+                    tn_ = k5.number_input("Extra tonnes claimed", min_value=0.0, step=1000.0, key="clm_t")
+                    am_ = k6.number_input("Amount claimed (\u20b9)", min_value=0.0, step=10000.0, key="clm_rs")
+                    nt_ = st.text_input("Note (e.g. the customer's letter reference)", key="clm_note")
+                    by_ = st.text_input("Your name (demo mode only)", key="clm_by")
+                    if st.button("Submit claim", key="clm_go", type="primary"):
+                        res_, err_ = _claim_post("/incentive/claims", {"scheme_ref": sch_["ref"], "customer": cust_, "period_from": str(pf_),
+                                                                       "period_to": str(pt_), "claimed_tonnes": tn_, "claimed_rs": am_,
+                                                                       "note": nt_, "by": by_})
+                        if err_:
+                            st.error(err_)
+                        else:
+                            st.success(f"Claim {res_['id']} submitted.")
+                            st.rerun()
+            open_ = [c for c in cl_.get("claims", []) if cl_.get("next", {}).get(c["status"])]
+            if open_:
+                with st.expander("Move a claim to its next step"):
+                    c_ = st.selectbox("Claim", open_, format_func=lambda c: f"{c['id']}: {c['customer']}, {c['status']}", key="mv_claim")
+                    to_ = st.radio("Next step", cl_["next"][c_["status"]], horizontal=True, key="mv_to")
+                    body_ = {"to": to_, "by": st.text_input("Your name (demo mode only)", key="mv_by")}
+                    if to_ == "Verified":
+                        v1, v2 = st.columns(2)
+                        body_["tonnes"] = v1.number_input("Verified extra tonnes", min_value=0.0, value=float(c_["claimed_tonnes"]), key="mv_t")
+                        body_["amount_rs"] = v2.number_input("Verified amount (\u20b9)", min_value=0.0, value=float(c_["claimed_rs"]), key="mv_rs")
+                    elif to_ == "Approved":
+                        body_["amount_rs"] = st.number_input("Approved amount (\u20b9)", min_value=0.0, value=float(c_["verified_rs"] or 0), key="mv_ap")
+                        rt_ = (api_get("/incentive/approval-route", {"decision": "Rebate claim: approve payment",
+                                                                      "amount_rs": body_["amount_rs"]}) or {}).get("answer", {})
+                        st.caption(f"Approval authority: {rt_['authority']} (confirmed by NMPA {rt_.get('confirmed_on', '')})."
+                                   if rt_.get("authority") else (rt_.get("message") or "") + " The approver's name and role are recorded.")
+                    elif to_ == "Paid":
+                        body_["payment_ref"] = st.text_input("Payment or credit note reference", key="mv_ref")
+                    body_["note"] = st.text_input("Reason" if to_ == "Rejected" else "Note", key="mv_note")
+                    if st.button(f"Mark {to_.lower()}", key="mv_go", type="primary"):
+                        res_, err_ = _claim_post(f"/incentive/claims/{c_['id']}/move", body_)
+                        if err_:
+                            st.error(err_)
+                        else:
+                            if res_.get("warning"):
+                                st.warning(res_["warning"])
+                            st.success(f"{c_['id']} is now {to_.lower()}.")
+                            st.rerun()
+
+            # Monthly settlement list for Finance: which calls and exporters qualify for NMPA's rebates this month
+            sl0 = api_get("/incentive/settlement-list") or {}
+            if sl0.get("available"):
+                mths_ = sl0["months"][::-1]
+                mth_ = st.selectbox("Month", mths_, format_func=lambda m: pd.Timestamp(m + "-01").strftime("%B %Y"), key="sl_month")
+                sl_ = api_get("/incentive/settlement-list", {"month": mth_}) or sl0
+                ct_, cp_ = sl_["container"]["calls"], sl_["capesize"]["calls"]
+                _head(f"Monthly settlement list: {sl_['month_label']}",
+                      insight=(f"{len(ct_)} container call(s) qualify for the container rebate and {len(cp_)} Berth 16 call(s) are to be "
+                               f"checked for the Cape-size rebate this month. Finance applies each rebate on the bill, which carries the "
+                               f"ship's GRT; amounts are shown here where the GRT is already held."),
+                      sub=sl_["method"] + f" Latest daily report: {sl_['latest_report']}.")
+                _cards([("Container rebate", f"{len(ct_)} call(s)", "Berth 14 \u00b7 25% to 50%, by date", "info"),
+                        ("Cape-size rebate", f"{len(cp_)} call(s)", "Berth 16 \u00b7 30%, only above 80,000 GRT", "info"),
+                        ("Iron ore rebate", "builds up", "paid after 31 Mar 2027, on verification", "info")])
+                st.markdown(f"**Container rebate** ({sl_['container']['notice']}): {sl_['container']['rule']}")
+                if ct_:
+                    _htable(pd.DataFrame([{"Vessel": x["vessel"], "Berthed": x["berthed"], "Last seen": x["last_report"],
+                                           "Run": {"F": "Foreign", "C": "Coastal"}.get(x["run"][:1].upper(), x["run"] or "\u2014"),
+                                           "Cargo": x["cargo"], "GRT": f"{x['grt']:,.0f}" if x["grt"] else "On the bill",
+                                           "Notice": x["notice"], "Rule": x["rule"],
+                                           "Rebate (feeder to mainline)": (f"{cr(x['rebate_low_rs'])} to {cr(x['rebate_high_rs'])}" if x["rebate_low_rs"] is not None else x["apply"])}
+                                          for x in ct_]))
+                else:
+                    st.caption("No container call at Berth 14 qualifies in this month (the rebate runs from 3 Nov 2026).")
+                st.markdown(f"**Cape-size rebate** ({sl_['capesize']['notice']}): {sl_['capesize']['rule']}")
+                if cp_:
+                    _htable(pd.DataFrame([{"Vessel": x["vessel"], "Berthed": x["berthed"], "Last seen": x["last_report"],
+                                           "Length (LOA, m)": x["loa"] or "\u2014", "Cargo": x["cargo"],
+                                           "GRT": f"{x['grt']:,.0f}" if x["grt"] else "On the bill", "Status": x["status"],
+                                           "Rebate": cr(x["rebate_rs"]) if x["rebate_rs"] else "\u2014"} for x in cp_]))
+                    st.caption("Length is a quick hint: Cape-size ships are typically around 280 m or longer. The GRT on the bill decides.")
+                else:
+                    st.caption("No call at Berth 16 in this month.")
+                io_ = sl_["iron_ore"]["monitor"]
+                st.markdown(f"**Iron ore export rebate** ({sl_['iron_ore']['notice']}): {sl_['iron_ore']['rule']}")
+                if io_:
+                    _htable(pd.DataFrame([{"Exporter": e["customer"], f"FY 2026-27 to date ({io_['months']})": f"{e['fy2026_27_to_date_t']:,.0f} t",
+                                           f"FY 2025-26 base ({sl_['iron_ore']['monitor'].get('base_months', '')}"
+                                           + ("" if sl_['iron_ore']['monitor'].get('base_complete') else ", partial") + ")":
+                                               f"{e.get('fy2025_26_base_t', e['sep2025_mar2026_t']):,.0f} t",
+                                           "Status": e["status"]} for e in io_["exporters"]]))
+                    st.caption(f"Each extra tonne above an exporter's full FY 2025-26 quantity earns \u20b9{io_['rebate_per_extra_t_rs']:,.2f}. "
+                               + ("The FY 2025-26 base is complete (all 12 months of daily reports held)." if io_.get("base_complete") else
+                                  f"The FY 2025-26 base covers {io_.get('base_months_held', '?')} of 12 months; back-fill the older daily reports to complete it."))
+                # Prepare a claim from a line of this list: fills the claim form above; the officer checks and submits
+                import datetime as _dtm
+                prep_ = []
+                for x in ct_:
+                    prep_.append((f"Container rebate ({x['notice']}) \u00b7 {x['vessel']} \u00b7 Berth {x['berth']} \u00b7 berthed {x['berthed']}", {
+                        "clm_scheme": x["notice"], "clm_cust": x.get("agent") or "",
+                        "clm_from": _dtm.date.fromisoformat(x["berthed"]), "clm_to": _dtm.date.fromisoformat(x["last_report"]),
+                        "clm_t": 0.0, "clm_rs": float(x["rebate_low_rs"] or 0),
+                        "clm_note": (f"Settlement list {sl_['month_label']}: {x['vessel']} at Berth {x['berth']}, berthed {x['berthed']}, "
+                                     f"{ {'F': 'Foreign', 'C': 'Coastal'}.get(x['run'][:1].upper(), x['run'] or 'run not stated') }, {x['cargo']}. Rebate under {x['notice']}: {x['rule']}" + (f"; estimate {cr(x['rebate_low_rs'])} to {cr(x['rebate_high_rs'])}"
+                                     if x["rebate_low_rs"] is not None else "; amount from NMPA's bill (GRT on the bill)") + ".")}))
+                for x in cp_:
+                    prep_.append((f"Cape-size rebate \u00b7 {x['vessel']} \u00b7 Berth 16 \u00b7 berthed {x['berthed']}", {
+                        "clm_scheme": sl_["capesize"]["notice"], "clm_cust": x.get("agent") or "",
+                        "clm_from": _dtm.date.fromisoformat(x["berthed"]), "clm_to": _dtm.date.fromisoformat(x["last_report"]),
+                        "clm_t": 0.0, "clm_rs": float(x["rebate_rs"] or 0),
+                        "clm_note": (f"Settlement list {sl_['month_label']}: {x['vessel']} at Berth 16, berthed {x['berthed']}, LOA "
+                                     f"{x['loa'] or 'not stated'} m, {x['cargo']}. {x['status']}. 30% of port dues and pilotage, "
+                                     f"only above 80,000 GRT: check the GRT on the bill.")}))
+                for e in ((io_ or {}).get("exporters") or []):
+                    if "KIOCL" in e["customer"].upper().split(" + "):
+                        continue
+                    prep_.append((f"Iron ore export rebate \u00b7 {e['customer']}", {
+                        "clm_scheme": sl_["iron_ore"]["notice"], "clm_cust": e["customer"],
+                        "clm_from": _dtm.date(2026, 9, 23), "clm_to": _dtm.date(2027, 3, 31),
+                        "clm_t": float(max(0, e.get("extra_vs_same_months_t") or 0)), "clm_rs": float(e.get("rebate_building_rs") or 0),
+                        "clm_note": (f"Iron ore export rebate: 20% of wharfage on tonnes above the exporter's FY 2025-26 quantity, paid "
+                                     f"after 31 Mar 2027 on verification. FY 2026-27 to date {e['fy2026_27_to_date_t']:,} t; FY 2025-26 base "
+                                     f"{e.get('fy2025_26_base_t', e['sep2025_mar2026_t']):,} t "
+                                     + ("(complete)." if (io_ or {}).get("base_complete") else "(partial: confirm with NMPA's figures).")
+                                     + f" Status: {e['status']}.")}))
+                if prep_:
+                    p1_, p2_ = st.columns([4, 1])
+                    pick_p = p1_.selectbox("Prepare a claim from this list", range(len(prep_)), format_func=lambda i: prep_[i][0], key="sl_prep_pick")
+                    if p2_.button("Prepare claim", key="sl_prep_go"):
+                        st.session_state["clm_prefill"] = prep_[pick_p][1]
+                        st.rerun()
+                    st.caption("Fills the 'New claim' form in Rebate claims with this line's details. Nothing is submitted: the officer "
+                               "checks the form against the customer's claim letter and NMPA's bill, then submits.")
+                for n_ in sl_["not_listed"]:
+                    st.caption(n_)
+                rows_csv = ([{"scheme": sl_["container"]["notice"], "vessel": x["vessel"], "berth": x["berth"], "berthed": x["berthed"],
+                              "last_seen": x["last_report"], "run": x["run"], "cargo": x["cargo"], "grt": x["grt"] or "",
+                              "rebate_low_rs": x["rebate_low_rs"] if x["rebate_low_rs"] is not None else "",
+                              "rebate_high_rs": x["rebate_high_rs"] if x["rebate_high_rs"] is not None else "", "apply": x["apply"]} for x in ct_] +
+                            [{"scheme": sl_["capesize"]["notice"], "vessel": x["vessel"], "berth": x["berth"], "berthed": x["berthed"],
+                              "last_seen": x["last_report"], "run": x["run"], "cargo": x["cargo"], "grt": x["grt"] or "",
+                              "rebate_low_rs": x["rebate_rs"] if x["rebate_rs"] is not None else "", "rebate_high_rs": "",
+                              "apply": x["status"]} for x in cp_])
+                if rows_csv:
+                    st.download_button("\u2913 Settlement list for Finance (CSV)", pd.DataFrame(rows_csv).to_csv(index=False),
+                                       file_name=f"settlement_list_{mth_}.csv", mime="text/csv", key="sl_csv")
+                _src(sl_["source"])
+
             # 4. What happened after past incentives
             ev = api_get("/incentive/evidence", timeout=30)
             if ev and ev.get("available"):
@@ -3885,6 +4548,26 @@ with tabs[5]:
                     "Notes": r.get("notes") or "\u2014"} for r in rows_sr]))
                 _src(sr_["source"])
 
+            # Did it pay for itself? Earned from extra cargo minus what each scheme gave up
+            nb_ = api_get("/incentive/net-benefit") or {}
+            if nb_.get("rows"):
+                judged_nb = [r for r in nb_["rows"] if r["net_low_rs"] is not None]
+                _head("Did each scheme pay for itself?",
+                      insight=(f"{len(judged_nb)} of {len(nb_['rows'])} schemes can be costed so far. A scheme pays for itself when the "
+                               "wharfage from cargo it really brought (above what the market explains) is more than what it gave up."),
+                      sub=nb_["method"])
+                tone_nb = {"Paid for itself (so far)": "\u2705 ", "Did not pay for itself (so far)": "\u26a0\ufe0f ", "Close to break-even": "",
+                           "Indicative only": "", "Cost not priced": "", "Earnings not priced": "", "Not yet": ""}
+                rng = lambda lo, hi: "\u2014" if lo is None else (cr(lo) if abs((hi or lo) - lo) < 1 else f"{cr(lo)} to {cr(hi)}")
+                _htable(pd.DataFrame([{"Scheme": r["short"], "Verdict": tone_nb.get(r["verdict"], "") + r["verdict"],
+                                       "What it gave up": "\u2014" if r["cost_rs"] is None else cr(r["cost_rs"]),
+                                       "Earned from extra cargo": rng(r["earned_low_rs"], r["earned_high_rs"]),
+                                       "Net": rng(r["net_low_rs"], r["net_high_rs"]), "Why": r["why"] or "\u2014"} for r in nb_["rows"]]))
+                st.caption("Ranges: the lower figure counts NMPA's published average handling cost per extra tonne; the higher counts none. "
+                           "Costs and earnings are estimates from published data, not billed figures; the bills (What we earn \u2192 Check "
+                           "against NMPA's bills) and the Scale of Rates are the authority.")
+                _src(nb_["source"])
+
             # Did it work? NMPA against the other major ports
             _head("Did a discount work? Compare with the other major ports",
                   insight="If NMPA's cargo rose 15% but the same cargo rose 12% at every other major port, only the 3% gap "
@@ -3924,6 +4607,106 @@ with tabs[5]:
                                     f'{html.escape(se_["settlement_mode"])}. {html.escape(se_["status_label"])}</div>', unsafe_allow_html=True)
 
             # Competitor watch: new incentive and tariff notices at Cochin, VOC Tuticorin and Mormugao
+            # NMPA circulars and trade notices: officer-added now; read automatically only after NMPA's permission
+            nc_ = api_get("/incentive/nmpa-circulars") or {}
+            def _nc_post(path_, body_):
+                try:
+                    r_ = requests.post(f"{API}{path_}", headers=_auth_headers(), json=body_, timeout=30)
+                    if r_.ok:
+                        return r_.json(), None
+                    if r_.status_code in (401, 403):
+                        return None, "Your login does not allow this (Traffic adds circulars; the Approver records NMPA's permission)."
+                    return None, str(r_.json().get("detail", r_.text))
+                except requests.RequestException as e_:
+                    return None, f"Could not reach the backend: {e_}"
+            perm_ = nc_.get("permission", {})
+            _head("NMPA circulars and trade notices",
+                  insight=(f"{nc_.get('open', 0)} circular(s) to look at. Each one shows which part of the platform it affects and a "
+                           "suggested next step." if nc_.get("rows") else
+                           "No circulars listed yet. Add NMPA's new circulars here: each is sorted (incentive, tariff, rules, weather, "
+                           "statistics, tenders) with the part of the platform it affects."),
+                  sub=nc_.get("rule", "") + (f" Automatic reading: ON (NMPA's permission recorded by {perm_['by']} on {perm_['on'][:10]}: "
+                                             f"{perm_['reference']})." if perm_.get("granted") else
+                                             " Automatic reading: OFF until NMPA's permission is recorded."))
+            if nc_.get("rows"):
+                show_nc = [r for r in nc_["rows"] if r["status"] == "Open"] or nc_["rows"][-10:]
+                _htable(pd.DataFrame([{"No.": r["id"], "Date": r["date"] or "\u2014", "Circular": r["title"], "Category": r["category"],
+                                       "Affects": r["affects"], "Suggested next step": r["next_step"], "Status": r["status"],
+                                       "Link": r["url"] or "\u2014"} for r in show_nc]))
+            with st.expander("Add an NMPA circular"):
+                n1, n2 = st.columns([3, 1])
+                t_nc = n1.text_input("Title, as NMPA wrote it", key="nc_title")
+                d_nc = n2.date_input("Date of the circular", key="nc_date")
+                u_nc = st.text_input("Link to the circular (optional)", key="nc_url")
+                cats_ = ["Sort it for me"] + nc_.get("categories", [])
+                c_nc = st.selectbox("Category", cats_, key="nc_cat")
+                by_nc = st.text_input("Your name (demo mode only)", key="nc_by")
+                if st.button("Add circular", key="nc_add", type="primary"):
+                    res_, err_ = _nc_post("/incentive/nmpa-circulars", {"title": t_nc, "date": str(d_nc), "url": u_nc, "by": by_nc,
+                                                                        "category": None if c_nc == "Sort it for me" else c_nc})
+                    if err_:
+                        st.error(err_)
+                    else:
+                        st.success(f"Added {res_['id']} as '{res_['category']}': {res_['next_step']}")
+                        st.rerun()
+            open_nc = [r for r in nc_.get("rows", []) if r["status"] == "Open"]
+            if open_nc:
+                with st.expander("Mark a circular as looked at"):
+                    pick_nc = st.selectbox("Circular", open_nc, format_func=lambda r: f"{r['id']}: {r['title'][:70]}", key="nc_pick")
+                    note_nc = st.text_input("What was done (e.g. 'added to the scheme register')", key="nc_note")
+                    if st.button("Mark done", key="nc_done"):
+                        res_, err_ = _nc_post(f"/incentive/nmpa-circulars/{pick_nc['id']}/done", {"note": note_nc, "by": by_nc})
+                        if err_:
+                            st.error(err_)
+                        else:
+                            st.rerun()
+            with st.expander("NMPA's permission for automatic reading (Approver)"):
+                st.markdown("NMPA's website asks programs not to read it automatically. When NMPA agrees in writing, record it here; "
+                            "from then on the weekly refresh reads NMPA's circulars page (one request a week) and lists new circulars.")
+                g_nc = st.checkbox("NMPA has given written permission", value=bool(perm_.get("granted")), key="nc_perm")
+                ref_nc = st.text_input("Reference (e.g. email of 20 Nov 2026 from the Traffic Manager)", value=perm_.get("reference", ""),
+                                       key="nc_ref")
+                if st.button("Save", key="nc_perm_save"):
+                    res_, err_ = _nc_post("/incentive/nmpa-circulars/permission", {"granted": g_nc, "reference": ref_nc, "by": by_nc})
+                    if err_:
+                        st.error(err_)
+                    else:
+                        st.success("Saved.")
+                        st.rerun()
+
+            # How New Mangalore's ship turnaround compares with the other major ports (Ministry figures)
+            tb_ = api_get("/incentive/turnaround-benchmark") or {}
+            if tb_.get("available"):
+                _head("Ship turnaround: New Mangalore against the other major ports",
+                      insight=tb_["plain"] + " Faster turnaround is part of what wins cargo, alongside price.",
+                      sub="Average turnaround time in hours (lower is better). A discount cannot make up for ships waiting longer.")
+                ps_ = tb_["ports"]
+                cols_tb = ["#E2600E" if p["port"] == "New Mangalore Port" else "#9AA1AD" for p in ps_]
+                fig_tb = go.Figure(go.Bar(x=[p["hours"] for p in ps_], y=[p["port"].replace(" Port", "") for p in ps_], orientation="h",
+                                          marker_color=cols_tb, text=[f"{p['hours']:.1f}" for p in ps_], textposition="outside"))
+                if tb_.get("all_ports_avg"):
+                    fig_tb.add_vline(x=tb_["all_ports_avg"], line_dash="dash", line_color="#2B4A6F",
+                                     annotation_text=f"All major ports {tb_['all_ports_avg']:.1f}", annotation_position="top")
+                if tb_.get("nmpa_ytd"):
+                    fig_tb.add_vline(x=tb_["nmpa_ytd"]["hours"], line_dash="dot", line_color="#E2600E",
+                                     annotation_text=f"New Mangalore this year {tb_['nmpa_ytd']['hours']:.1f}", annotation_position="bottom")
+                fig_tb.update_layout(height=430, margin=dict(l=10, r=40, t=30, b=10), yaxis=dict(autorange="reversed"),
+                                     xaxis_title=f"Hours, {tb_['year']}", plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)")
+                st.plotly_chart(fig_tb, **_W_CHART)
+                ch_ = api_get("/incentive/charter-standards") or {}
+                if ch_.get("available"):
+                    std_ = {r["service"]: r for r in ch_["standards"]}
+                    out_std = std_.get("Cargo handling at wharves and oil jetties", {}).get("standard")
+                    act = ch_.get("actual_output_per_berth_day_t")
+                    st.markdown(f'<div class="ie-take" style="font-size:13.5px"><b>NMPA\u2019s own service standards</b> (Citizen\u2019s Charter '
+                                f'2024-25): berth allotment within {std_["Allotment of berths to vessels"]["standard"]} min of the vessel call, '
+                                f'pilotage {std_["Pilotage"]["standard"]} min from pilot boarding to berthing, and {out_std:,.0f} t per ship '
+                                f'berth-day.' + (f' Actual output was {act:,.0f} t per ship berth-day ({ch_["actual_through"]}, year to date): '
+                                f'{"above" if act >= out_std else "below"} the standard, so ' + ("handling at the berth is not where time is "
+                                "lost; waiting before berthing is." if act >= out_std else "berth productivity needs attention.") if act else "")
+                                + '</div>', unsafe_allow_html=True)
+                _src(tb_["source"] + "; NMPA Citizen's Charter 2024-25")
+
             cw_ = api_get("/incentive/competitor-watch") or {}
             n_new_cw = len(cw_.get("new", []))
             _head("Competitor watch: new schemes at Cochin, VOC Tuticorin and Mormugao",

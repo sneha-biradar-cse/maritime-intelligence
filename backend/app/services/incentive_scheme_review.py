@@ -43,11 +43,17 @@ SCHEMES = [
      "cargo": "Iron ore exports", "aim": "More iron ore exports than last year"},
     {"short": "Cape-size rebate, Berth 16 (coal)", "notice": "12/1/2021-22/ATM Gr.I (Com)/JSW", "start": "2025-04",
      "end": "2027-03", "group": "Coal", "aim": "Bring larger coal vessels to Berth 16",
-     "note": "Covers all coal; the scheme covers only Cape-size vessels at Berth 16, so this is a broad check."},
+     "note": "Covers all coal; the scheme covers only Cape-size vessels at Berth 16, so this is a broad check. The same 30% "
+             "rebate has run without a break since April 2021 (extended in 2022, 2023 and 2025), so the year before this "
+             "extension already had it: the check shows how coal did during the extension, not what the rebate itself achieved."},
     {"short": "Middle East container waiver", "notice": "NMPA/TM/Trade Notice/2026 (corrigendum)", "start": "2026-03",
      "end": "2026-04", "group": "Containers (tonnes)", "relief": True, "aim": "Keep export containers moving"},
     {"short": "Container vessel rebate", "notice": "Comrc/DTM(C)/2026-27/01", "start": "2026-11", "end": "2027-03",
-     "group": "Containers (tonnes)", "aim": "More container services and calls"},
+     "group": "Containers (tonnes)", "aim": "More container services and calls",
+     "note": "This is an enhancement (35% feeder / 50% mainline from 3 Nov 2026) of a container rebate NMPA has given since "
+             "January 2023: 25% for feeders and mainline vessels in 2024 to 2026 (NMPA notices 2023-3 and 2023-4), plus 15% for "
+             "a new international service other than Colombo. When judged, it will show the effect of the higher rates, not "
+             "whether a rebate helps at all."},
     {"short": "New export cargo concession", "notice": "NMPA/TM/SM/2026", "start": "2026-07", "end": "2027-07",
      "why_not": "New cargo types are not shown separately in the Ministry's tables."},
     {"short": "Harit green cargo concession", "notice": "NMPA/Traffic/Com/Green Policy/01", "start": "2025-07",

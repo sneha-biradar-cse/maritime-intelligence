@@ -80,7 +80,7 @@ def classify(title: str) -> str | None:
     return None
 
 
-def extract(html: str, base_url: str) -> list[dict]:
+def extract(html: str, base_url: str, keep_all: bool = False) -> list[dict]:
     """Notices on a page: title, absolute link, kind, any date printed beside it. Duplicate links are kept once."""
     p = _Blocks()
     p.feed(html)
@@ -97,9 +97,14 @@ def extract(html: str, base_url: str) -> list[dict]:
                 title = title[len(m0.group(1)):].strip(" -:|")
             title = re.sub(r"(\s+(view|download|pdf|click here))+\s*$", "", title, flags=re.I).strip()[:300]
             kind = classify(title)
-            if not kind:
-                continue
             url = urljoin(base_url, href)
+            if not kind:
+                if not keep_all:                                     # competitors: incentive and tariff notices only
+                    continue
+                is_doc = url.lower().endswith((".pdf", ".doc", ".docx")) or "/files/" in url.lower()
+                if not is_doc and len(title) < 25:                   # skip menu links such as 'Home' or 'About us'
+                    continue
+                kind = "Other"
             if url in seen:
                 continue
             seen.add(url)

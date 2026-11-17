@@ -1,0 +1,26 @@
+vessel_name,dvp_loa_m,ship_type,imo_number,check_digit_valid,confidence,source_url,looked_up_on
+BEAGLE,229,bulk carrier,9731195,True,High,https://magicport.ai/vessels/bulk-carrier/beagle-mmsi-636024375,2026-11-10
+BEAGLE,183,chemical/product tanker,9814181,True,High,https://maritimeoptima.com/public/vessels/pages/imo:9814181/mmsi:352802000/BEAGLE.html,2026-11-10
+OCEAN PIONEER,144.09,chemical tanker,9347152,True,High,https://www.vesselfinder.com/vessels/details/9347152,2026-11-10
+OCEAN PIONEER,31,tug,9571129,True,High,https://www.vesselfinder.com/vessels/details/9571129,2026-11-10
+BITUMEN STAR,102.99,bitumen tanker,9159282,True,High,https://www.vesselfinder.com/vessels/details/9159282,2026-11-10
+NANDA DEVI,227,LPG tanker,9232503,True,High,https://www.vesselfinder.com/vessels/details/9232503,2026-11-10
+MARINTRUST-01,83,general cargo,9783174,True,High,https://newmangaloreport.gov.in/sites/default/files/2024-05/Advertisement%20Notice%20regd%20Sale%20of%20M.V.Marintrust-01..pdf,2026-11-10
+TCI EXPRESS,178,container,9138238,True,High,https://maritimeoptima.com/public/vessels/pages/imo:9138238/mmsi:419001352/TCI_EXPRESS.html,2026-11-10
+TCI ANAND,187.3,container,9282273,True,High,https://www.vesselfinder.com/vessels/details/9282273,2026-11-10
+SSL GUJARAT,193,container,9137533,True,High,https://www.vesselfinder.com/vessels/details/9137533,2026-11-10
+SSL VISAKHAPATNAM,193,container,9137521,True,High,https://www.vesselfinder.com/vessels/details/9137521,2026-11-10
+VARADA,261,container,9295206,True,High,https://maritimeoptima.com/public/vessels/pages/imo:9295206/mmsi:419001386/VARADA.html,2026-11-10
+MOGRAL,232,container,9169495,True,High,https://maritimeoptima.com/public/vessels/pages/imo:9169495/mmsi:419001380/MOGRAL.html,2026-11-10
+SM MANALI,222,container,9303742,True,High,https://maritimeoptima.com/public/vessels/pages/imo:9303742/mmsi:419001631/SM_MANALI.html,2026-11-10
+SPIRIT OF BERTRAM,170,container,9673642,True,High,https://maritimeoptima.com/public/vessels/pages/imo:9673642/mmsi:255915837/SPIRIT_OF_BERTRAM.html,2026-11-10
+BLOSSOM,119,product tanker,9294616,True,Medium,https://www.vesselfinder.com/vessels/details/9294616,2026-11-10
+DARYA SHAAN,169,cement carrier,9467897,True,High,https://www.vesselfinder.com/vessels/details/9467897,2026-11-10
+SANMAR SLOKA,228,product tanker,9288681,True,High,https://www.vesselfinder.com/vessels/details/9288681,2026-11-10
+HARVEST,183,product tanker,9296559,True,Medium,https://www.vesselfinder.com/vessels/details/9296559,2026-11-10
+SWARNA KRISHNA,228,tanker,9414838,True,High,https://www.shipindia.com/upload/tender/5_MT_SWARNA_KRISHNA_Ship_Particulars.pdf,2026-11-10
+SWARNA GODAVARI,228,tanker,9414826,True,High,https://www.vesselfinder.com/vessels/details/9414826,2026-11-10
+DESH BHAKT,245,crude tanker,9232905,True,High,https://magicport.ai/vessels/tanker/desh-bhakt-mmsi-419474000,2026-11-10
+DESH PREM,244.2,crude tanker,9232917,True,High,https://magicport.ai/vessels/tanker/desh-prem-mmsi-419471000,2026-11-10
+PENNA SURAKSHA,177,cement carrier,9310599,True,High,https://www.vesselfinder.com/vessels/details/9310599,2026-11-10
+VISHVA VIKAS,190,bulk carrier,9487902,True,High,https://www.vesselfinder.com/vessels/details/9487902,2026-11-10

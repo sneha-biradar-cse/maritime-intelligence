@@ -33,7 +33,10 @@ STATUS_ROLES = {"Traffic review": {"traffic"}, "Finance review": {"traffic"}, "D
                 "Rejected": {"traffic", "approver"}, "Approved": {"approver"}, "Active": {"traffic"}, "Completed": {"traffic"}}
 ACTION_ROLES = {"finance_upload": {"finance"}, "create_scheme": {"traffic"}, "rebaseline": {"traffic"}, "amend": {"traffic"}, "scheme_note": {"traffic", "finance", "approver"},
                 "customer_notes": {"traffic"}, "alert_feedback": {"traffic", "finance"},
-                "set_policy": {"approver"}}
+                "set_policy": {"approver"},
+                "claim_submit": {"traffic"}, "claim_verify": {"traffic", "finance"}, "claim_approve": {"approver"},
+                "claim_pay": {"finance"}, "claim_reject": {"traffic", "finance", "approver"},
+                "confirm_names": {"traffic"}, "circulars": {"traffic"}, "record_permission": {"approver"}}
 
 
 def _hash(password: str, salt: str) -> str:

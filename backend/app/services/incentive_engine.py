@@ -1343,7 +1343,19 @@ def iron_ore_rebate_monitor() -> dict[str, Any]:
     ex = v[(v["family"] == "Iron ore") & (v["direction"] == "outbound") & v["tonnes"].notna()]
     ex = ex[~ex["customer"].isin(["KIOCL", tcu.NOT_STATED])]
     by = lambda a, b: ex[(ex["month"] >= a) & (ex["month"] <= b)].groupby("customer")["tonnes"].sum()
-    cur_ex, base_ex = by("2026-04", latest.strftime("%Y-%m")), by("2025-09", "2026-03")
+    cur_ex = by("2026-04", latest.strftime("%Y-%m"))
+    held = sorted(set(ex["month"]) | set(v["month"]))                         # months the daily reports cover
+    complete = set(tcu.build().get("complete") or held)
+    base_months = [m for m in pd.date_range("2025-04-01", "2026-03-01", freq="MS").strftime("%Y-%m") if m in complete]
+    base_ex = ex[ex["month"].isin(base_months)].groupby("customer")["tonnes"].sum()
+    base_label = (f"{pd.Timestamp(base_months[0] + '-01'):%b %Y} to {pd.Timestamp(base_months[-1] + '-01'):%b %Y}"
+                  if base_months else "none")
+    base_full = len(base_months) == 12
+    cur_m = sorted(set(ex.loc[ex["month"] >= "2026-04", "month"]) & complete)
+    same_m = [(pd.Timestamp(m + "-01") - pd.DateOffset(years=1)).strftime("%Y-%m") for m in cur_m]
+    same_ok = bool(cur_m) and all(m in complete for m in same_m)
+    same_ex = ex[ex["month"].isin(same_m)].groupby("customer")["tonnes"].sum() if same_ok else None
+    cur_c = ex[ex["month"].isin(cur_m)].groupby("customer")["tonnes"].sum()
     ids = {}
     try:
         idp = pd.read_csv(tmk.ROOT / "data" / "customer_identity_proposals.csv")
@@ -1356,11 +1368,18 @@ def iron_ore_rebate_monitor() -> dict[str, Any]:
     def status(c):
         if "KIOCL" in c.upper().split(" + "):
             return "Joint entry including KIOCL (own arrangement): eligibility to confirm with Traffic"
-        base = "New in the daily reports since Sep 2025" if base_ex.get(c, 0) == 0 else "Existing"
+        base = (("New exporter (no FY 2025-26 tonnes)" if base_full else f"New in the daily reports since {base_label.split(' to ')[0]}")
+                if base_ex.get(c, 0) == 0 else "Existing")
         if c.upper() in ("ERM", "E. RAMAMURTHY MINERALS"):
             base += "; 'ERM' and 'E. RAMAMURTHY MINERALS' may be the same exporter (not confirmed by NMPA)"
         return base
+    def extra(c):
+        if same_ex is None:
+            return None
+        return round(float(cur_c.get(c, 0)) - float(same_ex.get(c, 0)))
     exporters = [{"customer": c, "fy2026_27_to_date_t": round(cur_ex.get(c, 0)), "sep2025_mar2026_t": round(base_ex.get(c, 0)),
+                  "fy2025_26_base_t": round(base_ex.get(c, 0)), "extra_vs_same_months_t": extra(c),
+                  "rebate_building_rs": (round(max(0, extra(c)) * rate * 0.20) if extra(c) is not None else None),
                   "status": status(c)}
                  for c in sorted(set(cur_ex.index) | set(base_ex.index), key=lambda c: -cur_ex.get(c, 0))]
     return {"scheme": "NMPA/TM/IOF-Exp-Rebate/26-27: 20% rebate on wharfage for incremental iron ore fines/lumps exports, "
@@ -1369,11 +1388,16 @@ def iron_ore_rebate_monitor() -> dict[str, Any]:
             "same_months_2025_t": round(t(prev_same)), "months": f"Apr to {latest:%b %Y}",
             "since_scheme_t": round(t(since)), "since_scheme_prev_t": round(t([m - pd.DateOffset(years=1) for m in since])),
             "rate_rs_per_t": rate, "rebate_per_extra_t_rs": round(rate * 0.20, 2), "exporters": exporters,
+            "base_months": base_label, "base_months_held": len(base_months), "base_complete": base_full,
+            "same_months_compared": (f"{pd.Timestamp(cur_m[0] + '-01'):%b %Y} to {pd.Timestamp(cur_m[-1] + '-01'):%b %Y} against a year earlier"
+                                     if same_ok else None),
             "limits": ["The rebate is per exporter, on tonnes above each exporter's own FY 2025-26 quantity (or 1,00,000 t for a "
                        "new exporter), settled after 31 Mar 2027. Port totals cannot show it: one exporter's rise may offset "
                        "another's fall.",
-                       "Exporters' FY 2025-26 base cannot be built from public data: NMPA's daily reports in this project start in "
-                       "Sep 2025, so Apr-Aug 2025 is missing. The 'Sep 2025 to Mar 2026' column is a partial base only.",
+                       (f"Exporters' FY 2025-26 base is complete: all 12 months of daily reports are held." if base_full else
+                        f"Exporters' FY 2025-26 base covers {len(base_months)} of 12 months ({base_label}): a partial base. "
+                        "Back-fill the older daily reports (download_daily_reports.py --direct --from 2025-04-01 --to 2025-08-31) "
+                        "to complete it."),
                        "KIOCL's iron ore is under its own arrangement and is left out. Exporter names are as written in the daily "
                        "reports (not confirmed by NMPA).",
                        "Each extra tonne under the scheme earns NMPA 80% of the wharfage rate; the other 20% is the rebate."],
@@ -1417,11 +1441,11 @@ SCHEME_PATTERNS = [
     ("Route or new-service incentive", None,
      "Not among NMPA's notices. Cochin, VOC and JNPA reward new routes or new services; NMPA's container rebate could be tied "
      "to new services or routes (for example West Asia) rather than all calls."),
-    ("Vessel or parcel-size concession", "12/1/2021-22/ATM Gr.I (Com)/JSW (30% for Cape-size vessels at Berth 16)",
+    ("Vessel or parcel-size concession", "12/1/2021-22/ATM Gr.I (Com)/JSW (30% for Cape-size vessels at Berth 16, running since April 2021)",
      "Larger parcels use berths better; Deendayal's salt scheme is linked to a rise of about 8.5 million t in a year."),
-    ("Performance norms (incentive and penalty)", None,
-     "Not among NMPA's notices. Cochin and Paradip reward handling faster than a norm and penalise slower handling. Relevant "
-     "where berth time is lost: NMPA's daily reports show key customers' ships waiting because the customer was not ready."),
+    ("Performance norms (incentive and penalty)", "NMPA Trade Notice: Performance norms for dry bulk vessels (Feb 2023, terms not held)",
+     "NMPA already uses it for dry bulk vessels (2023). Cochin and Paradip do the same. It could be extended where berth time is "
+     "lost: NMPA's daily reports show key customers' ships waiting because the customer was not ready."),
     ("Green ship discount", "NMPA/DC/Trade Circular/2025/01 (Harit Shrey, ended 31 Mar 2025)",
      "Mormugao started first (Oct 2023). NMPA's trial ended; no renewal found among its notices."),
     ("Green cargo concession", "NMPA/Traffic/Com/Green Policy/01 (Harit Cargo, 40% / 75%, to 2030)",

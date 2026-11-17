@@ -422,3 +422,179 @@ def get_berth_check(cargo: str, extra_pct: float):
         return da.berth_check(cargo, extra_pct)
     except KeyError as e:
         raise HTTPException(status_code=400, detail=f"Unknown cargo {e}")
+
+
+@router.get("/pool-simulation", summary="Shared budget pool: a fixed amount shared among customers by their extra cargo")
+def get_pool_simulation(cargo: str, pool_crore: float = 2.0, cap_pct: float = 50.0):
+    from backend.app.services import incentive_decision_aids as da
+    try:
+        return da.pool_simulation(cargo, pool_crore * 1e7, cap_pct)
+    except KeyError as e:
+        raise HTTPException(status_code=400, detail=f"Unknown cargo {e}")
+
+
+# ---- Rebate claims: submitted -> verified -> approved -> paid (or rejected)
+@router.get("/claims", summary="Rebate claims, by status and by scheme, with the schemes a claim can be made under")
+def get_claims():
+    from backend.app.services import incentive_claims as icl
+    return icl.get_claims()
+
+
+@router.post("/claims", summary="Submit a rebate claim (Traffic)")
+def post_claim(scheme_ref: str = Body(...), customer: str = Body(...), period_from: str = Body(...), period_to: str = Body(...),
+               claimed_tonnes: float = Body(...), claimed_rs: float = Body(...), note: str = Body(""), by: str = Body(""),
+               user: dict | None = Depends(auth.current_user)):
+    from backend.app.services import incentive_claims as icl
+    auth.require(user, auth.ACTION_ROLES["claim_submit"], "submit a claim")
+    try:
+        return icl.submit(scheme_ref, customer, period_from, period_to, claimed_tonnes, claimed_rs, auth.actor(user, by), note)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
+@router.post("/claims/{cid}/move", summary="Move a claim one step: Verified, Approved, Paid or Rejected")
+def move_claim(cid: str, to: str = Body(...), amount_rs: float | None = Body(None), tonnes: float | None = Body(None),
+               payment_ref: str = Body(""), note: str = Body(""), by: str = Body(""),
+               user: dict | None = Depends(auth.current_user)):
+    from backend.app.services import incentive_claims as icl
+    if to not in icl.ACTION_FOR:
+        raise HTTPException(status_code=422, detail=f"Unknown step: {to}")
+    auth.require(user, auth.ACTION_ROLES[icl.ACTION_FOR[to]], f"mark a claim {to.lower()}")
+    try:
+        return icl.move(cid, to, auth.actor(user, by), amount_rs, tonnes, payment_ref, note, pilot=user is not None)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No claim {cid}")
+    except (ValueError, PermissionError) as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
+@router.get("/settlement-list", summary="Monthly settlement list for Finance: qualifying calls and exporters for NMPA's rebates")
+def get_settlement_list(month: str | None = None):
+    from backend.app.services import incentive_settlement as stl
+    return stl.settlement_list(month)
+
+
+@router.get("/cost-reference", summary="NMPA's published cargo-handling cost per tonne (budget documents), a cautious upper bound")
+def get_cost_reference():
+    from backend.app.services import incentive_decision_aids as da
+    return da.cost_reference()
+
+
+@router.get("/turnaround-benchmark", summary="New Mangalore's ship turnaround time against the other major ports (Ministry figures)")
+def get_turnaround_benchmark():
+    from backend.app.services import incentive_decision_aids as da
+    return da.turnaround_benchmark()
+
+
+@router.get("/approval-route", summary="Who approves what: NMPA-confirmed approval route and reference documents (nothing unconfirmed is enforced)")
+def get_approval_route(decision: str | None = None, amount_rs: float | None = None):
+    from backend.app.services import incentive_decision_aids as da
+    return da.approval_route(decision, amount_rs)
+
+
+@router.get("/charter-standards", summary="NMPA's Citizen's Charter service standards, with actual berth-day output")
+def get_charter_standards():
+    from backend.app.services import incentive_decision_aids as da
+    return da.charter_standards()
+
+
+# ---- Customer name review (Traffic confirms; nothing changes until an officer applies the decisions)
+@router.get("/customer-names", summary="Customer name merges and proposals for Traffic to confirm, biggest cargo first, with evidence")
+def get_customer_names():
+    from backend.app.services import customer_names as cn
+    return cn.review_list()
+
+
+@router.post("/customer-names/decide", summary="Record a decision: same, different or not sure (changes no figure)")
+def post_customer_name_decision(item_id: str = Body(...), choice: str = Body(...), note: str = Body(""), keep_name: str = Body(""),
+                                by: str = Body(""), user: dict | None = Depends(auth.current_user)):
+    from backend.app.services import customer_names as cn
+    auth.require(user, auth.ACTION_ROLES["confirm_names"], "confirm customer names")
+    try:
+        return cn.decide(item_id, choice, auth.actor(user, by), note, keep_name)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="That item is no longer in the list")
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
+@router.post("/customer-names/apply", summary="Apply the confirmed decisions to the customer name list (backup kept)")
+def post_customer_names_apply(by: str = Body("", embed=True), user: dict | None = Depends(auth.current_user)):
+    from backend.app.services import customer_names as cn
+    auth.require(user, auth.ACTION_ROLES["confirm_names"], "apply customer name decisions")
+    return cn.apply(auth.actor(user, by))
+
+
+@router.get("/net-benefit", summary="Did each NMPA scheme pay for itself? Earned from extra cargo minus what it gave up")
+def get_net_benefit():
+    from backend.app.services import incentive_decision_aids as da
+    return da.net_benefit_review()
+
+
+@router.get("/compare-designs", summary="Compare scheme designs side by side for one cargo, discount and expected extra cargo")
+def get_compare_designs(cargo: str, discount_pct: float, extra_pct: float = 5.0, pool_crore: float | None = None):
+    from backend.app.services import incentive_decision_aids as da
+    try:
+        return da.compare_designs(cargo, discount_pct, extra_pct, pool_crore)
+    except KeyError as e:
+        raise HTTPException(status_code=400, detail=f"Unknown cargo {e}")
+
+
+@router.get("/customer-sheet", summary="Customer call sheet: facts and suggested talking points for one customer")
+def get_customer_sheet(customer: str):
+    from backend.app.services import customer_sheet as cs
+    try:
+        return cs.sheet(customer)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No customer named {customer}")
+
+
+@router.get("/customer-sheet.pdf", summary="Customer call sheet as a one-page PDF (made on request)")
+def get_customer_sheet_pdf(customer: str):
+    from fastapi.responses import Response
+    from backend.app.services import customer_sheet as cs
+    try:
+        return Response(cs.sheet_pdf(customer), media_type="application/pdf",
+                        headers={"Content-Disposition": f'attachment; filename="call_sheet_{customer.replace(" ", "_")}.pdf"'})
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No customer named {customer}")
+
+
+# ---- NMPA circulars and trade notices (officer-added; automatic only after NMPA's permission is recorded)
+@router.get("/nmpa-circulars", summary="NMPA circulars and trade notices, sorted by category, with what each affects")
+def get_nmpa_circulars():
+    from backend.app.services import nmpa_circulars as nc
+    return nc.get_circulars()
+
+
+@router.post("/nmpa-circulars", summary="Add an NMPA circular (Traffic)")
+def post_nmpa_circular(title: str = Body(...), date: str = Body(""), url: str = Body(""), note: str = Body(""),
+                       category: str | None = Body(None), by: str = Body(""), user: dict | None = Depends(auth.current_user)):
+    from backend.app.services import nmpa_circulars as nc
+    auth.require(user, auth.ACTION_ROLES["circulars"], "add NMPA circulars")
+    try:
+        return nc.add(title, date, url, auth.actor(user, by), note, category)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
+
+
+@router.post("/nmpa-circulars/{cid}/done", summary="Mark an NMPA circular as looked at (Traffic)")
+def post_nmpa_circular_done(cid: str, note: str = Body("", embed=True), by: str = Body("", embed=True),
+                            user: dict | None = Depends(auth.current_user)):
+    from backend.app.services import nmpa_circulars as nc
+    auth.require(user, auth.ACTION_ROLES["circulars"], "close NMPA circulars")
+    try:
+        return nc.mark_done(cid, auth.actor(user, by), note)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No circular {cid}")
+
+
+@router.post("/nmpa-circulars/permission", summary="Record NMPA's permission for automated reading of its website (Approver)")
+def post_nmpa_permission(granted: bool = Body(...), reference: str = Body(""), by: str = Body(""),
+                         user: dict | None = Depends(auth.current_user)):
+    from backend.app.services import nmpa_circulars as nc
+    auth.require(user, auth.ACTION_ROLES["record_permission"], "record NMPA's permission")
+    try:
+        return nc.record_permission(granted, auth.actor(user, by), reference)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))

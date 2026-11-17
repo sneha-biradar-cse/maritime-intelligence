@@ -72,6 +72,7 @@ function renderTabContent(tabId) {
     case 'tab-vessels': renderVessels(); break;
     case 'tab-cargo-forecasting': renderCargoForecasting(); break;
     case 'tab-cargo-routing': renderCargoRouting(); break;
+    case 'tab-port-cost': renderPortCost(); break;
     case 'tab-trade': renderTrade(); break;
     case 'tab-anomaly': renderAnomaly(); break;
     case 'tab-incentive': renderIncentive(); break;
@@ -84,7 +85,7 @@ function renderTabContent(tabId) {
 // ─── TAB 1: Executive Dashboard Renderer ──────────────────────────────────────
 async function renderExecutive() {
   const container = document.getElementById('tab-executive');
-  container.innerHTML = `<div class="sec-header"><span class="sec-title">Executive Command Center</span><span class="sec-tag">Demo Data</span><div class="sec-sub">Port-wide operational overview — KPIs, vessel positions, berth utilization & revenue</div></div><div class="alert-box alert-warning" style="margin-bottom:12px;">⚠ Revenue (₹ Cr), KPI deltas, and vessel positions/map on this tab are simulated — no financial/pricing or AIS dataset exists in this project. Only the underlying berth-utilization figures are real (data/berths.csv + latest cargo tonnage).</div><div class="grid-4" id="exec-kpis">Loading Executive KPIs...</div><br><div class="grid-3-2"><div class="card"><div style="font-family:Outfit;font-size:16px;font-weight:700;margin-bottom:12px;">NMPA Illustrative Vessel Approach Map</div><div id="exec-map" style="height:340px;"></div></div><div class="card"><div style="font-family:Outfit;font-size:16px;font-weight:700;margin-bottom:12px;">30-Day Revenue & Throughput Trend (Simulated)</div><div id="exec-trend" style="height:340px;"></div></div></div>`;
+  container.innerHTML = `<div class="sec-header"><span class="sec-title">Executive Command Center</span><span class="sec-tag">Demo Data</span><div class="sec-sub">Port-wide operational overview — KPIs, vessel positions, berth utilization & revenue</div></div><div class="alert-box alert-warning" style="margin-bottom:12px;">⚠ Revenue (₹ Cr), KPI deltas, and vessel positions/map on this tab are simulated — no financial/pricing or AIS dataset exists in this project. Only the underlying berth-utilization figures are real (data/berths.csv + latest cargo tonnage). Real vessel data (NMPA Daily Vessel Position reports) is on the Vessel Intelligence tab.</div><div class="grid-4" id="exec-kpis">Loading Executive KPIs...</div><br><div class="grid-3-2"><div class="card"><div style="font-family:Outfit;font-size:16px;font-weight:700;margin-bottom:12px;">NMPA Illustrative Vessel Approach Map</div><div id="exec-map" style="height:340px;"></div></div><div class="card"><div style="font-family:Outfit;font-size:16px;font-weight:700;margin-bottom:12px;">30-Day Revenue & Throughput Trend (Simulated)</div><div id="exec-trend" style="height:340px;"></div></div></div>`;
 
   const kpis = await fetchAPI('/executive/kpis') || {
     berth_utilization_pct: 72.4, berth_delta: "+2.1%",
@@ -124,34 +125,149 @@ async function renderExecutive() {
   Plotly.newPlot('exec-trend', trendTraces, { ...PLOTLY_THEME, title: 'Revenue Trend (30 Days)' });
 }
 
-// ─── TAB 2: Vessel Intelligence Renderer ──────────────────────────────────────
-async function renderVessels() {
+// ─── TAB 2: Vessel Intelligence Renderer (real NMPA data) ─────────────────────
+// Source: NMPA Daily Vessel Position reports + official monthly Operational
+// Performance report, via /vessels/intel/*. See PROJECT_DOCUMENTATION/27.
+const VI_CLASS = {
+  dry_bulk_conventional: "Dry bulk (conv.)", dry_bulk_mechanical: "Dry bulk (mech.)", break_bulk: "Break bulk",
+  liquid_bulk: "Liquid bulk", container: "Container", cruise: "Cruise", non_cargo: "Non-cargo", unknown: "Unknown"
+};
+const VI_CLASS_COLOR = {
+  dry_bulk_conventional: "#78716C", dry_bulk_mechanical: "#374151", break_bulk: "#0891B2", liquid_bulk: "#D97706",
+  container: "#2563EB", cruise: "#7C3AED", non_cargo: "#A8A29E", unknown: "#D6D3D1"
+};
+const VI_ACCOUNT = { port: "Port account", non_port: "Other than port", excluded: "Non-cargo", unknown: "Not stated" };
+
+// IMO number under the ship name (curated lookup, matched on name + LOA).
+function viImo(r) {
+  if (r.imo) return `<div style="font-size:11px;color:#57534E;">IMO ${escHtml(r.imo)}</div>`;
+  if (r.imo_match === 'ambiguous' || r.imo_match === 'loa_mismatch')
+    return `<div style="font-size:11px;color:#B45309;">same name as another ship, check IMO</div>`;
+  return '';
+}
+
+function viDt(s) {
+  if (!s) return "—";
+  const d = new Date(s);
+  if (isNaN(d)) return escHtml(s);
+  return d.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+async function renderVessels(asOf) {
   const container = document.getElementById('tab-vessels');
-  container.innerHTML = `<div class="sec-header"><span class="sec-title">Vessel Intelligence & AIS Tracking</span><span class="sec-tag">Module 1</span><div class="sec-sub">Real-time vessel arrival countdowns, ETA predictions, route risk scoring & congestion alerts</div></div><div class="card" id="vessels-table-container">Loading Tracked Vessels...</div>`;
+  container.innerHTML = `<div class="sec-header"><span class="sec-title">Vessel Intelligence — New Mangalore Port</span><span class="sec-tag">Real data</span>
+    <div class="sec-sub">For the berth planner and Traffic Department — expected, waiting and alongside vessels, departure forecasts, berth conflicts, and NMPA's own monthly KPIs.</div></div>
+    <div id="vi-body">Loading NMPA Daily Vessel Position data…</div>`;
 
-  const vesselsData = await fetchAPI('/vessels/') || { vessels: [] };
-  const vessels = vesselsData.vessels || [];
-
-  if (vessels.length === 0) {
-    document.getElementById('vessels-table-container').innerHTML = '<div class="alert-box alert-warning">No vessel tracking data available.</div>';
+  const dates = await fetchAPI('/vessels/intel/report-dates') || { dates: [] };
+  if (!dates.dates || dates.dates.length === 0) {
+    document.getElementById('vi-body').innerHTML = '<div class="alert-box alert-warning">No Daily Vessel Position reports loaded. Run <code>python scripts/update_vessel_intel_data.py</code>.</div>';
     return;
   }
+  const q = asOf ? `?as_of=${asOf}` : '';
+  const [board, arrivals, plan, perf, ov] = await Promise.all([
+    fetchAPI('/vessels/intel/board' + q), fetchAPI('/vessels/intel/arrivals' + q),
+    fetchAPI('/vessels/intel/berth-plan' + q), fetchAPI('/vessels/intel/performance' + q), fetchAPI('/vessels/intel/overview' + q)
+  ]);
+  if (!board) {
+    document.getElementById('vi-body').innerHTML = '<div class="alert-box alert-error">Vessel Intelligence API unavailable.</div>';
+    return;
+  }
+  const s = board.summary, lin = board.lineage || {};
+  const opts = dates.dates.slice().reverse().map(d => `<option value="${d}" ${d === board.as_of_report ? 'selected' : ''}>${d}</option>`).join('');
+  const age = lin.data_age_days;
+  let html = `
+    <div class="grid-3-2" style="align-items:center;margin-bottom:12px;">
+      <div class="alert-box alert-success" style="margin:0;"><div><b>REAL DATA</b> · NMPA Daily Vessel Position report of <b>${escHtml(board.as_of_report)}</b>
+        (as of ~${escHtml((lin.report_reference_time || '10:00').slice(0, 5))} IST) · ${lin.coverage ? lin.coverage.published_days : '?'} reports in archive
+        ${age > 2 ? `· <span style="color:#B45309;"><b>latest report is ${age} days old</b></span>` : ''}</div></div>
+      <div class="form-group" style="margin:0;"><label class="form-label">As of NMPA report</label>
+        <select onchange="renderVessels(this.value)">${opts}</select></div>
+    </div>
+    <div class="grid-4">
+      <div class="metric-card"><div class="metric-label">Cargo vessels alongside</div><div class="metric-value">${s.alongside_cargo}</div><div class="metric-delta">${s.berths_occupied_cargo}/${s.berths_total} berths occupied</div></div>
+      <div class="metric-card"><div class="metric-label">Waiting at anchorage</div><div class="metric-value">${s.waiting_total}</div><div class="metric-delta">${s.waiting_port_account} on port account · longest ${fmtNum(s.longest_port_account_wait_h)} h</div></div>
+      <div class="metric-card"><div class="metric-label">Expected next 72 h</div><div class="metric-value">${s.expected_next_72h}</div><div class="metric-delta">${s.expected_total} on the expected list</div></div>
+      <div class="metric-card"><div class="metric-label">NMPA programme</div><div class="metric-value">${s.programmed_berthings}</div><div class="metric-delta">berthings · ${s.programmed_sailings} sailings planned</div></div>
+    </div><br>`;
 
-  let html = `<div class="table-container"><table><thead><tr><th>Vessel Name</th><th>Commodity</th><th>Capacity (MT)</th><th>Speed (kn)</th><th>ETA (Hours)</th><th>Delay Prob</th><th>Route Risk</th></tr></thead><tbody>`;
-  vessels.forEach(v => {
-    const riskBadge = v.route_risk > 0.6 ? 'badge-critical' : (v.route_risk > 0.3 ? 'badge-warning' : 'badge-normal');
-    html += `<tr>
-      <td><b>${v.name}</b></td>
-      <td><span style="color:${COMMODITY_COLORS[v.commodity] || '#1C1917'};font-weight:700;">${v.commodity}</span></td>
-      <td>${(v.capacity_mt || 0).toLocaleString()}</td>
-      <td>${v.speed_kn || 12.5} kn</td>
-      <td>${v.hours_to_arrival || 14}h</td>
-      <td>${((v.delay_prob || 0.1) * 100).toFixed(0)}%</td>
-      <td><span class="badge ${riskBadge}">${(v.route_risk || 0.2).toFixed(2)}</span></td>
-    </tr>`;
+  if (board.alerts && board.alerts.length) {
+    html += board.alerts.slice(0, 6).map(a => `<div class="alert-box ${a.severity === 'high' ? 'alert-error' : 'alert-warning'}" style="margin-bottom:8px;"><div><b>${escHtml(a.type.replace(/_/g, ' '))}</b> — ${escHtml(a.message)}</div></div>`).join('');
+  }
+
+  // Alongside
+  html += `<div class="card"><div style="font-weight:700;font-size:16px;margin-bottom:10px;">Alongside — departure forecast</div><div class="table-container"><table><thead><tr>
+    <th>Berth</th><th>Vessel</th><th>Cargo</th><th>Balance (t)</th><th>Last 24h (t)</th><th>NMPA ETD</th><th>Predicted departure</th><th>Basis</th></tr></thead><tbody>`;
+  board.alongside.forEach(a => {
+    html += `<tr><td><b>${escHtml(a.berth || '—')}</b></td><td>${escHtml(a.vessel)}${viImo(a)}</td>
+      <td><span style="color:${VI_CLASS_COLOR[a.cargo_class] || '#1C1917'};font-weight:700;">${escHtml(a.cargo || VI_CLASS[a.cargo_class])}</span></td>
+      <td>${fmtNum(a.qty_balance_t)}</td><td>${fmtNum(a.qty_day_t)}</td><td>${escHtml(a.nmpa_etd || '—')}</td>
+      <td><b>${viDt(a.predicted_departure)}</b></td><td style="font-size:11px;color:#78716C;">${escHtml(a.forecast_method || '')}</td></tr>`;
   });
-  html += `</tbody></table></div>`;
-  document.getElementById('vessels-table-container').innerHTML = html;
+  html += `</tbody></table></div></div><br>`;
+
+  // Waiting
+  html += `<div class="card"><div style="font-weight:700;font-size:16px;margin-bottom:10px;">Waiting at anchorage / scheduled tankers</div><div class="table-container"><table><thead><tr>
+    <th>Vessel</th><th>Cargo</th><th>Waiting</th><th>Reason (NMPA)</th><th>Account</th><th>Target berth</th><th>Programmed berthing</th><th>Likely more wait</th></tr></thead><tbody>`;
+  board.waiting.forEach(w => {
+    const badge = w.account === 'port' ? 'badge-critical' : (w.account === 'non_port' ? 'badge-warning' : 'badge-normal');
+    html += `<tr><td><b>${escHtml(w.vessel)}</b>${viImo(w)}</td><td>${escHtml(w.cargo || '—')}</td><td>${fmtNum(w.waiting_h)} h</td>
+      <td>${escHtml(w.reason_raw || '—')}</td><td><span class="badge ${badge}">${escHtml(VI_ACCOUNT[w.account] || w.account)}</span></td>
+      <td>${escHtml(w.target_berth || '—')}</td><td>${w.programme_berthing ? viDt(w.programme_berthing.at) + ' @ B' + escHtml(w.programme_berthing.berth) : '—'}</td>
+      <td>${w.expected_more_wait_h != null ? fmtNum(w.expected_more_wait_h) + ' h (p80 ' + fmtNum(w.expected_more_wait_p80_h) + ' h)' : '—'}</td></tr>`;
+  });
+  if (!board.waiting.length) html += `<tr><td colspan="8">No vessels waiting in this report.</td></tr>`;
+  html += `</tbody></table></div></div><br>`;
+
+  // Expected
+  html += `<div class="card"><div style="font-weight:700;font-size:16px;margin-bottom:10px;">Vessels expected</div><div class="table-container"><table><thead><tr>
+    <th>Vessel</th><th>Cargo</th><th>Declared ETA</th><th>Likely window (p10–p90)</th><th>Draft / LOA</th><th>Berths</th><th>Fit</th><th>P(wait &gt; 24 h)</th></tr></thead><tbody>`;
+  board.expected.forEach(e => {
+    const fitBadge = e.berthing_fit === 'exceeds' ? 'badge-critical' : (e.berthing_fit === 'tight' ? 'badge-warning' : 'badge-normal');
+    html += `<tr><td><b>${escHtml(e.vessel)}</b>${viImo(e)}</td><td>${escHtml(e.cargo || '—')}</td><td>${viDt(e.declared_eta)}</td>
+      <td>${e.eta_p10 ? viDt(e.eta_p10) + ' – ' + viDt(e.eta_p90) : '—'}</td><td>${fmtNum(e.draft_m, 1)} m / ${fmtNum(e.loa_m)} m</td>
+      <td>${escHtml((e.berth_prefs || []).join(', ') || '—')}</td><td><span class="badge ${fitBadge}">${escHtml(e.berthing_fit.replace(/_/g, ' '))}</span></td>
+      <td>${e.p_wait_over_threshold != null ? (e.p_wait_over_threshold * 100).toFixed(0) + '%' : '—'}</td></tr>`;
+  });
+  html += `</tbody></table></div></div><br>`;
+
+  html += `<div class="grid-2"><div class="card"><div id="vi-arrivals" style="height:320px;"></div></div><div class="card"><div style="font-weight:700;font-size:16px;margin-bottom:10px;">Berth conflicts — next 72 h</div><div id="vi-conflicts"></div></div></div><br>`;
+  html += `<div class="card"><div style="font-weight:700;font-size:16px;margin-bottom:6px;">Performance vs NMPA official monthly report</div><div style="font-size:12px;color:#78716C;margin-bottom:10px;">${escHtml(perf?.how_to_read || '')}</div><div id="vi-perf"></div></div><br>`;
+  html += `<div class="card"><div style="font-weight:700;font-size:16px;margin-bottom:10px;">How reliable is each feature?</div><div id="vi-cards"></div></div>`;
+  document.getElementById('vi-body').innerHTML = html;
+
+  if (arrivals && arrivals.days) {
+    const classes = [...new Set(arrivals.days.flatMap(d => Object.keys(d.by_cargo_class)))];
+    const traces = classes.map(c => ({
+      type: 'bar', name: VI_CLASS[c] || c, x: arrivals.days.map(d => d.date),
+      y: arrivals.days.map(d => d.by_cargo_class[c] || 0), marker: { color: VI_CLASS_COLOR[c] || '#F59E0B' }
+    }));
+    if (window.Plotly) {
+      Plotly.newPlot('vi-arrivals', traces, { ...PLOTLY_THEME, barmode: 'stack', title: 'Expected arrivals per day (from declared ETAs)' }, { displayModeBar: false });
+    } else {
+      document.getElementById('vi-arrivals').innerHTML = '<div style="font-weight:700;margin-bottom:8px;">Expected arrivals per day</div>' +
+        arrivals.days.map(d => `<div>${escHtml(d.date)}: <b>${fmtNum(d.expected_arrivals, 1)}</b></div>`).join('');
+    }
+  }
+  const cf = (plan && plan.conflicts) || [];
+  document.getElementById('vi-conflicts').innerHTML = cf.length
+    ? cf.map(c => `<div class="alert-box ${c.severity === 'high' ? 'alert-error' : 'alert-warning'}" style="margin-bottom:8px;">${escHtml(c.message)}</div>`).join('')
+      + `<div style="font-size:11px;color:#78716C;">${escHtml(plan.lineage?.method || '')}</div>`
+    : '<div class="alert-box alert-success">No berth conflicts forecast.</div>';
+
+  const rec = perf && perf.reconciliation && perf.reconciliation.length ? perf.reconciliation[perf.reconciliation.length - 1] : null;
+  if (rec) {
+    const rows = rec.rows.filter(r => ['overall', 'liquid_bulk', 'dry_bulk_total', 'container'].includes(r.cargo_class));
+    document.getElementById('vi-perf').innerHTML = `<div style="margin-bottom:6px;"><b>${escHtml(rec.month)}</b> · daily-report coverage ${rec.dvp_coverage_pct}%</div>
+      <div class="table-container"><table><thead><tr><th>Class</th><th>Metric</th><th>NMPA official</th><th>Rebuilt from daily reports</th><th>Verdict</th></tr></thead><tbody>
+      ${rows.map(r => `<tr><td>${escHtml(VI_CLASS[r.cargo_class] || r.cargo_class.replace(/_/g, ' '))}</td><td>${escHtml(r.metric)}</td><td>${fmtNum(r.official, 2)}</td><td>${fmtNum(r.dvp_derived, 2)}</td>
+      <td><span class="badge ${['matches', 'close'].includes(r.verdict) ? 'badge-normal' : 'badge-warning'}">${escHtml(r.verdict)}</span></td></tr>`).join('')}</tbody></table></div>`;
+  } else {
+    document.getElementById('vi-perf').innerHTML = '<div class="alert-box alert-warning">No official monthly report overlapping the daily archive is loaded yet.</div>';
+  }
+  document.getElementById('vi-cards').innerHTML = ((ov && ov.model_cards) || []).map(c =>
+    `<div style="padding:10px 0;border-bottom:1px solid #F3E8D6;"><b>${escHtml(c.feature)}</b> <span class="badge badge-normal">${escHtml(c.status)}</span>
+     <div style="font-size:13px;margin-top:4px;">${escHtml(c.headline)}</div><div style="font-size:12px;color:#78716C;">${escHtml(c.verdict || '')}</div></div>`).join('');
 }
 
 // ─── TAB 3: Cargo Forecasting Renderer ─────────────────────────────────────
@@ -474,254 +590,417 @@ async function loadRoutingFacilities() {
   document.getElementById('route-facilities-table').innerHTML = html;
 }
 
+// ─── TAB 4b: Port Cost & Tariff (NMPA SOR 2026-27) ──────────────────────────
+// Every number on this tab comes from the NMPA SOR 2026-27, a real past vessel
+// call in NMPA's Daily Vessel Position reports, or the user. Nothing is filled
+// with demo values: a missing input (e.g. GRT) is shown as missing, not guessed.
+function escHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+}
+
+function fmtINR(value) {
+  return "₹" + Number(value || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+const fmtUSD = v => "US$ " + Number(v || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtNum = (v, d = 0) => v == null ? "—" : Number(v).toLocaleString("en-IN", { maximumFractionDigits: d });
+
+let sorCommodities = [];
+let costMatchTimer = null;
+let pastCalls = [];
+let pastCallTimer = null;
+
+const COST_BERTHS = ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "SPM"];
+
+async function renderPortCost() {
+  const container = document.getElementById('tab-port-cost');
+  const num = (id, label, attrs = "", help = "") =>
+    `<div class="form-group"><label class="form-label">${label}</label><input type="number" id="${id}" ${attrs}>${help ? `<div style="font-size:11px;color:#78716C;margin-top:4px;">${help}</div>` : ""}</div>`;
+  container.innerHTML = `
+    <div class="sec-header">
+      <span class="sec-title">NMPA Port Cost & Tariff Calculator</span>
+      <span class="sec-tag">Real (NMPA SOR 2026-27 + past calls)</span>
+      <div class="sec-sub">Rates from the NMPA Indexed SOR w.e.f. 01-05-2026 · inputs from real vessel calls in NMPA's Daily Vessel Position reports · checked against SOR 2022 and NMPA's 2023-24 income</div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:800;color:#D97706;">START FROM A REAL PAST CALL</div>
+      <div class="grid-2" style="margin-top:8px;">
+        <div class="form-group"><label class="form-label">Search vessel, cargo, berth or receiver</label>
+          <input type="text" id="past-call-q" placeholder="e.g. IOF, LPG, KIOCL, SPM, VISHVA" oninput="schedulePastCallSearch()"></div>
+        <div class="form-group"><label class="form-label">Past call (newest first)</label>
+          <select id="past-call-select" onchange="loadPastCall(this.value)"><option value="">Loading calls…</option></select></div>
+      </div>
+      <div id="past-call-info" style="font-size:12px;color:#78716C;"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:800;color:#D97706;">CARGO</div>
+      <div class="grid-4" style="margin-top:8px;">
+        <div class="form-group">
+          <label class="form-label">Commodity (any name, NMPA code or SOR code)</label>
+          <input type="text" id="cost-commodity" list="cost-commodity-list" oninput="scheduleCostMatch()">
+          <datalist id="cost-commodity-list"></datalist>
+          <div id="cost-match" style="font-size:12px;margin-top:6px;color:#78716C;"></div>
+        </div>
+        ${num("cost-qty", "Quantity (MT, or CBM / units where the SOR says so)", 'min="0" step="any"')}
+        <div class="form-group"><label class="form-label">Cargo flow</label>
+          <select id="cost-flow" onchange="toggleCostTrade()">
+            <option value="import">Unloaded / Import (foreign cargo)</option>
+            <option value="export">Loaded / Export (foreign cargo)</option>
+            <option value="coastal">Coastal cargo</option>
+            <option value="transhipment">Transhipment</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Cargo trade (transhipment only)</label>
+          <select id="cost-trade" disabled><option value="foreign">Foreign</option><option value="coastal">Coastal</option></select></div>
+        <div class="form-group"><label class="form-label">Receiver / shipper</label><input type="text" id="cost-party" placeholder="needed for KIOCL / UPCL rules"></div>
+        ${num("cost-storage-days", "Days in transit storage", 'min="0" step="1"', "From the day after complete discharge (import) / receipt (export).")}
+        ${num("cost-holidays", "Customs holidays / non-working days in free period", 'min="0" step="1" value="0"', "They extend working-day free periods (SOR 3.2.1).")}
+        <div class="form-group"><label class="form-label">Storage category</label>
+          <select id="cost-category">
+            <option value="bulk">Bulk</option><option value="break_bulk">Break bulk</option>
+            <option value="salvaged">Salvaged goods (export)</option><option value="not_shipped">Export cargo not shipped</option>
+          </select></div>
+        ${num("cost-annual", "Annual volume MT (cement band only)", 'min="0" step="1000"')}
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:800;color:#D97706;">VESSEL</div>
+      <div class="grid-4" style="margin-top:8px;">
+        <div class="form-group"><label class="form-label">Vessel status (Customs / DGS)</label>
+          <select id="cost-vessel-run"><option value="foreign">Foreign-going (US$ rates)</option><option value="coastal">Coastal (₹ rates)</option></select></div>
+        <div class="form-group"><label class="form-label">Vessel type (berth hire class)</label>
+          <select id="cost-vessel">
+            <option value="dry_bulk">Dry bulk</option><option value="liquid">POL / liquid tanker</option>
+            <option value="hazardous">Hazardous cargo / chemicals</option>
+            <option value="container">Container</option><option value="general_cargo">General cargo / break bulk</option>
+            <option value="roro">RoRo / RoPax</option><option value="other">Other cargo vessel</option>
+            <option value="bunkering_at_berth">Calling only for bunkering at berth</option>
+            <option value="barge_tug_craft">Barge / tug / small craft</option><option value="bunker_barge">Bunker barge</option>
+            <option value="fishing_service_boat">Fishing / service boat</option>
+          </select></div>
+        ${num("cost-grt", "Vessel GRT (from tonnage certificate)", 'min="0" step="1" placeholder="required for vessel charges"')}
+        <div class="form-group"><label class="form-label">Berth</label>
+          <select id="cost-berth">${COST_BERTHS.map(b => `<option value="${b}">${b === "" ? "— not set —" : b === "SPM" ? "SPM (MRPL)" : "Berth " + b}</option>`).join("")}</select></div>
+        ${num("cost-berth-hours", "Berth hours (all fast → all lines cast off)", 'min="0" step="any"')}
+        ${num("cost-usd-inr", "USD → INR (RBI reference, entry day)", 'min="0" step="0.0001" placeholder="needed for foreign vessels"', 'Look it up on rbi.org.in for the day the vessel entered port limits.')}
+        ${num("cost-anchorage", "Anchorage hours after sailing", 'min="0" step="any" value="0"', "Pre-berthing anchorage is free.")}
+        ${num("cost-tug-hours", "Tug hours hired on request", 'min="0" step="any" value="0"', "Berthing tugs are part of pilotage.")}
+        ${num("cost-shifts", "Shiftings at vessel's request", 'min="0" step="1" value="0"')}
+        ${num("cost-bunkers", "Bunkers supplied (MT, SOR 3.7)", 'min="0" step="any" value="0"')}
+        <div class="form-group"><label class="form-label">Port dues concession (SOR 2.1.2)</label>
+          <select id="cost-pd-reduction">
+            <option value="none">None</option><option value="ballast_no_passengers">In ballast, no passengers (25%)</option>
+            <option value="no_cargo_no_passenger">No cargo / passengers handled (50%)</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Double banked?</label>
+          <select id="cost-double"><option value="false">No</option><option value="true">Yes (50% berth hire)</option></select></div>
+      </div>
+      <button class="btn" onclick="calculatePortCost()">Calculate NMPA Port Cost</button>
+    </div>
+
+    <div id="cost-output"></div>
+    <br>
+    <div class="card" style="margin-bottom:20px;" id="cost-validation">Loading checks against past data…</div>
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-family:Outfit;font-size:18px;font-weight:800;margin-bottom:6px;">🚧 Coming soon — SOR charges without published rates</div>
+      <div style="font-size:13px;color:#78716C;margin-bottom:12px;">The 2026-27 SOR lists these charges but prints their rates as "*" (as and when applicable) or refers to another tariff. They are never estimated.</div>
+      <div id="cost-coming-soon">Loading…</div>
+    </div>
+    <div class="card">
+      <div style="font-family:Outfit;font-size:18px;font-weight:800;margin-bottom:12px;">📋 SOR 3.1.1 Wharfage Schedule (₹ per unit)</div>
+      <input type="text" id="cost-schedule-filter" placeholder="Filter commodities…" oninput="renderSorSchedule()" style="margin-bottom:12px;">
+      <div id="cost-schedule">Loading schedule…</div>
+    </div>
+  `;
+
+  const [schedule, comingSoon] = await Promise.all([
+    fetchAPI('/cost/commodities'),
+    fetchAPI('/cost/coming-soon'),
+  ]);
+
+  sorCommodities = schedule?.commodities || [];
+  document.getElementById('cost-commodity-list').innerHTML = sorCommodities
+    .map(r => `<option value="${escHtml(r.code)}">${escHtml(r.item)}</option>`).join("");
+  renderSorSchedule();
+
+  const items = comingSoon?.components || [];
+  document.getElementById('cost-coming-soon').innerHTML = items.length
+    ? `<div class="table-container"><table><thead><tr><th>Charge</th><th>SOR Ref</th><th>Status</th><th>Why</th></tr></thead><tbody>${
+        items.map(i => `<tr><td><b>${escHtml(i.label)}</b></td><td>${escHtml(i.sor_reference)}</td><td><span class="badge badge-warning">Coming soon</span></td><td>${escHtml(i.reason)}</td></tr>`).join("")
+      }</tbody></table></div>`
+    : `<div class="alert-box alert-error">Could not load the coming-soon list from the backend.</div>`;
+
+  renderTariffValidation();
+  await searchPastCalls();
+  const first = document.getElementById('past-call-select')?.value;
+  if (first) await loadPastCall(first);
+}
+
+function renderSorSchedule() {
+  const el = document.getElementById('cost-schedule');
+  if (!el) return;
+  if (!sorCommodities.length) {
+    el.innerHTML = `<div class="alert-box alert-error">Could not load the SOR schedule from the backend.</div>`;
+    return;
+  }
+  const q = (document.getElementById('cost-schedule-filter')?.value || "").toLowerCase();
+  const rows = sorCommodities.filter(r => !q || `${r.code} ${r.group} ${r.item}`.toLowerCase().includes(q));
+  el.innerHTML = `<div class="table-container" style="max-height:420px;overflow:auto;"><table><thead><tr><th>Code</th><th>Group</th><th>Commodity</th><th>Unit</th><th>Coastal (₹)</th><th>Foreign (₹)</th></tr></thead><tbody>${
+    rows.map(r => `<tr><td><b>${escHtml(r.code)}</b></td><td>${escHtml(r.group)}</td><td>${escHtml(r.item)}</td><td>${escHtml(r.unit)}</td><td>${r.coastal.toFixed(2)}</td><td>${r.foreign.toFixed(2)}</td></tr>`).join("")
+  }</tbody></table></div>`;
+}
+
+function toggleCostTrade() {
+  const flow = document.getElementById('cost-flow').value;
+  document.getElementById('cost-trade').disabled = flow !== 'transhipment';
+}
+
+function scheduleCostMatch() {
+  clearTimeout(costMatchTimer);
+  costMatchTimer = setTimeout(updateCostMatch, 250);
+}
+
+async function updateCostMatch() {
+  const name = document.getElementById('cost-commodity')?.value.trim();
+  const el = document.getElementById('cost-match');
+  if (!el) return;
+  if (!name) { el.innerHTML = ""; return; }
+  const m = await fetchAPI(`/cost/match?name=${encodeURIComponent(name)}`);
+  if (!m) { el.innerHTML = `<span style="color:#991B1B;">Backend not reachable.</span>`; return; }
+  if (!m.code) { el.innerHTML = `<span style="color:#92400E;">⚠ ${escHtml(m.message)}</span>`; return; }
+  const text = `→ <b>${escHtml(m.code)}</b> ${escHtml(m.item)} <span style="opacity:.7">(${escHtml(m.method)}, ${m.score.toFixed(2)})</span>`;
+  el.innerHTML = m.needs_review
+    ? `<span style="color:#92400E;">⚠ ${text} — confirm the SOR line${m.ambiguity ? ": " + escHtml(m.ambiguity) : ""}</span>`
+    : text;
+}
+
+// ── Real past calls ──
+function schedulePastCallSearch() {
+  clearTimeout(pastCallTimer);
+  pastCallTimer = setTimeout(searchPastCalls, 300);
+}
+
+async function searchPastCalls() {
+  const sel = document.getElementById('past-call-select');
+  if (!sel) return;
+  const q = document.getElementById('past-call-q')?.value.trim() || "";
+  const data = await fetchAPI(`/cost/past-calls?limit=400&q=${encodeURIComponent(q)}`);
+  if (!data) { sel.innerHTML = `<option value="">Backend not reachable</option>`; return; }
+  pastCalls = data.calls || [];
+  sel.innerHTML = pastCalls.length
+    ? pastCalls.map(c => `<option value="${escHtml(c.id)}">${escHtml(c.berthing_date)} · ${escHtml(c.vessel)} · ${c.berth ? (c.berth === 'SPM' ? 'SPM' : 'B' + escHtml(c.berth)) : '—'} · ${escHtml(c.cargo_raw)} · ${fmtNum(c.quantity)} t</option>`).join("")
+    : `<option value="">No matching calls</option>`;
+  const s = data.summary || {};
+  document.getElementById('past-call-info').innerHTML =
+    `${fmtNum(data.count)} matching calls · archive ${escHtml(s.first_berthing)} → ${escHtml(s.last_berthing)} · ${fmtNum(s.with_quantity_and_sor_line)} cargo calls with quantity · source: NMPA Daily Vessel Position reports`;
+}
+
+async function loadPastCall(id) {
+  if (!id) return;
+  const d = await fetchAPI(`/cost/past-calls/${encodeURIComponent(id)}`);
+  if (!d) return;
+  const c = d.call, inp = d.calculator_inputs;
+  const set = (elId, v) => { const el = document.getElementById(elId); if (el) el.value = v ?? ""; };
+  set('cost-commodity', inp.cargo_type);
+  set('cost-qty', inp.cargo_quantity_mt);
+  set('cost-flow', inp.cargo_flow);
+  set('cost-trade', inp.trade_type);
+  set('cost-vessel-run', inp.vessel_trade_type);
+  set('cost-vessel', inp.vessel_type);
+  set('cost-grt', "");
+  set('cost-berth', COST_BERTHS.includes((inp.berth || "").toUpperCase()) ? inp.berth.toUpperCase() : (inp.berth || "").replace(/\D.*$/, ""));
+  set('cost-berth-hours', inp.berth_hours);
+  set('cost-party', inp.receiver_shipper);
+  set('cost-storage-days', "");
+  toggleCostTrade();
+  const conf = { exact: "exact movement times", date_only: "berthing / sailing date only", unconfirmed_lower_bound: "sailing not seen — lower bound" }[c.berth_hours_confidence] || "not linked";
+  document.getElementById('past-call-info').innerHTML = `
+    <b>${escHtml(c.vessel)}</b> · berthed ${escHtml(c.berthing_date)} at ${c.berth ? "Berth " + escHtml(c.berth) : "—"} · run <b>${escHtml(c.run_raw || "?")}</b> · LOA ${fmtNum(c.loa_m, 2)} m · agent ${escHtml(c.agent || "—")} · ${escHtml(c.receiver_shipper || "—")}<br>
+    Quantity: <b>${fmtNum(c.quantity)}</b> (${escHtml(c.quantity_basis || "not reported")}) · Berth hours: <b>${fmtNum(c.berth_hours, 2)}</b> (${conf}) · seen in reports ${escHtml(c.first_report)} → ${escHtml(c.last_report)}<br>
+    <span style="color:#92400E;">GRT is not in NMPA's daily reports — enter it from the vessel's tonnage certificate to price port dues, pilotage and berth hire.</span>`;
+  updateCostMatch();
+  calculatePortCost();
+}
+
+// ── Calculation ──
+async function calculatePortCost() {
+  const out = document.getElementById('cost-output');
+  if (!out) return;
+  const val = id => document.getElementById(id)?.value;
+  const numOrNull = id => { const v = parseFloat(val(id)); return Number.isFinite(v) && v > 0 ? v : null; };
+  const flow = val('cost-flow');
+  const trade = flow === 'coastal' ? 'coastal' : flow === 'transhipment' ? val('cost-trade') : 'foreign';
+
+  const payload = {
+    cargo_type: (val('cost-commodity') || "").trim(),
+    cargo_quantity_mt: numOrNull('cost-qty') || 0,
+    trade_type: trade,
+    vessel_trade_type: val('cost-vessel-run'),
+    cargo_flow: flow,
+    vessel_type: val('cost-vessel'),
+    vessel_grt: numOrNull('cost-grt'),
+    berth: val('cost-berth') || null,
+    berth_hours: numOrNull('cost-berth-hours') || 0,
+    storage_days: numOrNull('cost-storage-days') || 0,
+    excluded_days_in_free_period: numOrNull('cost-holidays') || 0,
+    cargo_category: val('cost-category'),
+    annual_volume_mt: numOrNull('cost-annual'),
+    usd_inr_rate: numOrNull('cost-usd-inr'),
+    receiver_shipper: (val('cost-party') || "").trim() || null,
+    port_dues_reduction: val('cost-pd-reduction'),
+    double_banked: val('cost-double') === 'true',
+    anchorage_hours: numOrNull('cost-anchorage') || 0,
+    tug_hire_hours: numOrNull('cost-tug-hours') || 0,
+    shifting_count: parseInt(val('cost-shifts') || "0", 10) || 0,
+    bunker_quantity_mt: numOrNull('cost-bunkers') || 0,
+  };
+  if (!payload.cargo_type) { out.innerHTML = `<div class="alert-box alert-warning">Pick a past call or enter a commodity.</div>`; return; }
+
+  out.innerHTML = `<div class="card">Calculating…</div>`;
+  let res, data;
+  try {
+    res = await fetch(`${API_BASE}/cost/calculate`, { method: 'POST', headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    data = await res.json();
+  } catch (err) {
+    out.innerHTML = `<div class="alert-box alert-error">Backend not reachable: ${escHtml(err.message)}</div>`;
+    return;
+  }
+  if (!res.ok) {
+    const d = data?.detail;
+    const msg = typeof d === 'string' ? d
+      : Array.isArray(d) ? d.map(e => `${(e.loc || []).slice(-1)[0]}: ${e.msg}`).join("; ")
+      : (d?.message || d?.error || JSON.stringify(d));
+    out.innerHTML = `<div class="alert-box alert-error">Cost calculation error: ${escHtml(msg)}</div>`;
+    return;
+  }
+  renderCostResult(data);
+}
+
+const COST_LABELS = {
+  wharfage: "Wharfage", transit_storage: "Transit storage", port_dues: "Port dues", pilotage: "Pilotage",
+  berth_hire: "Berth hire", anchorage: "Anchorage", tug_hire: "Tug hire", shifting: "Shifting",
+  bunkering_facility: "Bunkering facility",
+};
+const COST_STATUS = {
+  calculated: ["Calculated", "badge-normal"], needs_exchange_rate: ["Needs USD→INR", "badge-warning"],
+  needs_grt: ["Needs GRT", "badge-warning"], not_billed_by_nmpa: ["Not billed by NMPA", "badge-critical"],
+  not_applicable: ["Not applicable", "badge-normal"], rate_unavailable: ["Rate not published", "badge-warning"],
+};
+
+function renderCostResult(data) {
+  const out = document.getElementById('cost-output');
+  const b = data.breakdown || {};
+  const w = b.wharfage || {}, s = b.transit_storage || {};
+  const rule = s.free_days_rule || {};
+  const slabLabels = { week_1: "First week", week_2: "Second week", after_week_2: "Succeeding period", all_days: "All chargeable days (export)" };
+
+  const rows = Object.entries(b).map(([k, c]) => {
+    const [st, cls] = COST_STATUS[c.status] || [c.status, "badge-warning"];
+    const usd = c.amount_usd != null ? fmtUSD(c.amount_usd) : (c.reference_currency === "USD" && c.reference_amount != null ? `<span style="opacity:.6">${fmtUSD(c.reference_amount)} (ref.)</span>` : "—");
+    const inr = c.amount != null ? fmtINR(c.amount) : (c.reference_currency === "INR" && c.reference_amount != null ? `<span style="opacity:.6">${fmtINR(c.reference_amount)} (ref.)</span>` : "—");
+    const why = c.message || c.note || (c.chargeable_hours != null ? `${c.chargeable_hours} chargeable hours` : "");
+    return `<tr><td>${COST_LABELS[k] || escHtml(k)}</td><td>${escHtml(c.sor_reference || "")}</td><td><span class="badge ${cls}">${escHtml(st)}</span></td><td>${escHtml(c.currency || c.reference_currency || "")}</td><td>${usd}</td><td>${inr}</td><td style="font-size:12px;color:#78716C;">${escHtml(why)}</td></tr>`;
+  }).join("");
+
+  const warn = [];
+  (data.exceptions || []).forEach(e => warn.push(e.scope === 'note'
+    ? `<div class="alert-box alert-warning" style="margin-bottom:10px;">⚠ ${escHtml(e.message)}</div>`
+    : `<div class="alert-box alert-error" style="margin-bottom:10px;">⛔ ${escHtml(e.message)}</div>`));
+  if ((data.missing_grt_components || []).length)
+    warn.push(`<div class="alert-box alert-warning" style="margin-bottom:10px;">⚠ Not in the total: ${data.missing_grt_components.map(k => COST_LABELS[k] || k).join(", ")} — enter the vessel's GRT.</div>`);
+  if ((data.unconverted_usd_components || []).length)
+    warn.push(`<div class="alert-box alert-warning" style="margin-bottom:10px;">⚠ ${fmtUSD(data.unconverted_usd_total)} of foreign-vessel charges is not in the ₹ total — enter the RBI USD→INR reference rate for the vessel's entry day.</div>`);
+  (data.notes || []).forEach(n => warn.push(`<div class="alert-box alert-success" style="margin-bottom:10px;">ℹ ${escHtml(n)}</div>`));
+
+  out.innerHTML = `
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="metric-card"><div class="metric-label">Wharfage</div><div class="metric-value">${w.amount != null ? fmtINR(w.amount) : "—"}</div></div>
+      <div class="metric-card"><div class="metric-label">Vessel related (₹)</div><div class="metric-value">${fmtINR(["port_dues", "pilotage", "berth_hire", "anchorage", "tug_hire", "shifting"].reduce((a, k) => a + (b[k]?.status === 'calculated' ? (b[k].amount || 0) : 0), 0))}</div></div>
+      <div class="metric-card"><div class="metric-label">Total known cost (₹)</div><div class="metric-value">${fmtINR(data.total_known_cost)}</div><div class="metric-delta" style="color:#78716C;">bill rounded: ₹${fmtNum(data.bill_total_rounded)} + GST</div></div>
+      <div class="metric-card"><div class="metric-label">Estimate status</div><div class="metric-value" style="font-size:20px;">${data.is_complete ? "✅ Complete" : "⚠ Partial"}</div><div class="metric-delta" style="color:#78716C;">${data.is_complete ? "all listed components priced" : "some inputs missing"}</div></div>
+    </div>
+    ${warn.join("")}
+    <div class="card" style="margin-bottom:20px;">
+      <div style="font-family:Outfit;font-size:18px;font-weight:800;margin-bottom:12px;">Cost breakdown</div>
+      <div class="table-container"><table><thead><tr><th>Component</th><th>SOR Ref</th><th>Status</th><th>Currency</th><th>Amount (US$)</th><th>Amount (₹)</th><th>Detail</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div style="font-size:12px;color:#78716C;margin-top:10px;">Tariff: <b>${escHtml(data.tariff?.name)}</b> · effective ${escHtml(data.tariff?.effective_from)} to ${escHtml(data.tariff?.effective_to)} · taxes extra (SOR 1.2(v)) · grand total rounded to the next rupee (SOR 1.2(ix)).</div>
+    </div>
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div class="card">
+        <div style="font-size:11px;font-weight:800;color:#D97706;">WHARFAGE DETAIL (SOR 3.1.1)</div>
+        ${w.sor_code ? `<div style="font-weight:700;margin-top:6px;">${escHtml(w.sor_code)} — ${escHtml(w.sor_item)}</div>
+        <div style="margin-top:8px;">${fmtNum(w.chargeable_units, 1)} chargeable ${escHtml(w.unit)} × ₹${Number(w.rate_per_mt || 0).toFixed(2)} (${escHtml(w.trade_type)} cargo) = <b>${fmtINR(w.amount ?? w.reference_amount)}</b></div>` : `<div style="margin-top:6px;">${escHtml(w.message || "—")}</div>`}
+        ${(w.notes || []).map(n => `<div style="font-size:12px;color:#92400E;margin-top:4px;">⚠ ${escHtml(n)}</div>`).join("")}
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-weight:800;color:#D97706;">STORAGE (SOR 3.2.1)</div>
+        <div style="margin-top:6px;">${rule.status === 'configured'
+          ? `Free period: <b>${rule.free_storage_days}${rule.extended_by_non_working_days ? " + " + rule.extended_by_non_working_days : ""} days</b> — ${escHtml(rule.basis)} (SOR ${escHtml(rule.sor_reference)})`
+          : `No automatic free-period rule for this flow / category.`}</div>
+        <div style="margin-top:4px;">Chargeable days: <b>${s.chargeable_days ?? 0}</b></div>
+        ${(s.slabs || []).length
+          ? `<div class="table-container" style="margin-top:10px;"><table><thead><tr><th>Period</th><th>Days</th><th>₹ / unit / day</th><th>Amount</th></tr></thead><tbody>${
+              s.slabs.map(x => `<tr><td>${slabLabels[x.slab] || escHtml(x.slab)}</td><td>${x.days}</td><td>${x.rate_per_unit_day}</td><td>${fmtINR(x.amount)}</td></tr>`).join("")
+            }</tbody></table></div>`
+          : `<div style="margin-top:8px;color:#065F46;">No storage charge (within free period or no storage days entered).</div>`}
+      </div>
+    </div>`;
+}
+
+// ── Checks against past data ──
+async function renderTariffValidation() {
+  const el = document.getElementById('cost-validation');
+  const v = await fetchAPI('/cost/validation');
+  if (!el) return;
+  if (!v) { el.innerHTML = `<div class="alert-box alert-error">Could not load the validation report.</div>`; return; }
+  const sum = v.summary, sor = v.past_tariff, inc = v.past_revenue, calls = v.past_calls;
+  const factors = Object.entries(sor.factor_counts).map(([f, n]) => `${n} items × ${f}`).join(" · ");
+  const lines = inc.cargo_lines.map(c => `<tr><td><b>${escHtml(c.line)}</b><div style="font-size:11px;color:#78716C;">${c.ledger.map(escHtml).join("<br>")}</div></td><td>₹${c.income_rs_crore} Cr</td><td>${c.tonnes_lakh} lakh t</td><td><b>₹${c.realised_rs_per_tonne}</b></td><td>₹${c.sor_band_rs_per_tonne[0]} – ₹${c.sor_band_rs_per_tonne[1]}<div style="font-size:11px;color:#78716C;">${escHtml(c.band_basis)}</div></td><td><span class="badge ${c.result === 'consistent' ? 'badge-normal' : 'badge-critical'}">${c.inside_band ? "Inside band" : (c.result === 'consistent' ? "Outside band — expected" : "Outside band")}</span>${c.explanation ? `<div style="font-size:11px;color:#78716C;margin-top:4px;">${escHtml(c.explanation)}</div>` : ""}</td></tr>`).join("");
+  const ratios = inc.vessel_ratio_checks.map(r => `<tr><td>${escHtml(r.line)}</td><td>${r.ledger_ratio_pilotage_to_port_dues}</td><td>${r.sor_ratio}</td><td>${r.difference_pct}%</td><td style="font-size:11px;color:#78716C;">${escHtml(r.basis)}${r.explanation ? "<br>" + escHtml(r.explanation) : ""}</td></tr>`).join("");
+  const groups = calls.by_group.map(g => `<tr><td>${escHtml(g.section)}</td><td>${escHtml(g.group)}</td><td>${fmtNum(g.official_tonnes)}</td><td>${fmtNum(g.calls_tonnes)}</td><td>${g.coverage_pct == null ? "—" : g.coverage_pct + "%"}</td></tr>`).join("");
+  el.innerHTML = `
+    <div style="font-family:Outfit;font-size:18px;font-weight:800;margin-bottom:6px;">🔎 Checked against past data</div>
+    <div class="grid-3" style="margin:12px 0 16px;">
+      <div class="metric-card"><div class="metric-label">Rates vs SOR 2022</div><div class="metric-value">${sum.sor_items_consistent}/${sum.sor_items_checked}</div><div class="metric-delta" style="color:#78716C;">${escHtml(factors)}</div></div>
+      <div class="metric-card"><div class="metric-label">NMPA income 2023-24 vs SOR</div><div class="metric-value">${sum.income_lines_consistent}/${sum.income_lines_checked}</div><div class="metric-delta" style="color:#78716C;">realised ₹/t explained by SOR</div></div>
+      <div class="metric-card"><div class="metric-label">Past calls vs traffic statement</div><div class="metric-value">${sum.calls_tonnage_coverage_pct}%</div><div class="metric-delta" style="color:#78716C;">tonnage, ${escHtml(sum.months_compared[0])} → ${escHtml(sum.months_compared.slice(-1)[0])}</div></div>
+    </div>
+    <details open><summary style="cursor:pointer;font-weight:700;">1 · Every rate vs the SOR general revision of Dec 2022</summary>
+      <div style="font-size:13px;color:#78716C;margin:8px 0;">NMPA indexes the SOR each 1 May (SOR 1.2(xix)), so every rate must have moved by the same few factors since 2022. ${sor.outliers.length ? `<b style="color:#991B1B;">${sor.outliers.length} rate(s) do not — check them.</b>` : "No rate is out of line, so no transcription errors were found."}</div>
+      <div class="table-container" style="max-height:260px;overflow:auto;"><table><thead><tr><th>Item</th><th>SOR 2022</th><th>SOR 2026-27</th><th>Ratio</th></tr></thead><tbody>${
+        sor.items.map(i => `<tr><td>${escHtml(i.item)}</td><td>${i.sor_2022}</td><td>${i.sor_2026}</td><td>${i.ratio}${i.consistent ? "" : " ⚠"}</td></tr>`).join("")}</tbody></table></div>
+    </details>
+    <details open style="margin-top:14px;"><summary style="cursor:pointer;font-weight:700;">2 · NMPA's own income (Revised Estimate 2023-24) ÷ tonnage handled</summary>
+      <div class="table-container" style="margin-top:8px;"><table><thead><tr><th>Ledger line</th><th>Income</th><th>Tonnage</th><th>Realised ₹/t</th><th>SOR band</th><th>Result</th></tr></thead><tbody>${lines}</tbody></table></div>
+      <div class="table-container" style="margin-top:10px;"><table><thead><tr><th>Vessel charges</th><th>Pilotage ÷ port dues (ledger)</th><th>Same ratio in SOR</th><th>Diff.</th><th>Basis</th></tr></thead><tbody>${ratios}</tbody></table></div>
+      <div style="font-size:12px;color:#78716C;margin-top:6px;">${escHtml(inc.caveat)}</div>
+    </details>
+    <details style="margin-top:14px;"><summary style="cursor:pointer;font-weight:700;">3 · Tonnage of individual past calls vs NMPA's monthly traffic statement</summary>
+      <div style="font-size:13px;color:#78716C;margin:8px 0;">${fmtNum(calls.calls_total_tonnes)} t from individual calls vs ${fmtNum(calls.official_total_tonnes)} t reported. Calls never exceed the official figure; the gap is days missing from the report archive and calls without a quantity. ${escHtml(calls.note)}</div>
+      <div class="table-container"><table><thead><tr><th>Section</th><th>Commodity</th><th>NMPA statement (t)</th><th>Sum of calls (t)</th><th>Coverage</th></tr></thead><tbody>${groups}</tbody></table></div>
+    </details>
+    <div style="font-size:11px;color:#78716C;margin-top:12px;">Sources: ${[...new Set([...sor.sources, ...inc.sources].map(s => s.url ? `<a href="${escHtml(s.url)}" target="_blank" rel="noopener">${escHtml(s.title)}</a>` : escHtml(s.title)))].join(" · ")}</div>`;
+}
+
 // ─── TAB 5: Trade Intelligence Renderer ──────────────────────────────────────
 async function renderTrade() {
   const container = document.getElementById('tab-trade');
-  const title = (t) => `<div style="font-family:Outfit;font-size:16px;font-weight:700;margin-bottom:12px;">${t}</div>`;
-  const sec = (n, t, what, id, body) => `<div class="card" style="margin-top:14px;"><div style="font-family:Outfit;font-size:16px;font-weight:700;">${n}. ${t}</div><div style="font-size:12.5px;color:#57534E;margin:4px 0 10px;">${what}</div>${body}<div class="src-note" id="${id}" style="font-size:11px;color:#78716C;margin-top:8px;border-top:1px solid #E7E5E4;padding-top:6px;"></div></div>`;
-  container.innerHTML = `
-    <div class="sec-header"><span class="sec-title">Trade Intelligence — Cargo Flows and Customers</span><span class="sec-tag">Real data</span><div class="sec-sub">Every number on this page is real NMPA / Ministry data. Under each section, "Data used" says which file it comes from and where that file originally came from.</div></div>
-    <div class="card" id="trade-findings" style="border-left:4px solid #2563EB;">Loading key findings...</div>
-    <div class="grid-4" id="trade-kpis" style="margin-top:12px;">Loading trade summary...</div>
-    <div id="trade-alerts" style="margin-top:12px;"></div>
-    ${sec(1, 'Customer watch — who brings the cargo, and who is changing', 'Every receiver or shipper named in NMPA\'s daily vessel reports: how much cargo they bring, whether that is growing or shrinking over the last 3 complete months, when they last called, and how many waiting days their ships account for.', 'src-cust', '<div id="trade-customers">Loading customers...</div>')}
-    ${sec(2, 'Overseas vs coastal cargo (whole port)', 'Shows how much of the port\'s cargo is foreign trade and how much moves along the Indian coast.', 'src-oc', '<div id="trade-oc">Loading...</div>')}
-    ${sec(3, 'Monthly inbound and outbound cargo', 'Inbound = cargo unloaded at the port, outbound = cargo loaded. Dotted lines are the smoothed trend.', 'src-flow', '<div id="trade-flow-chart" style="height:340px;"></div>')}
-    ${sec(4, 'Which cargos are gaining or losing momentum', 'Compares each cargo\'s recent 3-month average with its 12-month average. Green = rising, red = falling, grey = irregular cargo.', 'src-mom', '<div id="trade-momentum-chart" style="height:380px;"></div>')}
-    ${sec(5, 'Forecast: the next 3 months, and how reliable it is', 'Simple forecast from past tonnes only. Dots are forecasts and the bars show the typical range (80% of past forecasts missed by less than this). Cargos that cannot be forecast reliably show no number.', 'src-fc', '<div id="trade-fc-chart" style="height:340px;"></div><div id="trade-fc-table" style="margin-top:10px;">Loading forecast...</div>')}
-    ${sec(6, 'Foreign vs coastal ships, cargo by cargo (estimate)', 'Counts ships in NMPA\'s daily vessel reports by cargo and by foreign (F) or coastal (C) run, and names the main customers. It is an estimate of the pattern, not official tonnes.', 'src-split', '<div id="trade-split">Loading...</div>')}
-    ${sec(7, 'Why ships wait at anchor', 'Ships waiting for a berth or for the customer, from NMPA daily vessel reports. Shows what causes the waiting, which cargos and customers wait most, and how it changed by month.', 'src-wait', '<div id="trade-wait">Loading...</div>')}
-    ${sec(8, 'Cargo-by-cargo table', 'Same numbers as above, one row per cargo, for checking.', 'src-table', '<details><summary style="cursor:pointer;font-weight:600;margin-bottom:8px;">Show full table</summary><div id="trade-table">Loading...</div></details>')}
-    <div class="card" style="margin-top:14px;"><div style="font-family:Outfit;font-size:16px;font-weight:700;margin-bottom:6px;">9. Data quality and limits</div><div id="trade-quality" style="font-size:12.5px;"></div><ul id="trade-limits" style="font-size:12.5px;margin:8px 0 0 18px;"></ul></div>`;
+  container.innerHTML = `<div class="sec-header"><span class="sec-title">Commodity Demand by Trade Lane</span><span class="sec-tag">Demo Data</span></div><div class="alert-box alert-warning" style="margin-bottom:12px;">⚠ This entire tab is simulated — no trade-lane, shipping-route, or commodity-price dataset exists in this project. For real commodity demand, see the Cargo Forecasting tab, grounded in data/port_cargo_monthly.csv.</div><div class="card" id="trade-content">Loading Trade Lanes...</div>`;
 
-  const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const mt = (v) => v == null ? '—' : (v / 1e6).toFixed(2) + ' M t';
-  const pct = (v) => v == null ? '—' : (v > 0 ? '+' : '') + v.toFixed(1) + '%';
-  const delta = (v, tail) => v == null ? '' : `<div class="metric-delta ${v >= 0 ? 'positive' : 'negative'}">${pct(v)} ${tail}</div>`;
-  const SIGNAL_COLORS = { Rising: '#059669', Falling: '#DC2626', Steady: '#2563EB', Irregular: '#9CA3AF', 'Insufficient data': '#9CA3AF' };
+  const lanesData = await fetchAPI('/trade/lanes') || { lanes: [] };
+  const lanes = lanesData.lanes || [];
 
-  const [summary, flows, comm, brief] = await Promise.all([
-    fetchAPI('/trade/summary'), fetchAPI('/trade/flows?months=60'), fetchAPI('/trade/commodities'), fetchAPI('/trade/brief')
-  ]);
-  const srcLine = (k) => { const x = brief && brief.sources && brief.sources[k]; return x ? `<b>Data used:</b> ${esc(x.title)} &nbsp;|&nbsp; <b>File:</b> ${esc(x.data_file)} &nbsp;|&nbsp; <b>Where it comes from:</b> ${esc(x.origin)} &nbsp;|&nbsp; <b>Coverage:</b> ${esc(x.coverage)}` : ''; };
-  const setSrc = (id, k) => { const e = document.getElementById(id); if (e) e.innerHTML = srcLine(k); };
-  ['src-flow', 'src-mom', 'src-table'].forEach(id => setSrc(id, 'cargo'));
-  setSrc('src-fc', 'forecast');
-  setSrc('src-split', 'cargo_split');
-  setSrc('src-wait', 'waiting');
-  setSrc('src-oc', 'overseas_coastal');
-  setSrc('src-cust', 'customers');
-
-  // ── Customer watch (NMPA daily vessel reports) ──
-  async function loadCustomers() {
-    const box = document.getElementById('trade-customers');
-    const cw = await fetchAPI('/trade/customers');
-    if (!cw || !cw.available) {
-      box.innerHTML = '<div class="alert-box alert-error">Could not load /trade/customers. If you just updated the project, an OLD backend is probably still running: close its window, start the backend again from the new folder, then refresh this page (Ctrl+F5).</div>';
-      return;
-    }
-    const per = cw.period, conc = cw.concentration, cov = cw.coverage_vs_official;
-    const num = (v) => v == null ? '—' : Math.round(v).toLocaleString();
-    const ALERT_CLASS = { falling: 'alert-warning', gone_quiet: 'alert-warning', waiting: 'alert-warning', rising: 'alert-success', new: 'alert-info' };
-    const TREND_COL = { Rising: '#059669', Falling: '#DC2626', Steady: '#2563EB' };
-    const alerts = cw.alerts.map(a => `<div class="alert-box ${ALERT_CLASS[a.type] || 'alert-warning'}" style="margin-bottom:6px;">${esc(a.message)}</div>`);
-    const rows = cw.customers;
-    const flag = r => [r.joint_entry ? 'joint entry' : '', r.agent_name_warning ? 'agent name?' : ''].filter(Boolean).join(', ');
-    const rowHtml = r => `<tr><td>${r.rank}</td><td><b>${esc(r.customer)}</b></td><td>${esc(r.main_cargo)}</td><td>${r.calls}</td><td>${num(r.tonnes)}</td><td>${r.share_of_traced_tonnes_pct == null ? '—' : r.share_of_traced_tonnes_pct + '%'}</td><td>${num(r.recent_tonnes)}</td><td>${num(r.previous_tonnes)}</td><td>${pct(r.change_pct)}</td><td><span style="color:${TREND_COL[r.trend] || '#6B7280'};font-weight:700;">${esc(r.trend)}</span></td><td>${r.days_since_last_call}</td><td>${r.usual_gap_days == null ? '—' : r.usual_gap_days}</td><td>${r.not_ready_ship_days}</td><td>${r.in_latest_report.expected} / ${r.in_latest_report.waiting}</td><td style="font-size:11px;color:#78716C;">${esc(flag(r))}</td></tr>`;
-    const head = `<div class="table-container"><table><thead><tr><th>#</th><th>Customer</th><th>Main cargo</th><th>Calls</th><th>Tonnes</th><th>Share</th><th>${esc(per.recent_label)}</th><th>${esc(per.previous_label)}</th><th>Change</th><th>Trend</th><th>Days since last call</th><th>Usual gap (days)</th><th>Not-ready waiting (ship-days)</th><th>Due / waiting now</th><th>Note</th></tr></thead><tbody>`;
-    const main = rows.filter(r => (r.share_of_traced_tonnes_pct || 0) >= 1 || r.calls >= 5);
-    const rest = rows.filter(r => !((r.share_of_traced_tonnes_pct || 0) >= 1 || r.calls >= 5));
-
-    box.innerHTML = `
-      <div class="grid-4">
-        <div class="metric-card"><div class="metric-label">Largest customer (${esc(conc.top3[0])})</div><div class="metric-value">${Math.round(conc.top1_pct)}%</div><div class="metric-delta">of traced tonnes</div></div>
-        <div class="metric-card"><div class="metric-label">Top 3 customers</div><div class="metric-value">${Math.round(conc.top3_pct)}%</div><div class="metric-delta">${esc(conc.top3.join(', '))}</div></div>
-        <div class="metric-card"><div class="metric-label">Customers making 80% of tonnes</div><div class="metric-value">${conc.customers_for_80pct}</div><div class="metric-delta">of ${cw.totals.customers} named customers</div></div>
-        <div class="metric-card"><div class="metric-label">Tonnes traced vs official</div><div class="metric-value">${cov.traced_pct == null ? '—' : Math.round(cov.traced_pct) + '%'}</div><div class="metric-delta">non-container cargo</div></div>
-      </div>
-      <div style="font-size:12px;color:#57534E;margin:8px 0;">Trend compares <b>${esc(per.recent_label)}</b> with <b>${esc(per.previous_label)}</b> (complete months only). Latest daily report: ${esc(per.latest_report)}. ${esc(cov.verdict)}</div>
-      ${alerts.length ? '<div style="font-weight:700;margin:10px 0 6px;">What needs a conversation with the customer</div>' + alerts.slice(0, 6).join('') + (alerts.length > 6 ? `<details><summary style="cursor:pointer;font-weight:600;margin:4px 0;">Show the other ${alerts.length - 6} customer alerts</summary>${alerts.slice(6).join('')}</details>` : '') : '<div class="alert-box alert-success">No customer is changing sharply, has gone quiet, or is causing an unusual share of waiting.</div>'}
-      <div id="trade-cust-chart" style="height:460px;margin-top:10px;"></div>
-      ${head}${main.map(rowHtml).join('')}</tbody></table></div>
-      ${rest.length ? `<details style="margin-top:6px;"><summary style="cursor:pointer;font-weight:600;">Show ${rest.length} smaller customers</summary>${head}${rest.map(rowHtml).join('')}</tbody></table></div></details>` : ''}
-      <div style="font-size:11.5px;color:#57534E;margin-top:6px;">Tonnes = complete months only. Container lines count calls, not tonnes. 'Joint entry' = the daily sheet names several receivers for one parcel. 'Agent name?' = this name is mostly written in the agent column, so it may not be the cargo owner.</div>
-      <div style="font-family:Outfit;font-size:15px;font-weight:700;margin:16px 0 6px;">One customer in detail</div>
-      <select id="trade-cust-pick" style="padding:6px 10px;border:1px solid #E7E5E4;border-radius:6px;min-width:260px;">${rows.map(r => `<option value="${esc(r.customer)}">${esc(r.customer)}</option>`).join('')}</select>
-      <div id="trade-cust-detail" style="margin-top:10px;">Loading...</div>
-      <details style="margin-top:10px;"><summary style="cursor:pointer;font-weight:600;">How customer numbers are checked, and their limits</summary>
-        <div class="table-container"><table><thead><tr><th>Month</th><th>Official tonnes</th><th>Traced in daily reports</th><th>Traced %</th><th>With a named customer %</th><th>Daily reports</th></tr></thead><tbody>${cov.months.map(m => `<tr><td>${esc(m.month)}</td><td>${num(m.official_t)}</td><td>${num(m.traced_t)}</td><td>${m.traced_pct}%</td><td>${m.named_customer_pct}%</td><td>${m.report_days}</td></tr>`).join('')}</tbody></table></div>
-        <div style="font-size:12px;margin-top:6px;"><b>Customer names:</b> ${cw.name_review.alias_rows} spellings are merged by <code>data/customer_aliases.csv</code>; ${cw.name_review.names_used_as_written} names are used exactly as written. ${esc(cw.name_review.note)}</div>
-        <ul style="font-size:12px;margin:6px 0 0 18px;">${cw.how_it_works.map(h => `<li>${esc(h)}</li>`).join('')}</ul>
-        <div style="font-size:12px;margin-top:6px;"><b>Limits</b></div><ul style="font-size:12px;margin:4px 0 0 18px;">${cw.limits.map(l => `<li>${esc(l)}</li>`).join('')}</ul>
-      </details>`;
-
-    const top = rows.filter(r => r.trend_basis === 'tonnes').slice(0, 12);
-    Plotly.newPlot('trade-cust-chart', [
-      { type: 'bar', orientation: 'h', name: per.previous_label, y: top.map(r => r.customer), x: top.map(r => r.previous_tonnes), marker: { color: '#CBD5E1' } },
-      { type: 'bar', orientation: 'h', name: per.recent_label, y: top.map(r => r.customer), x: top.map(r => r.recent_tonnes), marker: { color: top.map(r => TREND_COL[r.trend] || '#2563EB') } },
-    ], { ...PLOTLY_THEME, barmode: 'group', margin: { l: 170, r: 20, t: 30, b: 60 }, legend: { orientation: 'h', y: -0.12 },
-         title: { text: 'Largest 12 customers: recent 3 months (coloured) vs the 3 before (grey)', font: { size: 13 } },
-         xaxis: { ...PLOTLY_THEME.xaxis, type: 'linear', title: 'Tonnes (traced ship parcels)' }, yaxis: { ...PLOTLY_THEME.yaxis, type: 'category', autorange: 'reversed', automargin: true } });
-
-    const pick = document.getElementById('trade-cust-pick');
-    const showDetail = async () => {
-      const el = document.getElementById('trade-cust-detail');
-      el.innerHTML = 'Loading...';
-      const cd = await fetchAPI('/trade/customer?name=' + encodeURIComponent(pick.value));
-      if (!cd) { el.innerHTML = '<div class="alert-box alert-error">Could not load this customer.</div>'; return; }
-      const s = cd.summary;
-      const tbl = (cols, data) => `<div class="table-container"><table><thead><tr>${cols.map(c => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${data.map(d => `<tr>${cols.map(c => `<td>${c[1](d)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-      el.innerHTML = `
-        <div class="grid-4">
-          <div class="metric-card"><div class="metric-label">Calls</div><div class="metric-value">${s.calls}</div><div class="metric-delta">${s.recent_calls} in last 3 months</div></div>
-          <div class="metric-card"><div class="metric-label">Tonnes (complete months)</div><div class="metric-value">${mt(s.tonnes)}</div>${delta(s.change_pct, 'recent vs previous 3 months')}</div>
-          <div class="metric-card"><div class="metric-label">Foreign / coastal calls</div><div class="metric-value">${s.foreign_calls} / ${s.coastal_calls}</div></div>
-          <div class="metric-card"><div class="metric-label">Waiting ship-days</div><div class="metric-value">${s.waiting_ship_days}</div><div class="metric-delta">${s.not_ready_ship_days} because not ready</div></div>
-        </div>
-        <div id="trade-cust-month" style="height:300px;margin-top:10px;"></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;">
-          <div><b>Cargo mix</b>${tbl([['Cargo', d => esc(d.cargo)], ['Direction', d => esc(d.direction)], ['Calls', d => d.calls], ['Tonnes', d => num(d.tonnes)], ['Foreign', d => d.foreign_calls], ['Coastal', d => d.coastal_calls]], cd.cargo_mix)}
-            <div style="margin-top:8px;"><b>Waiting by reason</b></div>${cd.waiting_by_reason.length ? tbl([['Reason', d => esc(d.reason)], ['Ships', d => d.events], ['Ship-days', d => d.ship_days]], cd.waiting_by_reason) : '<div style="font-size:12px;color:#78716C;">No ship of this customer was recorded waiting.</div>'}</div>
-          <div><b>In the latest daily report (${esc(cd.in_latest_report.report_date)})</b>${cd.in_latest_report.ships.length ? tbl([['Status', d => esc(d.status)], ['Ship', d => esc(d.vessel)], ['Cargo', d => esc(d.cargo)], ['Tonnes', d => num(d.quantity_t)], ['ETA / arrived', d => esc(d.eta_or_arrival)], ['Note', d => esc(d.reason)]], cd.in_latest_report.ships) : '<div style="font-size:12px;color:#78716C;">No ship for this customer is expected or waiting in the latest report.</div>'}
-            <div style="margin-top:8px;"><b>Spellings merged into this name</b></div><div style="font-size:12px;color:#57534E;">${esc(cd.spellings_seen.join(', ') || '—')}</div></div>
-        </div>
-        <details style="margin-top:8px;"><summary style="cursor:pointer;font-weight:600;">Latest ships for this customer</summary>${tbl([['Ship', d => esc(d.vessel)], ['Cargo code', d => esc(d.cargo)], ['Cargo', d => esc(d.cargo_group)], ['First seen', d => esc(d.first_seen)], ['Last seen', d => esc(d.last_seen)], ['Run', d => esc(d.run)], ['Tonnes', d => num(d.tonnes)], ['Written as', d => esc(d.written_as)]], cd.recent_calls)}</details>
-        ${cd.recent_waiting.length ? `<details style="margin-top:6px;"><summary style="cursor:pointer;font-weight:600;">Latest waiting events for this customer</summary>${tbl([['Ship', d => esc(d.vessel)], ['Cargo', d => esc(d.cargo)], ['Seen waiting', d => esc(d.first_seen)], ['Days waited', d => d.wait_days], ['Reason as written', d => esc(d.reason_as_written)], ['Reason group', d => esc(d.reason_group)]], cd.recent_waiting)}</details>` : ''}`;
-      const mo = cd.monthly;
-      Plotly.newPlot('trade-cust-month', [
-        { type: 'bar', name: 'Tonnes', x: mo.map(m => m.month), y: mo.map(m => m.tonnes), marker: { color: mo.map(m => m.complete ? '#2563EB' : '#9CA3AF') } },
-        { type: 'scatter', mode: 'lines+markers', name: 'Calls', x: mo.map(m => m.month), y: mo.map(m => m.calls), yaxis: 'y2', line: { color: '#D97706', width: 2 } },
-      ], { ...PLOTLY_THEME, margin: { l: 60, r: 50, t: 30, b: 50 }, legend: { orientation: 'h', y: -0.2 },
-           title: { text: `${cd.customer} — tonnes and calls per month (grey = partial month)`, font: { size: 13 } },
-           xaxis: { ...PLOTLY_THEME.xaxis, type: 'category' }, yaxis: { ...PLOTLY_THEME.yaxis, title: 'Tonnes' },
-           yaxis2: { overlaying: 'y', side: 'right', title: 'Calls', showgrid: false, rangemode: 'tozero' } });
-    };
-    pick.addEventListener('change', showDetail);
-    showDetail();
-  }
-  loadCustomers();
-
-  if (brief) {
-    document.getElementById('trade-findings').innerHTML = `<div style="font-family:Outfit;font-size:16px;font-weight:700;margin-bottom:6px;">Key findings — ${esc(brief.as_of)}</div><ul style="margin:0 0 0 18px;font-size:13.5px;line-height:1.6;">${brief.findings.map(f => `<li>${esc(f)}</li>`).join('')}</ul><div style="font-size:11px;color:#78716C;margin-top:8px;">${srcLine('cargo')}</div>`;
-    document.getElementById('trade-limits').innerHTML = brief.limits.map(l => `<li>${esc(l)}</li>`).join('');
-  }
-
-  if (!summary || !flows || !comm) {
-    document.getElementById('trade-kpis').innerHTML = '<div class="alert-box alert-error">Could not load trade data — check that the backend is running.</div>';
-  } else {
-    const lm = summary.latest_month, ti = summary.inbound, to = summary.outbound, tt = summary.total;
-    document.getElementById('trade-kpis').innerHTML = `
-      <div class="metric-card"><div class="metric-label">Inbound — ${esc(summary.as_of)}</div><div class="metric-value">${mt(lm.inbound_tonnes)}</div>${delta(ti.yoy_pct_latest_month, 'vs same month last year')}</div>
-      <div class="metric-card"><div class="metric-label">Outbound — ${esc(summary.as_of)}</div><div class="metric-value">${mt(lm.outbound_tonnes)}</div>${delta(to.yoy_pct_latest_month, 'vs same month last year')}</div>
-      <div class="metric-card"><div class="metric-label">Outbound share</div><div class="metric-value">${lm.outbound_share_pct == null ? '—' : lm.outbound_share_pct.toFixed(1) + '%'}</div></div>
-      <div class="metric-card"><div class="metric-label">Last 12 months, total</div><div class="metric-value">${mt(tt.last_12_months_tonnes)}</div>${delta(tt.yoy_pct_last_12_months, 'YoY (' + tt.months_compared_12m + ' months compared)')}</div>`;
-
-    const alertData = await fetchAPI('/trade/alerts');
-    if (alertData) {
-      const cls = { warning: 'alert-warning', positive: 'alert-success', info: 'alert-info' };
-      document.getElementById('trade-alerts').innerHTML = `<div style="font-family:Outfit;font-weight:700;margin:12px 0 8px;">What needs attention</div>` +
-        (alertData.alerts.length ? (() => { const one = a => `<div class="alert-box ${cls[a.severity] || 'alert-info'}" style="margin-bottom:8px;">${esc(a.message)}</div>`; const A = alertData.alerts; return A.slice(0, 4).map(one).join('') + (A.length > 4 ? `<details><summary style="cursor:pointer;font-weight:600;margin-bottom:8px;">Show ${A.length - 4} more</summary>${A.slice(4).map(one).join('')}</details>` : ''); })()
-                                 : '<div class="alert-box alert-success">No unusual cargo movements this month.</div>');
-    }
-
-    const oc = await fetchAPI('/trade/overseas-coastal');
-    if (oc) {
-      const y = oc.financial_year_to_date;
-      document.getElementById('trade-oc').innerHTML = `
-        <div class="grid-3" style="margin-bottom:8px;">
-          <div class="metric-card"><div class="metric-label">Overseas, ${esc(y.from)} to ${esc(y.to)}</div><div class="metric-value">${mt(y.overseas_tonnes)}</div>${delta(y.overseas_yoy_pct, 'vs last year')}</div>
-          <div class="metric-card"><div class="metric-label">Coastal</div><div class="metric-value">${mt(y.coastal_tonnes)}</div>${delta(y.coastal_yoy_pct, 'vs last year')}</div>
-          <div class="metric-card"><div class="metric-label">Coastal share</div><div class="metric-value">${y.coastal_share_pct.toFixed(1)}%</div><div style="font-size:11px;color:#78716C;">${y.coastal_share_prev_year_pct.toFixed(1)}% last year</div></div>
-        </div><div id="trade-oc-chart" style="height:280px;"></div>
-        <div style="font-size:11.5px;color:#57534E;margin-top:6px;">${esc(oc.scope)}</div>`;
-      const m = oc.series.map(r => r.month);
-      Plotly.newPlot('trade-oc-chart', [
-        { x: m, y: oc.series.map(r => r.overseas_tonnes), name: 'Overseas', type: 'bar', marker: { color: '#2563EB' } },
-        { x: m, y: oc.series.map(r => r.coastal_tonnes), name: 'Coastal', type: 'bar', marker: { color: '#D97706' } }
-      ], { ...PLOTLY_THEME, barmode: 'stack', legend: { orientation: 'h', y: -0.25 }, xaxis: { ...PLOTLY_THEME.xaxis, type: 'date', tickformat: '%b %Y' } });
-    }
-
-    const s = flows.series, x = s.map(r => r.month);
-    const line = (name, key, color, dash) => ({ x, y: s.map(r => r[key]), name, type: 'scatter', mode: dash ? 'lines' : 'lines+markers', connectgaps: !!dash, line: { color, width: dash ? 1.5 : 2, dash: dash || 'solid' } });
-    Plotly.newPlot('trade-flow-chart', [
-      line('Inbound', 'inbound_tonnes', '#2563EB'), line('Outbound', 'outbound_tonnes', '#D97706'),
-      line('Inbound trend (3-mo EMA)', 'inbound_ema3', '#2563EB', 'dot'), line('Outbound trend (3-mo EMA)', 'outbound_ema3', '#D97706', 'dot')
-    ], { ...PLOTLY_THEME, legend: { orientation: 'h', y: -0.25 }, xaxis: { ...PLOTLY_THEME.xaxis, type: 'date', tickformat: '%b %Y' }, yaxis: { ...PLOTLY_THEME.yaxis, title: 'Tonnes' } });
-
-    const fc = await fetchAPI('/trade/forecast');
-    if (fc) {
-      const mm = (v) => (v / 1e6).toFixed(2);
-      const hist = s.slice(-24);
-      const traces = [
-        { x: hist.map(r => r.month), y: hist.map(r => r.inbound_tonnes), name: 'Inbound (actual)', type: 'scatter', mode: 'lines', line: { color: '#2563EB', width: 2 } },
-        { x: hist.map(r => r.month), y: hist.map(r => r.outbound_tonnes), name: 'Outbound (actual)', type: 'scatter', mode: 'lines', line: { color: '#D97706', width: 2 } }
-      ];
-      [['All inbound cargo', 'Inbound forecast', '#2563EB'], ['All outbound cargo', 'Outbound forecast', '#D97706']].forEach(([label, name, color]) => {
-        const r = fc.results.find(q => q.series === label);
-        if (r && r.forecast.length) traces.push({ x: r.forecast.map(f => f.month + '-01'), y: r.forecast.map(f => f.forecast_tonnes), name, type: 'scatter', mode: 'markers', marker: { color, size: 10, symbol: 'diamond' },
-          error_y: { type: 'data', symmetric: false, array: r.forecast.map(f => f.range_high_tonnes - f.forecast_tonnes), arrayminus: r.forecast.map(f => f.forecast_tonnes - f.range_low_tonnes), color, thickness: 2, width: 6 } });
-      });
-      Plotly.newPlot('trade-fc-chart', traces, { ...PLOTLY_THEME, legend: { orientation: 'h', y: -0.25 }, xaxis: { ...PLOTLY_THEME.xaxis, type: 'date', tickformat: '%b %Y' }, yaxis: { ...PLOTLY_THEME.yaxis, title: 'Tonnes' } });
-      const CONF = { High: '#059669', Medium: '#2563EB', Low: '#D97706', 'Not forecastable': '#9CA3AF', 'Not enough history': '#9CA3AF' };
-      let t = `<div class="table-container"><table><thead><tr><th>Cargo</th><th>Direction</th><th>Next month</th><th>Forecast</th><th>Typical range</th><th>Past error</th><th>Reliability</th><th>Method used</th></tr></thead><tbody>`;
-      fc.results.forEach(r => {
-        const f = r.forecast[0];
-        t += `<tr><td><b>${esc(r.series)}</b></td><td>${esc(r.direction)}</td><td>${f ? esc(f.month) : '—'}</td><td>${f ? mm(f.forecast_tonnes) + ' M t' : 'not shown'}</td><td>${f ? mm(f.range_low_tonnes) + ' to ' + mm(f.range_high_tonnes) + ' M t' : '—'}</td><td>${r.used_wape_pct == null ? '—' : r.used_wape_pct + '%'}</td><td><span style="color:${CONF[r.confidence] || '#6B7280'};font-weight:700;">${esc(r.confidence)}</span></td><td>${esc(r.method_text || '—')}</td></tr>`;
-      });
-      t += `</tbody></table></div><div style="font-size:11.5px;color:#57534E;margin-top:8px;"><b>How to read it:</b> "Past error" is how far past forecasts missed, out of every 100 tonnes. ${fc.how_it_works.map(esc).join(' ')} <b>Limits:</b> ${fc.limits.map(esc).join(' ')}</div>`;
-      document.getElementById('trade-fc-table').innerHTML = t;
-    } else {
-      document.getElementById('trade-fc-table').innerHTML = '<div class="alert-box alert-error">Could not load the forecast.</div>';
-    }
-
-    const sp = await fetchAPI('/trade/cargo-split');
-    if (sp && sp.available) {
-      const v = sp.validation_against_ministry;
-      const known = sp.families.filter(f => f.direction_known && f.ships >= 8);
-      const rest = sp.families.filter(f => !(f.direction_known && f.ships >= 8));
-      const PCOL = { 'Mostly foreign': '#2563EB', 'Mostly coastal': '#D97706', Mixed: '#7C3AED', 'Too few ships to tell': '#9CA3AF' };
-      const rowHtml = f => `<tr><td><b>${esc(f.cargo)}</b></td><td>${esc(f.direction)}</td><td>${f.ships}</td><td>${f.foreign_ships} / ${f.coastal_ships}</td><td>${f.coastal_share_by_ships_pct}%</td><td>${f.coastal_share_by_quantity_pct == null ? '—' : f.coastal_share_by_quantity_pct + '%'}</td><td><span style="color:${PCOL[f.pattern] || '#6B7280'};font-weight:700;">${esc(f.pattern)}</span></td><td>${f.top_customers.map(c => esc(c.customer)).join(', ') || '—'}</td></tr>`;
-      const head = '<div class="table-container"><table><thead><tr><th>Cargo</th><th>Direction</th><th>Ships</th><th>Foreign / coastal</th><th>Coastal % (ships)</th><th>Coastal % (quantity)</th><th>Pattern</th><th>Main customers</th></tr></thead><tbody>';
-      document.getElementById('trade-split').innerHTML = `<div class="alert-box alert-warning" style="margin-bottom:8px;"><b>Estimate.</b> ${esc(v.verdict)}</div>` + head + known.map(rowHtml).join('') + '</tbody></table></div>' +
-        (rest.length ? `<details style="margin-top:8px;"><summary style="cursor:pointer;font-weight:600;">Show ${rest.length} more groups (few ships, or direction not written in the daily sheet)</summary>${head}${rest.map(rowHtml).join('')}</tbody></table></div></details>` : '') +
-        `<div style="font-size:11.5px;color:#57534E;margin-top:8px;"><b>Period:</b> ${esc(sp.period.from)} to ${esc(sp.period.to)}. <b>Limits:</b> ${sp.limits.map(esc).join(' ')}</div>`;
-    } else {
-      document.getElementById('trade-split').innerHTML = '<div class="alert-box alert-error">Could not load the foreign vs coastal split from /trade/cargo-split. If you just updated the project, an OLD backend is probably still running: close its window, start the backend again from the new folder, then refresh this page (Ctrl+F5).</div>';
-    }
-
-    const wt = await fetchAPI('/trade/waiting');
-    if (wt && wt.available) {
-      const o = wt.overall, top = wt.by_reason[0];
-      const rt = r => `<tr><td><b>${esc(r.reason || r.cargo || r.customer)}</b></td><td>${r.events}</td><td>${r.avg_wait_days}</td><td>${r.ship_days}</td><td>${r.share_of_waiting_days_pct}%</td>${r.not_ready_share_pct == null ? '' : `<td>${r.not_ready_share_pct}%</td>`}</tr>`;
-      const tbl = (rows, first, extra) => `<div class="table-container"><table><thead><tr><th>${first}</th><th>Waiting events</th><th>Avg wait (days)</th><th>Total ship-days</th><th>Share of all waiting</th>${extra ? '<th>Of which "not ready"</th>' : ''}</tr></thead><tbody>${rows.map(rt).join('')}</tbody></table></div>`;
-      document.getElementById('trade-wait').innerHTML =
-        `<div class="alert-box alert-warning" style="margin-bottom:8px;"><b>${o.events} waiting events</b> (${esc(wt.period.from)} to ${esc(wt.period.to)}). Average wait ${o.avg_wait_days} days, middle value ${o.median_wait_days}, the longest 10% waited ${o.p90_wait_days}+ days. Biggest written cause: <b>${esc(top.reason)}</b> (${top.share_of_waiting_days_pct}% of waiting days).</div>` +
-        '<div id="trade-wait-month" style="height:260px;"></div>' + '<b>By reason</b>' + tbl(wt.by_reason, 'Reason', false) +
-        '<div style="margin-top:10px;"><b>By cargo</b></div>' + tbl(wt.by_cargo.slice(0, 8), 'Cargo', true) +
-        '<div style="margin-top:10px;"><b>By customer</b></div>' + tbl(wt.by_customer.slice(0, 8), 'Customer', true) +
-        `<div style="font-size:11.5px;color:#57534E;margin-top:8px;"><b>Limits:</b> ${wt.limits.map(esc).join(' ')}</div>`;
-      Plotly.newPlot('trade-wait-month', [{ type: 'bar', x: wt.by_month.map(m => m.month), y: wt.by_month.map(m => m.avg_wait_days), marker: { color: wt.by_month.map(m => wt.partial_months.includes(m.month) ? '#9CA3AF' : '#2563EB') }, text: wt.by_month.map(m => m.avg_wait_days), textposition: 'outside' }], { ...PLOTLY_THEME, margin: { l: 50, r: 20, t: 20, b: 40 }, yaxis: { ...PLOTLY_THEME.yaxis, title: 'Average wait (days); grey = partial month' } });
-    } else {
-      document.getElementById('trade-wait').innerHTML = '<div class="alert-box alert-error">Could not load /trade/waiting. An OLD backend may still be running: close it, start it again from the new folder, then refresh (Ctrl+F5).</div>';
-    }
-
-    const ranked = comm.commodities.filter(c => c.momentum_pct != null).sort((a, b) => a.momentum_pct - b.momentum_pct);
-    Plotly.newPlot('trade-momentum-chart', [{
+  if (lanes.length > 0) {
+    const trace = [{
       type: 'bar', orientation: 'h',
-      x: ranked.map(c => c.momentum_pct), y: ranked.map(c => `${c.commodity} (${c.direction})`),
-      text: ranked.map(c => pct(c.momentum_pct)), textposition: 'outside', cliponaxis: false,
-      marker: { color: ranked.map(c => SIGNAL_COLORS[c.signal] || '#9CA3AF') }
-    }], { ...PLOTLY_THEME, margin: { l: 190, r: 70, t: 20, b: 50 }, xaxis: { ...PLOTLY_THEME.xaxis, title: 'Momentum % (grey = irregular cargo)', zeroline: true }, yaxis: { ...PLOTLY_THEME.yaxis, type: 'category', automargin: true, tickfont: { size: 10 } } });
-
-    let html = `<div class="table-container"><table><thead><tr><th>Cargo</th><th>Direction</th><th>Latest month (t)</th><th>YoY latest month</th><th>YoY last 12 months</th><th>Share of direction</th><th>Momentum</th><th>Signal</th></tr></thead><tbody>`;
-    comm.commodities.forEach(c => {
-      html += `<tr><td><b>${esc(c.commodity)}</b></td><td>${esc(c.direction)}</td><td>${c.latest_month_tonnes == null ? '—' : c.latest_month_tonnes.toLocaleString()}</td><td>${pct(c.yoy_pct_latest_month)}</td><td>${pct(c.yoy_pct_last_12_months)}</td><td>${c.share_of_direction_pct == null ? '—' : c.share_of_direction_pct + '%'}</td><td>${pct(c.momentum_pct)}</td><td><span style="color:${SIGNAL_COLORS[c.signal] || '#6B7280'};font-weight:700;">${esc(c.signal)}</span></td></tr>`;
-    });
-    html += `</tbody></table></div><div style="font-size:11px;color:#78716C;margin-top:8px;">${esc(comm.momentum_method)} Momentum and year-on-year measure different things and can disagree.</div>`;
-    document.getElementById('trade-table').innerHTML = html;
-
-    const dq = summary.data_quality, xc = dq.prior_year_crosscheck;
-    document.getElementById('trade-quality').innerHTML = `<b>Data quality:</b> ${esc(dq.first_month)} to ${esc(dq.latest_month)}, ${dq.months_with_data} of ${dq.months_in_span} months have data. Missing: ${esc(dq.missing_months.join(', ') || 'none')} (shown as gaps, never zero). ${dq.reconstructed_months.length} months (${esc(dq.reconstructed_months[0])} to ${esc(dq.reconstructed_months[dq.reconstructed_months.length - 1])}) are rebuilt from the prior-year column of later reports — ${xc.exact_match_pct}% of cross-checkable figures match the original exactly. Inbound = cargo unloaded, outbound = cargo loaded; the source does not split foreign trade from coastal movement.`;
+      x: lanes.map(l => l.growth_pct),
+      y: lanes.map(l => l.route),
+      marker: { color: lanes.map(l => l.growth_pct > 0 ? '#059669' : '#DC2626') }
+    }];
+    Plotly.newPlot('trade-content', trace, { ...PLOTLY_THEME, title: 'Trade Lane YoY Growth (%)' });
   }
 }
 
@@ -744,9 +1023,17 @@ async function renderAnomaly() {
 // ─── TAB 7: Incentive Engine Renderer ─────────────────────────────────────────
 async function renderIncentive() {
   const container = document.getElementById('tab-incentive');
-  container.innerHTML = `<div class="sec-header"><span class="sec-title">Incentive Engine</span></div>
-    <div class="card">The Incentive Engine is in the main dashboard (Streamlit, port 8501), tab "Incentive Engine".
-    It works from NMPA's published tonnes and Scale of Rates and does not use assumed demand responses.</div>`;
+  container.innerHTML = `<div class="sec-header"><span class="sec-title">Trade Incentive Engine</span><span class="sec-tag">Real (derived)</span></div><div class="alert-box alert-warning" style="margin-bottom:12px;">⚠ Recommendations are grounded in real YoY tonnage trends from data/port_cargo_monthly.csv. The incentive %/impact figures follow a documented elasticity formula (not a trained model — no historical incentive-campaign outcome data exists to fit one against), and revenue impact is "N/A" because the dataset has no tariff/pricing column.</div><div class="card" id="incentive-recs">Loading recommendations...</div>`;
+
+  const data = await fetchAPI('/incentive/recommendations') || { recommendations: [] };
+  const recs = data.recommendations || [];
+  document.getElementById('incentive-recs').innerHTML = recs.map(r => `
+    <div class="alert-box alert-success" style="margin-bottom:12px;">
+      <div><b>${r.action}</b> <span class="badge badge-normal">${r.priority}</span></div>
+      <div style="font-size:12px;margin-top:4px;">${r.rationale}</div>
+      <div style="font-size:11px;color:#78716C;margin-top:4px;">${r.current_metric} → Predicted traffic impact: ${r.predicted_traffic_impact} | Revenue impact: ${r.predicted_revenue_impact} | Confidence: ${(r.confidence * 100).toFixed(0)}%</div>
+    </div>
+  `).join('');
 }
 
 // ─── TAB 8: Digital Twin Renderer ─────────────────────────────────────────────

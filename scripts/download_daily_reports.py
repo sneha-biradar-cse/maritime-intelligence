@@ -10,6 +10,7 @@ Usage (PowerShell, from the project folder, venv active):
   python scripts\\download_daily_reports.py                           download the missing days (data/daily_reports_missing_pdfs.csv)
   python scripts\\download_daily_reports.py --from 2026-10-27 --to 2026-11-30   download a date range
   python scripts\\download_daily_reports.py --max-pages 60 --delay 5  settings
+  python scripts\\download_daily_reports.py --direct --from 2025-04-01 --to 2025-08-31   back-fill older reports, one request per day
 
 Then:  python scripts\\update_trade_data.py   (reads each PDF, checks it against the record already held, and refreshes everything)
 
@@ -120,6 +121,28 @@ def sane_dates(links: list[tuple[str, date | None, str]], max_gap_days: int = 45
     return dated, odd
 
 
+DIRECT = BASE + "/sites/default/files/dailyvessel/{name}{suffix}.pdf"
+SUFFIXES = ("", "_0", "_1")
+
+
+def direct_fetch(get, d: date, delay: float = 0.0):
+    """Try NMPA's file address for a date (and the _0/_1 variants the site sometimes uses). Returns (url, bytes) for the
+    first reply that is really a PDF, else (None, reason). `get` is a function url -> response (requests-like)."""
+    name, last = d.strftime("%d-%m-%Y"), "not on the site"
+    for i, suf in enumerate(SUFFIXES):
+        url = DIRECT.format(name=name, suffix=suf)
+        try:
+            r = get(url)
+            if getattr(r, "status_code", 200) == 200 and r.content[:4] == b"%PDF":
+                return url, r.content
+            last = f"not on the site (HTTP {getattr(r, 'status_code', '?')})"
+        except Exception as e:                                      # network trouble: report it, never invent a file
+            last = f"failed: {e}"
+        if delay and i < len(SUFFIXES) - 1:
+            time.sleep(delay)
+    return None, last
+
+
 def wanted_dates(args) -> set[date]:
     if args.date_from or args.date_to:
         d0 = datetime.strptime(args.date_from or args.date_to, "%Y-%m-%d").date()
@@ -136,6 +159,9 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--from", dest="date_from", help="first date, YYYY-MM-DD (default: the missing days list)")
     ap.add_argument("--to", dest="date_to", help="last date, YYYY-MM-DD")
     ap.add_argument("--max-pages", type=int, default=80, help="archive pages to read at most (default 80)")
+    ap.add_argument("--direct", action="store_true",
+                    help="ask for each wanted date's file directly (dailyvessel/DD-MM-YYYY.pdf), one request per missing day; "
+                         "best for back-filling older reports, and fewer requests than reading the archive pages")
     ap.add_argument("--delay", type=float, default=3.0, help="seconds between requests (default 3)")
     ap.add_argument("--ca-bundle", help="a certificate file (.pem) to trust, e.g. one supplied by your organisation's IT")
     ap.add_argument("--insecure", action="store_true",
@@ -163,6 +189,39 @@ def main(argv: list[str]) -> int:
     found: dict[date, tuple[str, str]] = {}
     suspects: list[tuple[str, date, str]] = []
     seen_urls: set[str] = set()
+    if args.direct:
+        rows = []
+        todo = [d for d in sorted(want) if d.strftime("%d-%m-%Y") not in held]
+        print(f"Direct mode: {len(todo)} date(s) to ask for, one at a time, {args.delay:g} s apart.")
+        for d in sorted(want):
+            name = d.strftime("%d-%m-%Y")
+            if name in held:
+                rows.append({"date": d.isoformat(), "file": f"{name}.pdf", "link": "", "result": "already held"})
+                continue
+            if args.dry_run:
+                rows.append({"date": d.isoformat(), "file": "", "link": DIRECT.format(name=name, suffix=""), "result": "would ask (dry run)"})
+                continue
+            url, got = direct_fetch(lambda u: s.get(u, timeout=120), d, args.delay)
+            if url:
+                INBOX.mkdir(exist_ok=True)
+                (INBOX / f"{name}.pdf").write_bytes(got)
+                rows.append({"date": d.isoformat(), "file": f"{name}.pdf", "link": url, "result": f"downloaded ({len(got) // 1024} KB)"})
+                print(f"  downloaded {name}.pdf")
+            else:
+                rows.append({"date": d.isoformat(), "file": "", "link": "", "result": got})
+            time.sleep(args.delay)
+        LOG.parent.mkdir(exist_ok=True)
+        with open(LOG, "w", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=["date", "file", "link", "result"])
+            w.writeheader()
+            w.writerows(rows)
+        summ = {}
+        for r in rows:
+            k = r["result"].split(" (")[0].split(":")[0]
+            summ[k] = summ.get(k, 0) + 1
+        print("Summary: " + "; ".join(f"{k}: {v}" for k, v in summ.items()) + f". Details: {LOG}")
+        print("Next: python scripts\\update_trade_data.py   (reads and checks the new reports)")
+        return 0
     pages = [LATEST] + [ARCHIVE] + [f"{ARCHIVE}?page={i}" for i in range(1, args.max_pages)]
     empty_streak = 0
     for i, url in enumerate(pages):

@@ -109,12 +109,13 @@ def brief_pdf() -> bytes:
     sm = ParagraphStyle("s", parent=b, fontSize=7.5, textColor=colors.HexColor("#555555"))
     rv, kc, a = ie.get_revenue(), ie.get_key_customers(), get_actions()
     buf = io.BytesIO()
-    doc = SimpleDocTemplate(buf, pagesize=A4, leftMargin=14 * mm, rightMargin=14 * mm, topMargin=12 * mm, bottomMargin=12 * mm,
+    doc = SimpleDocTemplate(buf, pagesize=A4, leftMargin=14 * mm, rightMargin=14 * mm, topMargin=9 * mm, bottomMargin=9 * mm,
                             title="NMPA Incentive brief")
     t = rv["total"]
     el = [Paragraph("New Mangalore Port: Incentive brief", ss["Title"]),
-          Paragraph(asc(f"Prepared {a['prepared_on']}. Estimates from NMPA's published tonnes, daily reports and Scale of Rates; "
-                        "not billing figures."), sm),
+          Paragraph(asc(f"Prepared {a['prepared_on']} on request. Estimates from NMPA's published tonnes, daily reports, Scale of "
+                        "Rates and Ministry data; not billing figures. For discussion: nothing in it is a decision; any benefit needs the "
+                        "customer's reason, Finance review and approval."), sm),
           Paragraph("1. The picture", h),
           Paragraph(asc(f"Estimated wharfage {rv['period']}: {cr(t['revenue_rs'])} on {t['tonnes'] / 1e6:.1f} MMT "
                         f"({(t['revenue_rs'] / t['revenue_prev_rs'] - 1) * 100:+.1f}% on the same months last year). "
@@ -122,7 +123,7 @@ def brief_pdf() -> bytes:
                         f"warning sign (their wharfage fell {cr(-kc['at_risk_quarter_fall_rs'])} in {kc['q2_label']} against {kc['q1_label']})."), b),
           Paragraph("2. Actions this week", h)]
     rows = [["Who", "Action", "Why"]] + [[Paragraph(asc(x["who"]), b), Paragraph(asc(x["action"]), b), Paragraph(asc(x["why"]), b)]
-                                         for x in a["actions"][:8]]
+                                         for x in a["actions"][:6]]
     tb = Table(rows, colWidths=[28 * mm, 55 * mm, 99 * mm])
     tb.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.3, colors.grey), ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#EEEEEE")),
                             ("FONTSIZE", (0, 0), (-1, -1), 8), ("VALIGN", (0, 0), (-1, -1), "TOP")]))
@@ -130,12 +131,55 @@ def brief_pdf() -> bytes:
     el.append(Paragraph("3. Key customers at risk", h))
     rows = [["Customer", "Share", "Risk", "Warning signs"]] + [[asc(r["customer"]), f"{r['share_pct']:.1f}%", r["risk"],
                                                                  Paragraph(asc("; ".join(r["signals"])), b)]
-                                                                for r in kc["rows"] if r["risk"] != "None found"][:6]
+                                                                for r in kc["rows"] if r["risk"] != "None found"][:5]
     tb = Table(rows, colWidths=[42 * mm, 16 * mm, 16 * mm, 108 * mm])
     tb.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.3, colors.grey), ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#EEEEEE")),
                             ("FONTSIZE", (0, 0), (-1, -1), 8), ("VALIGN", (0, 0), (-1, -1), "TOP")]))
     el.append(tb)
-    el.append(Paragraph(asc("Signals to act on, not conclusions. Any benefit needs the reason confirmed with the customer, Finance "
-                            "review and approval (scheme register). Full detail: Incentive Engine in the YellowSense platform."), sm))
+    # 4-7: schemes, claims, competition, berths (each section is left out quietly if its data is not available)
+    from backend.app.services import incentive_decision_aids as da
+
+    def grid(rows, widths):
+        tb = Table(rows, colWidths=[w * mm for w in widths])
+        tb.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.3, colors.grey), ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#EEEEEE")),
+                                ("FONTSIZE", (0, 0), (-1, -1), 8), ("VALIGN", (0, 0), (-1, -1), "TOP")]))
+        return tb
+    try:
+        ex = da.expiring_schemes()
+        el.append(Paragraph("4. NMPA schemes ending within six months", h))
+        rows = [["Scheme", "Ends", "Days left", "Recommendation"]] + [
+            [Paragraph(asc(f"{r['what']} ({r['cargo']}) - {r['notice']}"), b), r["ends"], str(r["days_left"]), Paragraph(asc(r["recommendation"].split(":")[0].split(".")[0]), b)]
+            for r in ex["rows"] if r["days_left"] <= 180][:5]
+        el.append(grid(rows, [96, 20, 16, 50]) if len(rows) > 1 else Paragraph("None.", b))
+    except Exception:
+        pass
+    try:
+        from backend.app.services import incentive_claims as icl
+        cl = icl.get_claims()
+        cnt = cl["count"]
+        paid = sum(c.get("paid_rs") or 0 for c in cl["claims"])
+        el.append(Paragraph("5. Rebate claims", h))
+        el.append(Paragraph(asc(f"{cl['waiting']} waiting (submitted {cnt['Submitted']}, verified {cnt['Verified']}, approved "
+                                f"{cnt['Approved']}); {cnt['Paid']} paid, {cr(paid)} in all; {cnt['Rejected']} rejected."
+                                if cl["claims"] else "No claims recorded yet."), b))
+    except Exception:
+        pass
+    try:
+        ar, tb_ = da.cargo_at_risk(), da.turnaround_benchmark()
+        el.append(Paragraph("6. Against the other major ports", h))
+        el.append(Paragraph(asc(f"Cargo going to other ports, {ar['period']} against {ar['compared_with']}: about "
+                                f"{ar['total_t'] / 1e5:.1f} lakh t at last year's share ("
+                                + ", ".join(f"{r['cargo']} {r['tonnes_at_stake'] / 1e5:.1f}" for r in ar["rows"]) + " lakh t). "
+                                + (tb_["plain"] if tb_.get("available") else "")), b))
+    except Exception:
+        pass
+    try:
+        bb = da.busy_berths()
+        el.append(Paragraph("7. Berths near or beyond NMPA's usable capacity", h))
+        el.append(Paragraph(asc("; ".join(f"Berth {r['berth']}: about {r['used_pct']}% ({r['tonnes_mt']:.2f} of {r['usable_mt']} MMT a year)"
+                                          for r in bb) + ". Extra cargo there would mostly wait: aim discounts at berths and months "
+                                "with room." if bb else "None estimated above 85% of usable capacity."), b))
+    except Exception:
+        pass
     doc.build(el)
     return buf.getvalue()

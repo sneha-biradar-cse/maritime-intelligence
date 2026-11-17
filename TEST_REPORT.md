@@ -1,19 +1,28 @@
 # Test report
 
-Run: 2026-11-13T15:34:50  
+Run: 2026-11-17T16:57:16  
 Python 3.12.3 on Linux; pandas 2.3.3, fastapi 0.128.8  
 Command: `python -m pytest -q` from the project folder (re-run with `python scripts/make_test_report.py`)
 
-**291 passed, 0 failed, 0 skipped, 291 in total.**
+**414 passed, 0 failed, 0 skipped, 414 in total.**
 
 What the tests check: every tariff rate used against the Scale of Rates PDF; data files against the official reports; the incentive rules (eligibility, baselines, slabs, approvals, amendments); the end-to-end workflow; the monthly update (rollback on failure, safe re-run). They run on the data held in this project.
 
 | File | Test | Result | Seconds |
 |---|---|---|---|
-| test_auth_pilot | test_actions_need_login_and_the_right_role | passed | 3.65 |
-| test_auth_pilot | test_customer_notes_and_feedback_roles | passed | 0.34 |
+| test_auth_pilot | test_actions_need_login_and_the_right_role | passed | 3.59 |
+| test_auth_pilot | test_customer_notes_and_feedback_roles | passed | 0.33 |
 | test_auth_pilot | test_demo_mode_without_users | passed | 0.01 |
 | test_auth_pilot | test_passwords_are_hashed_and_wrong_password_refused | passed | 0.37 |
+| test_backfill_and_iron_base | test_direct_fetch_pdf_variants_and_refusals | passed | 0.00 |
+| test_backfill_and_iron_base | test_iron_ore_base_reports_its_months | passed | 0.01 |
+| test_customer_names | test_decisions_change_nothing_until_applied | passed | 2.15 |
+| test_customer_names | test_list_is_sorted_and_has_no_false_letter_match | passed | 0.85 |
+| test_customer_names | test_spelling_marked_different_is_unmerged | passed | 1.13 |
+| test_customer_sheet | test_iron_ore_rebate_with_and_without_caution | passed | 0.57 |
+| test_customer_sheet | test_no_scheme_from_a_generic_word | passed | 1.09 |
+| test_customer_sheet | test_one_page_and_unknown_customer | passed | 0.32 |
+| test_customer_sheet | test_talking_point_agrees_with_status | passed | 0.81 |
 | test_download_daily_reports | test_certificate_options | passed | 0.00 |
 | test_download_daily_reports | test_dates_in_many_formats[01 Sep 2025-expected5] | passed | 0.00 |
 | test_download_daily_reports | test_dates_in_many_formats[01.09.2025-expected1] | passed | 0.00 |
@@ -25,28 +34,41 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_download_daily_reports | test_dates_in_many_formats[dvp_01092025.pdf-expected3] | passed | 0.00 |
 | test_download_daily_reports | test_downloads_only_wanted_days_and_refuses_non_pdfs | passed | 0.00 |
 | test_download_daily_reports | test_dry_run_downloads_nothing | passed | 0.00 |
-| test_download_daily_reports | test_excel_workbook_has_every_day_and_traceability | passed | 3.28 |
+| test_download_daily_reports | test_excel_workbook_has_every_day_and_traceability | passed | 3.25 |
 | test_download_daily_reports | test_nothing_missing_is_handled | passed | 0.00 |
 | test_download_daily_reports | test_typo_dates_do_not_stop_the_crawl_and_are_reported | passed | 0.00 |
-| test_finance_check_and_competitor_watch | test_competitor_watch_baseline_then_new | passed | 0.00 |
+| test_finance_check_and_competitor_watch | test_competitor_watch_baseline_then_new | passed | 0.01 |
 | test_finance_check_and_competitor_watch | test_competitor_watch_two_pages_linking_the_same_notice | passed | 0.00 |
 | test_finance_check_and_competitor_watch | test_dashboard_reader | passed | 0.01 |
-| test_finance_check_and_competitor_watch | test_finance_check_arithmetic | passed | 10.42 |
+| test_finance_check_and_competitor_watch | test_finance_check_arithmetic | passed | 10.32 |
 | test_finance_check_and_competitor_watch | test_finance_check_refuses_bad_files | passed | 0.00 |
-| test_finance_check_and_competitor_watch | test_finance_check_uses_the_rate_in_force_each_month | passed | 0.83 |
+| test_finance_check_and_competitor_watch | test_finance_check_uses_the_rate_in_force_each_month | passed | 0.84 |
 | test_finance_check_and_competitor_watch | test_only_finance_can_upload_billing | passed | 0.00 |
 | test_harvest_nmpa | test_downloads_statements_to_incoming_and_notices_for_review | passed | 0.00 |
 | test_harvest_nmpa | test_dry_run_lists_and_classifies_without_downloading | passed | 0.00 |
 | test_harvest_nmpa | test_ministry_reports | passed | 0.00 |
-| test_harvest_nmpa | test_month_read_from_inside_a_real_statement | passed | 0.26 |
-| test_harvest_nmpa | test_only_statements_newer_than_data_held_and_no_other_documents | passed | 0.37 |
+| test_harvest_nmpa | test_month_read_from_inside_a_real_statement | passed | 0.11 |
+| test_harvest_nmpa | test_only_statements_newer_than_data_held_and_no_other_documents | passed | 0.07 |
 | test_harvest_nmpa | test_poppler_installer_pins_version_and_fingerprint | passed | 0.00 |
 | test_harvest_nmpa | test_project_poppler_is_found_without_system_changes | passed | 0.00 |
-| test_incentive_decision_aids | test_berth_check | passed | 0.10 |
-| test_incentive_decision_aids | test_board_note_and_trade_notice | passed | 0.02 |
-| test_incentive_decision_aids | test_expiring_schemes_days_and_order | passed | 0.97 |
+| test_incentive_claims | test_amounts_and_steps | passed | 0.00 |
+| test_incentive_claims | test_budget_limit_for_register_schemes | passed | 0.02 |
+| test_incentive_claims | test_claims_allowed_under_a_recently_ended_scheme | passed | 0.00 |
+| test_incentive_claims | test_full_journey_to_paid | passed | 0.01 |
+| test_incentive_claims | test_no_double_claims | passed | 0.01 |
+| test_incentive_claims | test_separation_of_duties | passed | 0.00 |
+| test_incentive_decision_aids | test_berth_check | passed | 0.01 |
+| test_incentive_decision_aids | test_board_note_and_trade_notice | passed | 0.14 |
+| test_incentive_decision_aids | test_board_note_carries_the_new_evidence | passed | 0.35 |
+| test_incentive_decision_aids | test_brief_is_one_page_with_all_sections | passed | 0.34 |
+| test_incentive_decision_aids | test_compare_designs_is_consistent | passed | 1.02 |
+| test_incentive_decision_aids | test_expiring_schemes_days_and_order | passed | 1.06 |
 | test_incentive_decision_aids | test_growth_check_arithmetic | passed | 0.00 |
-| test_incentive_engine | test_2025_26_rates_are_in_the_pdf | passed | 0.08 |
+| test_incentive_decision_aids | test_net_benefit_is_never_firmer_than_the_evidence | passed | 0.00 |
+| test_incentive_decision_aids | test_nmpa_berth_capacity_and_estimates | passed | 0.00 |
+| test_incentive_decision_aids | test_pool_guarantees | passed | 0.00 |
+| test_incentive_decision_aids | test_pool_simulation_never_exceeds_budget | passed | 0.02 |
+| test_incentive_engine | test_2025_26_rates_are_in_the_pdf | passed | 0.07 |
 | test_incentive_engine | test_accounts_check_implied_rates | passed | 0.01 |
 | test_incentive_engine | test_actual_income_table_adds_up | passed | 0.00 |
 | test_incentive_engine | test_baseline_methods_and_missing_months | passed | 0.00 |
@@ -54,30 +76,30 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_incentive_engine | test_both_tariff_versions_held_and_identical_lines | passed | 0.00 |
 | test_incentive_engine | test_break_even_formula | passed | 0.00 |
 | test_incentive_engine | test_budget_lines_add_up_to_nmpa_totals_where_complete | passed | 0.00 |
-| test_incentive_engine | test_container_royalty_is_teu_times_rate | passed | 0.01 |
+| test_incentive_engine | test_container_royalty_is_teu_times_rate | passed | 0.00 |
 | test_incentive_engine | test_crude_is_priced_by_where_it_is_discharged | passed | 0.00 |
-| test_incentive_engine | test_customer_figures_use_only_months_fully_covered_by_daily_reports | passed | 0.01 |
+| test_incentive_engine | test_customer_figures_use_only_months_fully_covered_by_daily_reports | passed | 0.00 |
 | test_incentive_engine | test_customer_stage_validation | passed | 0.00 |
-| test_incentive_engine | test_customer_wharfage_adds_up_and_excludes_own_arrangements | passed | 0.08 |
-| test_incentive_engine | test_deal_desk_blocks_and_errors | passed | 0.08 |
+| test_incentive_engine | test_customer_wharfage_adds_up_and_excludes_own_arrangements | passed | 0.00 |
+| test_incentive_engine | test_deal_desk_blocks_and_errors | passed | 0.07 |
 | test_incentive_engine | test_deal_desk_proposal_arithmetic_and_labels | passed | 0.09 |
 | test_incentive_engine | test_draft_flagged_when_data_changes_and_amendment_needs_reapproval | passed | 0.05 |
-| test_incentive_engine | test_end_to_end_workflow_as_nmpa_would_use_it | passed | 0.25 |
+| test_incentive_engine | test_end_to_end_workflow_as_nmpa_would_use_it | passed | 0.21 |
 | test_incentive_engine | test_endpoints_ok_no_nan[/incentive/evidence] | passed | 0.00 |
 | test_incentive_engine | test_endpoints_ok_no_nan[/incentive/opportunities] | passed | 0.00 |
 | test_incentive_engine | test_endpoints_ok_no_nan[/incentive/revenue] | passed | 0.00 |
 | test_incentive_engine | test_every_rate_used_appears_on_one_line_of_the_scale_of_rates | passed | 0.00 |
 | test_incentive_engine | test_evidence_states_its_limits | passed | 0.01 |
 | test_incentive_engine | test_key_customers | passed | 0.00 |
-| test_incentive_engine | test_kpi_tariff_check_survives_unreadable_pdftotext_output | passed | 6.36 |
+| test_incentive_engine | test_kpi_tariff_check_survives_unreadable_pdftotext_output | passed | 6.08 |
 | test_incentive_engine | test_large_customer_drop_counts_as_falling | passed | 0.00 |
 | test_incentive_engine | test_marginal_slabs_and_cap | passed | 0.00 |
 | test_incentive_engine | test_market_context_excludes_nmpa_and_missing_months | passed | 0.01 |
-| test_incentive_engine | test_module_kpis | passed | 0.19 |
+| test_incentive_engine | test_module_kpis | passed | 0.18 |
 | test_incentive_engine | test_new_endpoints_ok_no_nan[/incentive/cochin-schemes] | passed | 0.00 |
 | test_incentive_engine | test_new_endpoints_ok_no_nan[/incentive/published-accounts] | passed | 0.00 |
 | test_incentive_engine | test_new_endpoints_ok_no_nan[/incentive/rules] | passed | 0.00 |
-| test_incentive_engine | test_new_endpoints_ok_no_nan[/incentive/tariff-comparison] | passed | 0.01 |
+| test_incentive_engine | test_new_endpoints_ok_no_nan[/incentive/tariff-comparison] | passed | 0.00 |
 | test_incentive_engine | test_nmpa_notices_and_iron_ore_monitor | passed | 0.01 |
 | test_incentive_engine | test_nmpa_scheme_records_are_backed_by_notice_files | passed | 0.00 |
 | test_incentive_engine | test_opportunities_are_reviews_not_discounts | passed | 0.00 |
@@ -85,7 +107,7 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_incentive_engine | test_other_ports_schemes_are_sourced_and_nmpa_use_comes_from_its_notices | passed | 0.01 |
 | test_incentive_engine | test_ppp_berths_are_not_priced_as_wharfage | passed | 0.00 |
 | test_incentive_engine | test_previous_financial_year_baseline_matches_nmpa_notice | passed | 0.00 |
-| test_incentive_engine | test_rates_match_the_scale_of_rates_pdf[crude_spm-Crude oil through Single Point Mooring\\s+M\\.T\\.\\s+34\\.89\\s+34\\.90] | passed | 0.18 |
+| test_incentive_engine | test_rates_match_the_scale_of_rates_pdf[crude_spm-Crude oil through Single Point Mooring\\s+M\\.T\\.\\s+34\\.89\\s+34\\.90] | passed | 0.16 |
 | test_incentive_engine | test_rates_match_the_scale_of_rates_pdf[fertilizer-MOP, SOP, Urea ,DAP, NPK, CAN,\\s+M\\.T\\s+26\\.65\\s+45\\.71] | passed | 0.00 |
 | test_incentive_engine | test_rates_match_the_scale_of_rates_pdf[food_grains-Rice,Wheat, Maize, Pulses\\s+M\\.T\\.\\s+30\\.47\\s+52\\.04] | passed | 0.00 |
 | test_incentive_engine | test_rates_match_the_scale_of_rates_pdf[iron_ore_fines_lumps-Iron Ore Fines/Lumps\\s+M\\.T\\.\\s+43\\.16\\s+43\\.16] | passed | 0.00 |
@@ -93,26 +115,26 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_incentive_engine | test_rates_match_the_scale_of_rates_pdf[pol_products-\\(d\\) Crude Oil\\s+M\\.T\\.\\s+96\\.60\\s+96\\.60] | passed | 0.00 |
 | test_incentive_engine | test_rates_match_the_scale_of_rates_pdf[rock_phosphate_sulphate-Sulphate/ Rock phosphate\\s+M\\.T\\s+30\\.47\\s+52\\.04] | passed | 0.00 |
 | test_incentive_engine | test_rates_match_the_scale_of_rates_pdf[thermal_coal-Thermal Coal \\(other than UPCL\\)\\s+M\\.T\\.\\s+31\\.73\\s+31\\.73] | passed | 0.00 |
-| test_incentive_engine | test_rebate_only_touches_extra_volume | passed | 0.01 |
+| test_incentive_engine | test_rebate_only_touches_extra_volume | passed | 0.00 |
 | test_incentive_engine | test_revenue_is_tonnes_times_rate | passed | 0.00 |
 | test_incentive_engine | test_scenario_arithmetic_blanket_and_rebate | passed | 0.01 |
 | test_incentive_engine | test_scenario_baseline_is_actual_last_12_months_and_rows_are_sourced | passed | 0.01 |
 | test_incentive_engine | test_scenario_with_costs_is_contribution | passed | 0.01 |
-| test_incentive_engine | test_scheme_workflow_and_audit | passed | 0.16 |
-| test_incentive_engine | test_seasonal_windows | passed | 0.08 |
+| test_incentive_engine | test_scheme_workflow_and_audit | passed | 0.15 |
+| test_incentive_engine | test_seasonal_windows | passed | 0.00 |
 | test_incentive_engine | test_sor_allows_lower_rates_and_rebates | passed | 0.00 |
 | test_incentive_engine | test_sor_reference_points_to_the_right_lines | passed | 0.00 |
 | test_incentive_engine | test_source_register_lists_every_original | passed | 0.00 |
-| test_incentive_engine | test_start_here_actions_and_brief | passed | 0.03 |
+| test_incentive_engine | test_start_here_actions_and_brief | passed | 0.26 |
 | test_incentive_engine | test_tariff_comparison_values_are_in_both_pdfs | passed | 0.00 |
 | test_incentive_engine | test_tariff_version_and_identity_block_a_proposal | passed | 0.01 |
-| test_incentive_engine | test_update_rolls_back_on_failure_and_rerun_changes_nothing | passed | 12.37 |
-| test_incentive_engine | test_update_without_poppler_daily_only_works_and_statements_explain | passed | 1.65 |
+| test_incentive_engine | test_update_rolls_back_on_failure_and_rerun_changes_nothing | passed | 2.12 |
+| test_incentive_engine | test_update_without_poppler_daily_only_works_and_statements_explain | passed | 1.58 |
 | test_incentive_engine | test_voc_comparison_same_year_and_located | passed | 0.00 |
-| test_incentive_engine | test_waiver_coverage_from_daily_reports | passed | 0.01 |
+| test_incentive_engine | test_waiver_coverage_from_daily_reports | passed | 0.00 |
 | test_incentive_engine | test_waiver_uses_the_circulars_dates | passed | 0.00 |
-| test_incentive_engine | test_win_back_gap_is_split_between_linked_cargos | passed | 0.01 |
-| test_incentive_engine | test_zero_discount_gives_original_receipts | passed | 0.01 |
+| test_incentive_engine | test_win_back_gap_is_split_between_linked_cargos | passed | 0.00 |
+| test_incentive_engine | test_zero_discount_gives_original_receipts | passed | 0.00 |
 | test_incentive_improvements | test_board_ceiling_allows_or_blocks_stacking | passed | 0.00 |
 | test_incentive_improvements | test_default_policy_keeps_the_old_rule | passed | 0.00 |
 | test_incentive_improvements | test_easy_baseline_is_flagged | passed | 0.00 |
@@ -120,7 +142,7 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_incentive_improvements | test_every_ship_charge_rate_is_in_the_scale_of_rates_pdf | passed | 0.01 |
 | test_incentive_improvements | test_fx_parse_and_official_rates_win | passed | 0.00 |
 | test_incentive_improvements | test_integrity_check_runs_for_a_real_customer | passed | 0.03 |
-| test_incentive_improvements | test_new_routes_answer | passed | 0.13 |
+| test_incentive_improvements | test_new_routes_answer | passed | 0.12 |
 | test_incentive_improvements | test_one_call_by_hand | passed | 0.00 |
 | test_incentive_improvements | test_peer_arithmetic_uses_other_ports_not_all_ports | passed | 0.00 |
 | test_incentive_improvements | test_pilotage_slabs_join_up_and_respect_the_minimum | passed | 0.00 |
@@ -132,16 +154,73 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_incentive_improvements | test_settlement_proportional_and_all_or_nothing | passed | 0.00 |
 | test_incentive_improvements | test_timing_shift_is_flagged | passed | 0.00 |
 | test_incentive_improvements | test_wikidata_parse_and_name_match_skip_ambiguous | passed | 0.00 |
-| test_incentive_scheme_review | test_readiness_condition_is_consistent | passed | 0.78 |
+| test_incentive_scheme_review | test_readiness_condition_is_consistent | passed | 0.75 |
 | test_incentive_scheme_review | test_review_uses_the_right_check_and_never_guesses | passed | 0.00 |
 | test_incentive_scheme_review | test_simple_check_arithmetic | passed | 0.00 |
 | test_incentive_scheme_review | test_simple_check_other_ports_are_all_ports_minus_new_mangalore | passed | 0.00 |
+| test_incentive_settlement | test_calls_are_unique_and_dated | passed | 0.07 |
+| test_incentive_settlement | test_calls_carry_the_agent_for_ship_charge_claims | passed | 0.01 |
+| test_incentive_settlement | test_capesize_rule | passed | 0.01 |
+| test_incentive_settlement | test_container_rebate_follows_the_notice_in_force_on_each_date | passed | 0.05 |
 | test_ministry_monthly | test_benchmark_trend_in_api | passed | 0.04 |
 | test_ministry_monthly | test_derived_months_equal_nmpa_own_reports | passed | 0.01 |
 | test_ministry_monthly | test_months_are_continuous_and_complete | passed | 0.00 |
 | test_ministry_monthly | test_non_major_table_adds_up_to_printed_totals | passed | 0.00 |
-| test_ministry_monthly | test_parser_runs_and_checks_every_report | passed | 0.91 |
+| test_ministry_monthly | test_parser_runs_and_checks_every_report | passed | 0.87 |
 | test_ministry_monthly | test_ports_add_up_to_all_port_total_every_month | passed | 0.00 |
+| test_nmpa_circulars | test_add_duplicates_and_done | passed | 0.00 |
+| test_nmpa_circulars | test_reader_waits_for_permission | passed | 0.00 |
+| test_nmpa_circulars | test_real_titles_are_sorted | passed | 0.00 |
+| test_public_reference_data | test_approval_route_never_enforces_unconfirmed | passed | 0.01 |
+| test_public_reference_data | test_budget_parser_reads_nmpa_figures_exactly | passed | 0.00 |
+| test_public_reference_data | test_citizen_charter_standards_and_scheme_history | passed | 0.01 |
+| test_public_reference_data | test_cost_reference | passed | 0.00 |
+| test_public_reference_data | test_turnaround_table_and_cross_check | passed | 0.01 |
+| test_tariff_calculator | test_anchorage_and_spm_tug_minimum | passed | 0.00 |
+| test_tariff_calculator | test_api_calculate_and_past_calls | passed | 1.18 |
+| test_tariff_calculator | test_berth_hire_double_banking_and_small_craft | passed | 0.00 |
+| test_tariff_calculator | test_berth_hire_minimum_per_hour | passed | 0.00 |
+| test_tariff_calculator | test_berth_hire_rounds_part_hours_up | passed | 0.00 |
+| test_tariff_calculator | test_berth_hire_without_grt_is_not_guessed | passed | 0.00 |
+| test_tariff_calculator | test_crude_at_spm_uses_spm_line | passed | 0.00 |
+| test_tariff_calculator | test_export_storage_flat_rate | passed | 0.00 |
+| test_tariff_calculator | test_free_period_extended_by_holidays_but_not_for_coastal | passed | 0.00 |
+| test_tariff_calculator | test_import_storage_slabs | passed | 0.00 |
+| test_tariff_calculator | test_missing_grt_and_exchange_rate_are_reported_not_invented | passed | 0.00 |
+| test_tariff_calculator | test_non_cargo_entries[BUNKER BARGE] | passed | 0.00 |
+| test_tariff_calculator | test_non_cargo_entries[DREDGING] | passed | 0.00 |
+| test_tariff_calculator | test_non_cargo_entries[MRPL SPM OP.] | passed | 0.00 |
+| test_tariff_calculator | test_non_cargo_entries[SEA TRIAL/ BUNKERS/ CREW CHANGE] | passed | 0.00 |
+| test_tariff_calculator | test_pilotage[20000-foreign-10538.0] | passed | 0.00 |
+| test_tariff_calculator | test_pilotage[2500-coastal-42194.0] | passed | 0.00 |
+| test_tariff_calculator | test_pilotage[45000-coastal-590715.0] | passed | 0.00 |
+| test_tariff_calculator | test_pilotage[70000-foreign-32150.0] | passed | 0.00 |
+| test_tariff_calculator | test_port_dues_and_ballast_concession | passed | 0.00 |
+| test_tariff_calculator | test_ppp_berth_and_kiocl_are_not_billed_by_nmpa | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[AMSUL(D)-B.II.a] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[BAGGED SUGAR(L)-C.j] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[CEMENT(D)-B.V.a] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[COALD)-B.IV.a] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[COKING COAL(D)-B.IV.b] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[CPO(D)-A.V.a] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[CSFO(D)-A.V.a] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[IOF(D)-B.III.j] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[IOP(L)-B.III.i] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[LPG (D)-A.IV.a] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[M.CRUDE(D)-A.I.d] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[MS/HSD(D)-A.I.c] | passed | 0.01 |
+| test_tariff_calculator | test_real_cargo_codes[PHOS.ACID(D)-A.II.b] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[ROCK PHOS.(D)-B.II.b] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[S.COAL(D)-B.IV.a] | passed | 0.00 |
+| test_tariff_calculator | test_real_cargo_codes[S.COIL/PLATES-C.g] | passed | 0.00 |
+| test_tariff_calculator | test_total_and_rounding_to_next_rupee | passed | 0.00 |
+| test_tariff_calculator | test_unit_rounding_and_minimum[0.2-1] | passed | 0.00 |
+| test_tariff_calculator | test_unit_rounding_and_minimum[100.0-100] | passed | 0.00 |
+| test_tariff_calculator | test_unit_rounding_and_minimum[100.3-100.5] | passed | 0.00 |
+| test_tariff_calculator | test_unit_rounding_and_minimum[100.5-101] | passed | 0.00 |
+| test_tariff_calculator | test_validation_against_past_data | passed | 0.02 |
+| test_tariff_calculator | test_vessel_status_is_separate_from_cargo_status | passed | 0.00 |
+| test_tariff_calculator | test_wharfage_iron_ore_fines_coastal_real_call | passed | 0.00 |
 | test_trade_customers | test_alerts_follow_their_rules | passed | 0.00 |
 | test_trade_customers | test_canonical_customer[-Not stated] | passed | 0.00 |
 | test_trade_customers | test_canonical_customer[199(I)+150(E )-Not stated] | passed | 0.00 |
@@ -160,7 +239,7 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_customers | test_canonical_customer[UF 250(I)+250(E )-UF] | passed | 0.00 |
 | test_trade_customers | test_canonical_customer[VARIOUS-Not stated] | passed | 0.00 |
 | test_trade_customers | test_detail_months_add_up_to_summary | passed | 0.00 |
-| test_trade_customers | test_endpoints_ok_no_nan_and_unknown_is_404 | passed | 0.78 |
+| test_trade_customers | test_endpoints_ok_no_nan_and_unknown_is_404 | passed | 0.77 |
 | test_trade_customers | test_parcel_is_handled_plus_balance | passed | 0.01 |
 | test_trade_customers | test_real_data_is_checked_against_official_statements | passed | 0.00 |
 | test_trade_customers | test_real_data_shares_and_counts_are_consistent | passed | 0.00 |
@@ -175,7 +254,7 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_extras | test_alert_feedback_round_trip | passed | 0.01 |
 | test_trade_extras | test_annual_port_commodity_adds_up_and_matches_monthly_total | passed | 0.01 |
 | test_trade_extras | test_april_reports_store_full_financial_years | passed | 0.00 |
-| test_trade_extras | test_brief_pdf_is_one_page | passed | 0.24 |
+| test_trade_extras | test_brief_pdf_is_one_page | passed | 0.57 |
 | test_trade_extras | test_cargo_mix_shares_add_up_each_year | passed | 0.01 |
 | test_trade_extras | test_container_lines_endpoint | passed | 0.15 |
 | test_trade_extras | test_customer_names_csv | passed | 0.01 |
@@ -191,7 +270,7 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_extras | test_only_date_named_files_are_daily_reports[01.09.2025.pdf-daily] | passed | 0.00 |
 | test_trade_extras | test_only_date_named_files_are_daily_reports[05-09-2025-Revision-in-Credit-Rating-JSW-Mangalore-Container-Terminal.pdf-unknown] | passed | 0.00 |
 | test_trade_extras | test_port_competition_endpoint | passed | 0.03 |
-| test_trade_extras | test_seasonality_iron_ore_peaks_in_winter | passed | 0.03 |
+| test_trade_extras | test_seasonality_iron_ore_peaks_in_winter | passed | 0.02 |
 | test_trade_extras | test_target_by_cargo_adds_up | passed | 0.00 |
 | test_trade_extras | test_unconfirmed_identities_are_not_merged | passed | 0.00 |
 | test_trade_extras | test_update_script_recognises_files[27-10-2026.pdf-daily] | passed | 0.00 |
@@ -204,10 +283,10 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_forecast | test_backtest_never_uses_future_data | passed | 0.01 |
 | test_trade_forecast | test_baseline_error_matches_independent_loop_on_real_inbound | passed | 0.01 |
 | test_trade_forecast | test_challenger_used_only_when_it_wins_both_halves_by_margin | passed | 0.00 |
-| test_trade_forecast | test_endpoint_horizon_limits | passed | 0.17 |
-| test_trade_forecast | test_endpoint_ok_json_and_no_nan | passed | 0.39 |
-| test_trade_forecast | test_forecast_months_come_after_latest_data | passed | 0.45 |
-| test_trade_forecast | test_irregular_and_tiny_cargos_are_not_forecast | passed | 0.04 |
+| test_trade_forecast | test_endpoint_horizon_limits | passed | 0.16 |
+| test_trade_forecast | test_endpoint_ok_json_and_no_nan | passed | 0.37 |
+| test_trade_forecast | test_forecast_months_come_after_latest_data | passed | 0.37 |
+| test_trade_forecast | test_irregular_and_tiny_cargos_are_not_forecast | passed | 0.03 |
 | test_trade_forecast | test_mean12_is_average_of_last_12_months_with_data | passed | 0.00 |
 | test_trade_forecast | test_mean12_skips_missing_months_not_zero | passed | 0.00 |
 | test_trade_forecast | test_not_forecastable_shows_no_number_and_high_error | passed | 0.00 |
@@ -215,13 +294,13 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_forecast | test_seasonal_blend_is_average_of_mean12_and_same_month_last_year | passed | 0.00 |
 | test_trade_forecast | test_seasonal_blend_is_nan_without_last_year_value | passed | 0.00 |
 | test_trade_forecast | test_wape_matches_hand_calculation | passed | 0.00 |
-| test_trade_intelligence | test_alerts_follow_their_rules | passed | 0.04 |
+| test_trade_intelligence | test_alerts_follow_their_rules | passed | 0.03 |
 | test_trade_intelligence | test_august_2026_matches_official_nmpa_statement | passed | 0.00 |
 | test_trade_intelligence | test_bad_params_422[/trade/commodities?direction=x] | passed | 0.00 |
 | test_trade_intelligence | test_bad_params_422[/trade/flows?months=1] | passed | 0.00 |
 | test_trade_intelligence | test_bad_params_422[/trade/flows?months=999] | passed | 0.00 |
-| test_trade_intelligence | test_brief_has_findings_sources_and_real_numbers | passed | 0.04 |
-| test_trade_intelligence | test_build_flow_table_rebuilds_prior_year_without_overriding_real_rows | passed | 0.06 |
+| test_trade_intelligence | test_brief_has_findings_sources_and_real_numbers | passed | 0.03 |
+| test_trade_intelligence | test_build_flow_table_rebuilds_prior_year_without_overriding_real_rows | passed | 0.04 |
 | test_trade_intelligence | test_canon_merges_spelling_variants | passed | 0.00 |
 | test_trade_intelligence | test_csv_matches_official_statement_transcripts[April-April_2026] | passed | 0.01 |
 | test_trade_intelligence | test_csv_matches_official_statement_transcripts[March-March_2026] | passed | 0.01 |
@@ -234,23 +313,23 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_intelligence | test_missing_months_are_missing_not_zero | passed | 0.00 |
 | test_trade_intelligence | test_momentum_signals | passed | 0.00 |
 | test_trade_intelligence | test_overseas_plus_coastal_equals_total_every_month | passed | 0.00 |
-| test_trade_intelligence | test_prior_year_crosscheck_leaves_only_known_differences | passed | 0.03 |
+| test_trade_intelligence | test_prior_year_crosscheck_leaves_only_known_differences | passed | 0.01 |
 | test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/alerts] | passed | 0.00 |
-| test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/commodities?direction=inbound] | passed | 0.04 |
-| test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/commodities] | passed | 0.04 |
-| test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/commodity?name=IRON%20ORE] | passed | 0.04 |
+| test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/commodities?direction=inbound] | passed | 0.03 |
+| test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/commodities] | passed | 0.03 |
+| test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/commodity?name=IRON%20ORE] | passed | 0.03 |
 | test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/flows?months=60] | passed | 0.01 |
 | test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/overseas-coastal] | passed | 0.00 |
 | test_trade_intelligence | test_real_endpoints_ok_and_valid_json[/trade/summary] | passed | 0.00 |
-| test_trade_intelligence | test_rebuilt_december_2022_matches_official_statement | passed | 0.07 |
+| test_trade_intelligence | test_rebuilt_december_2022_matches_official_statement | passed | 0.05 |
 | test_trade_intelligence | test_simulated_endpoints_are_gone[/trade/commodity-prices] | passed | 0.00 |
 | test_trade_intelligence | test_simulated_endpoints_are_gone[/trade/lanes] | passed | 0.00 |
 | test_trade_intelligence | test_simulated_endpoints_are_gone[/trade/opportunities] | passed | 0.00 |
 | test_trade_intelligence | test_unknown_commodity_404 | passed | 0.00 |
-| test_trade_intelligence | test_verification_script_passes_against_official_pdf | passed | 0.40 |
+| test_trade_intelligence | test_verification_script_passes_against_official_pdf | passed | 0.35 |
 | test_trade_intelligence | test_window_compare_matches_by_calendar_date_not_position | passed | 0.00 |
 | test_trade_intelligence | test_yoy_matches_independent_calculation | passed | 0.00 |
-| test_trade_lookahead | test_berth_outlook_queues_two_ships_for_one_berth | passed | 0.02 |
+| test_trade_lookahead | test_berth_outlook_queues_two_ships_for_one_berth | passed | 0.01 |
 | test_trade_lookahead | test_berths[10/11/SPM-expected1] | passed | 0.00 |
 | test_trade_lookahead | test_berths[12 / 13-expected0] | passed | 0.00 |
 | test_trade_lookahead | test_berths[12(P)/9-expected4] | passed | 0.00 |
@@ -261,12 +340,12 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_lookahead | test_day[27/10-2026-10-26-2026-10-27] | passed | 0.00 |
 | test_trade_lookahead | test_day[28/12-2027-01-02-2026-12-28] | passed | 0.00 |
 | test_trade_lookahead | test_day[COMPLETED-2026-10-26-None] | passed | 0.00 |
-| test_trade_lookahead | test_endpoint_on_real_latest_report | passed | 0.53 |
+| test_trade_lookahead | test_endpoint_on_real_latest_report | passed | 0.49 |
 | test_trade_performance_containers | test_august_2026_report_values_as_printed | passed | 0.01 |
 | test_trade_performance_containers | test_container_commodities_add_up_to_printed_totals | passed | 0.00 |
 | test_trade_performance_containers | test_endpoints_ok_no_nan[/trade/containers] | passed | 0.01 |
 | test_trade_performance_containers | test_endpoints_ok_no_nan[/trade/performance] | passed | 0.00 |
-| test_trade_performance_containers | test_liquid_waiting_shares_are_consistent | passed | 0.47 |
+| test_trade_performance_containers | test_liquid_waiting_shares_are_consistent | passed | 0.43 |
 | test_trade_performance_containers | test_report_traffic_equals_ministry_total | passed | 0.01 |
 | test_trade_performance_containers | test_targets_read_from_nmpa_reports | passed | 0.01 |
 | test_trade_split | test_blank_or_mixed_run_flag_is_left_out_of_the_split | passed | 0.01 |
@@ -279,8 +358,8 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_split | test_classify_cargo[MS(L)-Petroleum products (fuels)-outbound] | passed | 0.00 |
 | test_trade_split | test_classify_cargo[S.COAL(D)-Coal-inbound] | passed | 0.00 |
 | test_trade_split | test_classify_cargo[SOMETHING NEW-Other cargo-unknown] | passed | 0.00 |
-| test_trade_split | test_counts_add_up_and_shares_are_valid | passed | 0.45 |
-| test_trade_split | test_endpoint_ok_and_no_nan | passed | 0.43 |
+| test_trade_split | test_counts_add_up_and_shares_are_valid | passed | 0.42 |
+| test_trade_split | test_endpoint_ok_and_no_nan | passed | 0.41 |
 | test_trade_split | test_estimate_is_labelled_and_limits_are_stated | passed | 0.00 |
 | test_trade_split | test_joint_receivers_are_split | passed | 0.00 |
 | test_trade_split | test_non_cargo_rows_and_placeholders_are_dropped | passed | 0.01 |
@@ -291,13 +370,57 @@ What the tests check: every tariff rate used against the Scale of Rates PDF; dat
 | test_trade_target_benchmark | test_endpoints_ok_no_nan[/trade/target] | passed | 0.00 |
 | test_trade_target_benchmark | test_june_2026_statement_equals_the_value_we_had_derived | passed | 0.00 |
 | test_trade_target_benchmark | test_ministry_august_equals_nmpa_traffic_and_performance_report | passed | 0.00 |
-| test_trade_target_benchmark | test_ministry_file_matches_the_original_pdfs | passed | 0.61 |
-| test_trade_target_benchmark | test_ministry_new_mangalore_rows_match_the_overseas_coastal_file | passed | 0.01 |
+| test_trade_target_benchmark | test_ministry_file_matches_the_original_pdfs | passed | 0.51 |
+| test_trade_target_benchmark | test_ministry_new_mangalore_rows_match_the_overseas_coastal_file | passed | 0.00 |
 | test_trade_target_benchmark | test_ministry_table_is_transcribed_exactly[major_ports_ministry_2026-07.csv-printed0] | passed | 0.00 |
 | test_trade_target_benchmark | test_ministry_table_is_transcribed_exactly[major_ports_ministry_2026-09.csv-printed1] | passed | 0.00 |
 | test_trade_target_benchmark | test_target_arithmetic | passed | 0.00 |
 | test_trade_target_benchmark | test_target_done_equals_ministry_april_to_september | passed | 0.00 |
 | test_trade_waiting | test_blank_wait_is_not_counted | passed | 0.01 |
 | test_trade_waiting | test_buckets | passed | 0.00 |
-| test_trade_waiting | test_longest_wait_kept_and_one_event | passed | 0.02 |
-| test_trade_waiting | test_real_data_totals_and_endpoint | passed | 0.39 |
+| test_trade_waiting | test_longest_wait_kept_and_one_event | passed | 0.01 |
+| test_trade_waiting | test_real_data_totals_and_endpoint | passed | 0.33 |
+| test_vessel_intel | test_berth_normalisation | passed | 0.00 |
+| test_vessel_intel | test_cargo_flow | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[-None-unknown] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[BITUMEN(D)-9-liquid_bulk] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[BOXES-14-container] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[BUNKER BARGE-SPM-non_cargo] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[CEMENT(D)-5-dry_bulk_conventional] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[COAL(D)-16-dry_bulk_mechanical] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[CRUDE(D)-SPM-liquid_bulk] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[CRUISE SHIP-4-cruise] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[IOF(D)-8-dry_bulk_mechanical] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[LPG(D)-13-liquid_bulk] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[MRPL SPM OP.-4-non_cargo] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[STEAM COAL(D)-15-dry_bulk_mechanical] | passed | 0.00 |
+| test_vessel_intel | test_classify_cargo[STEEL COIL/PLATES-2-break_bulk] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[-unknown-No reason stated] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[25000-unknown-Unreadable (quantity in reason column)] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[DE-SLOPPING NON- CARGO VESSEL-excluded-Non-cargo call] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[LAY CAN 16-09-26-non_port-Laycan not started] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[LEY CAN 18-09-2026-non_port-Laycan not started] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[NON-WINDOW VSL-non_port-Non-window vessel (berthing policy)] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[RECEIVER NOT RAEADY-non_port-Receiver not ready] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[SHIPPER NOT REDY-non_port-Shipper not ready] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[WAITING FOR HIGH TIDE-port-Tide / draft window] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[WANT OF BERTH (B.12)-port-Want of berth] | passed | 0.00 |
+| test_vessel_intel | test_classify_reason[WANT OF BERTH(SPM)-port-Want of berth] | passed | 0.00 |
+| test_vessel_intel | test_clock_and_wait_parsers | passed | 0.00 |
+| test_vessel_intel | test_full_date_year_wrap | passed | 0.00 |
+| test_vessel_intel | test_imo_check_digit | passed | 0.00 |
+| test_vessel_intel | test_imo_lookup_rows_all_valid | passed | 0.00 |
+| test_vessel_intel | test_official_parse_real_pdf | passed | 0.13 |
+| test_vessel_intel | test_official_parse_text | passed | 0.00 |
+| test_vessel_intel | test_qty_and_boxes | passed | 0.00 |
+| test_vessel_intel | test_same_name_ships_separated_by_loa | passed | 0.00 |
+| test_vessel_intel | test_synthetic_call_stitching | passed | 0.00 |
+| test_vessel_intel | test_synthetic_report_time_default | passed | 0.00 |
+| test_vessel_intel | test_vessel_key_cleanups | passed | 0.00 |
+| test_vessel_intel | test_want_of_berth_target | passed | 0.00 |
+| test_vessel_intel.TestRealArchive | test_api_endpoints | passed | 0.74 |
+| test_vessel_intel.TestRealArchive | test_board_shapes | passed | 2.39 |
+| test_vessel_intel.TestRealArchive | test_departure_forecast_not_worse_than_nmpa_etd | passed | 0.90 |
+| test_vessel_intel.TestRealArchive | test_eta_linking_quality | passed | 0.81 |
+| test_vessel_intel.TestRealArchive | test_reconciles_with_nmpa_official_august_2026 | passed | 3.75 |
+| test_vessel_intel.TestRealArchive | test_report_reference_time_is_morning | passed | 2.34 |

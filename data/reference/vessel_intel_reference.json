@@ -1,0 +1,180 @@
+{
+  "_about": "Reference rules for the Vessel Intelligence data layer. Every rule here is a human-reviewable assumption, NOT learned from data. Edit this file (not the code) when NMPA Traffic Dept corrects a classification. Loaded by backend/app/services/vi_reference.py.",
+  "_version": "2026-10-27.2",
+  "waiting_reason_rules": {
+    "_about": "Regex (case-insensitive) on the anchorage / tankers-scheduled 'reason_or_note' column, checked in order; first match wins. 'account' mirrors NMPA's monthly Operational Performance split of pre-berthing detention: 'port' = Port Account, 'non_port' = Other than Port Account, 'excluded' = non-cargo calls NMPA does not count, 'unknown' = blank or unreadable.",
+    "rules": [
+      {
+        "pattern": "WANT\\s*OF\\s*BERTH",
+        "reason": "Want of berth",
+        "account": "port"
+      },
+      {
+        "pattern": "WANT\\s*OF\\s*TIDE|AWAITING\\s*FOR\\s*TIDE|WAITING\\s*FOR\\s*HIGH\\s*TIDE|HIGH\\s*DRAFT",
+        "reason": "Tide / draft window",
+        "account": "port"
+      },
+      {
+        "pattern": "BERTHING\\s*(UNDER|PLANNED)|UNDER\\s*PROGRESS",
+        "reason": "Berthing in progress",
+        "account": "port"
+      },
+      {
+        "pattern": "RECEIVER\\s*NOT\\s*R",
+        "reason": "Receiver not ready",
+        "account": "non_port"
+      },
+      {
+        "pattern": "SHIPPER\\s*NOT\\s*R",
+        "reason": "Shipper not ready",
+        "account": "non_port"
+      },
+      {
+        "pattern": "L[AE]Y\\s*CAN",
+        "reason": "Laycan not started",
+        "account": "non_port"
+      },
+      {
+        "pattern": "NON[\\s-]*WINDOW",
+        "reason": "Non-window vessel (berthing policy)",
+        "account": "non_port"
+      },
+      {
+        "pattern": "CUSTOM",
+        "reason": "Customs clearance",
+        "account": "non_port"
+      },
+      {
+        "pattern": "WAITING\\s*FOR\\s*CARGO|BACK\\s*LDG",
+        "reason": "Cargo not available",
+        "account": "non_port"
+      },
+      {
+        "pattern": "VESSEL\\s*NOT\\s*READY|VESSEL\\s*MTC|REPAIR",
+        "reason": "Vessel not ready / maintenance",
+        "account": "non_port"
+      },
+      {
+        "pattern": "COURT\\s*ARREST|COMMERCIAL\\s*DISPUTE|CHANGE\\s*OF\\s*OWNERSHIP",
+        "reason": "Legal / commercial hold",
+        "account": "non_port"
+      },
+      {
+        "pattern": "NON[\\s-]*CARGO|SEA\\s*TRIAL|CREW\\s*CHANGE|DE-?SLOPPING|BUNKER",
+        "reason": "Non-cargo call",
+        "account": "excluded"
+      },
+      {
+        "pattern": "DIVERTED|SAILING\\s*FROM\\s*ANCH",
+        "reason": "Diverted / sailed from anchorage",
+        "account": "non_port"
+      }
+    ],
+    "fallback_numeric": {
+      "reason": "Unreadable (quantity in reason column)",
+      "account": "unknown"
+    },
+    "fallback_blank": {
+      "reason": "No reason stated",
+      "account": "unknown"
+    },
+    "fallback_other": {
+      "reason": "Other (unclassified)",
+      "account": "unknown"
+    }
+  },
+  "cargo_class": {
+    "_about": "Maps a call's cargo text to NMPA's monthly Operational Performance classes: dry_bulk_conventional, dry_bulk_mechanical, break_bulk, liquid_bulk, container; plus cruise and non_cargo (excluded from KPIs) and unknown. SOR code prefix from sor_wharfage.match_commodity(): A=liquid, B=dry bulk, C=break bulk.",
+    "non_cargo_keywords": [
+      "SPM OP",
+      "PORT OP",
+      "BUNKER",
+      "BARGE",
+      "DREDG",
+      "CREW CHANGE",
+      "SEA TRIAL",
+      "SEA TRAIL",
+      "REPAIR",
+      "RESEARCH",
+      "FOR CONVERSION",
+      "BOLLARD",
+      "RE-FLAGGING",
+      "REFLAGGING",
+      "TAKE OVER",
+      "REVERSION",
+      "SUPPLY STORES",
+      "STORE SUPPLY",
+      "NON CARGO",
+      "NON-CARGO",
+      "TUG",
+      "SURVEY",
+      "LAY UP",
+      "LAY-UP",
+      "NAVY",
+      "COAST GUARD"
+    ],
+    "cruise_keywords": [
+      "CRUISE"
+    ],
+    "container_keywords": [
+      "BOXES",
+      "CONTAINER",
+      "TEU"
+    ],
+    "liquid_overrides": [
+      "BITUMEN(D)",
+      "BITUMEN (D)",
+      "BITUMEN(L)",
+      "BITUMEN"
+    ],
+    "mechanical_dry_bulk": {
+      "_about": "Berths whose dry-bulk calls NMPA counts as 'Mechanical' in its monthly Operational Performance report. Calibrated 2026-10-27 against the official August 2026 report: treating Berths 8, 15 and 16 as mechanical reproduces NMPA's split (official: 17 mechanical / 10 conventional; DVP-derived: 18 / 9), while the berths.csv labels alone (15 always, 8 only for pellets) gave 10 / 17. Re-check whenever more monthly reports are loaded (Performance panel).",
+      "berths_always": [
+        "8",
+        "15",
+        "16"
+      ],
+      "berths_if_cargo_matches": {}
+    },
+    "berth_default_class": {
+      "_about": "Used ONLY when a call has no cargo text at all (typically a call seen only in the movement log). Single-purpose berths from berths.csv; the call is flagged 'cargo_class_inferred_from_berth'.",
+      "14": "container",
+      "SPM": "liquid_bulk",
+      "10": "liquid_bulk",
+      "11": "liquid_bulk",
+      "13": "liquid_bulk",
+      "15": "dry_bulk_mechanical",
+      "16": "dry_bulk_mechanical"
+    }
+  },
+  "standards": {
+    "_about": "Service standards used for alerts. Sources noted per value; thresholds are proposed defaults to be confirmed with Traffic Dept (see PROJECT_DOCUMENTATION/26).",
+    "port_account_wait_alert_hours": {
+      "value": 24,
+      "source": "Proposed default; NMPA Aug-2026 Port-Account pre-berthing average was 0.08 days"
+    },
+    "long_wait_any_reason_hours": {
+      "value": 72,
+      "source": "Proposed default"
+    },
+    "turnaround_standard_hours": {
+      "value": 37,
+      "source": "NMPA SOR 2026-27 Annexure-II (average turnaround time of vessels)"
+    },
+    "pre_berthing_standard_hours": {
+      "value": 7,
+      "source": "NMPA SOR 2026-27 Annexure-II (average pre-berthing time)"
+    },
+    "berth_conflict_window_hours": {
+      "value": 72,
+      "source": "Planner look-ahead horizon (proposed)"
+    }
+  },
+  "linking": {
+    "_about": "Tolerances used to stitch daily snapshots into port calls. Larger values link more but risk merging two different calls of the same ship.",
+    "expected_to_arrival_max_days_after_eta": 10,
+    "expected_to_arrival_max_days_before_first_seen": 2,
+    "movement_after_last_seen_days": 3,
+    "max_plausible_call_days": 45
+  }
+}

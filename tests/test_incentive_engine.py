@@ -693,4 +693,5 @@ def test_other_ports_schemes_are_sourced_and_nmpa_use_comes_from_its_notices():
         if r["used_by_nmpa"] and not r["nmpa"].startswith("NMPA Scale of Rates"):
             assert r["nmpa"].split(" (")[0] in held, r["nmpa"]                 # NMPA's use is backed by a notice held
     assert pats["Transshipment rate"]["used_by_nmpa"]                           # checked in NMPA's Scale of Rates (2.5.3, 4.2)
-    assert "Performance norms (incentive and penalty)" in o["not_at_nmpa"]
+    assert pats["Performance norms (incentive and penalty)"]["used_by_nmpa"]       # NMPA trade notice, Feb 2023 (dry bulk)
+    assert "Performance norms (incentive and penalty)" not in o["not_at_nmpa"]

@@ -3,7 +3,7 @@
 **Owner:** Sneha Biradar
 **Project:** Maritime Port Intelligence Platform (YellowSense) for New Mangalore Port Authority (NMPA)
 **My module:** Trade Intelligence and Incentive Engine (teammates own Cargo Forecasting and Vessel Intelligence)
-**Last updated:** 13-11-2026
+**Last updated:** 17-11-2026
 
 ---
 
@@ -23,7 +23,7 @@ would really cost, using only NMPA's own public documents.
 | 4 | Discount calculator and scenarios based on real tonnes, not guesses | Done |
 | 5 | Scheme register that follows NMPA's own way of designing and approving schemes | Done |
 | 6 | Data refreshed automatically with one command (can run weekly) | Done |
-| 7 | All automated tests passing | Done (291 tests) |
+| 7 | All automated tests passing | Done (414 tests, with Bhaskar's) |
 | 8 | Demo to NMPA's team | Pending |
 | 9 | Estimates turned into checked figures with NMPA's billing data | Pending NMPA data |
 | 10 | Individual logins for NMPA officers (pilot use) | Built; waiting for the pilot decision |
@@ -70,15 +70,41 @@ Tracking with daily branches starts today. What already exists in the project on
 - [ ] Add the remaining five major ports' scheme designs
 - [ ] Create a new branch every day, named `feature_name_date`
 
-## 6. Today: 13-11-2026
+## 6. Today: 17-11-2026
 
-**Branch:** `berth_capacity_13-11-2026`
+**Branch:** `board_note_17-11-2026`
 
-- [x] Reviewed and tested the billing check and competitor watch (Cochin, VOC Tuticorin, Mormugao); all 5 notice pages confirmed
-- [x] Removed duplicate dashboard sections
-- [x] Berth capacity check in the discount calculator ("Is there room at the berths?")
-- [x] 291 automated tests passing
-- [ ] Next: shared budget pool, claim tracking, monthly settlement list
+- [x] Board agenda note drafts carry the engine's evidence: earlier NMPA schemes for the cargo, kept per extra tonne after handling cost, berth room, approval route (to be confirmed by NMPA)
+- [x] Data request for NMPA prepared (NMPA_Data_Needs_Questions: 5 datasets + 3 questions, checked against public sources)
+- [x] Compare scheme designs side by side (Plan a discount): cost, net, break-even, customer duty, risk
+- [x] Customer call sheet on request (Customers & cargo): facts and suggested talking points
+- [x] NMPA circulars and trade notices (Sidhesh Sir's point 5): sorted, what each affects; automatic reading only after NMPA's permission
+- [x] Five NMPA notices added (container rebate 2023-2026, coastal container free storage 2019-2022); settlement list applies the rebate in force on each date
+- [x] Merged Bhaskar's Vessel Intelligence and tariff calculator work (MERGE_NOTES.md)
+- [x] 414 automated tests passing (325 + Bhaskar's 89)
+- [ ] Next: act on what NMPA agrees to share; "pay only when ready" template once the 2023 performance-norms notice is held
+
+## Earlier: 14-11-2026
+
+**Branch:** `settlement_list_14-11-2026`
+
+- [x] Monthly settlement list for Finance: qualifying container and Cape-size calls, iron ore exporters; CSV download
+- [x] Uploads yesterday's shared budget pool and rebate claims, which were not yet on GitHub
+- [x] Ship stays rebuilt to 7 Nov 2026 (had stopped at 14 Sep 2026) and added to the weekly refresh
+- [x] Public data: NMPA berth capacity (official); public ship sizes and USD-INR rates added to the weekly refresh
+- [x] Berth check now also measures against NMPA's usable capacity and names berths with room
+- [x] Pitch deck: learned berth times updated (21 / 44 / 52 hours)
+- [x] Public data: NMPA's published handling cost per tonne (budget document); Ministry turnaround times of all 12 major ports
+- [x] Back-fill of older daily reports (direct mode, Apr-Aug 2025) ready; iron ore base uses whatever months are held
+- [x] Approval route: NMPA's delegation documents as references; limits used only after NMPA confirms them
+- [x] Scheme history: Cape-size rebate since Apr 2021, container rebate since 2023, 2023 performance norms; every notice row sourced
+- [x] NMPA Citizen's Charter standards next to turnaround; days in each step for rebate claims
+- [x] Confirm customer names: one review list for Traffic, biggest cargo first; nothing changes until an officer applies
+- [x] Prepare a claim from the settlement list (pre-fills the form; the officer checks and submits)
+- [x] One-page brief on request (Start here): actions, customers, schemes ending, claims, other ports, busy berths
+- [x] Did each scheme pay for itself? Net benefit after cost, never firmer than the evidence
+- [x] 315 automated tests passing
+- [ ] Next: one-page data request letter to NMPA (billing, ship sizes, customer names, FY 2025-26 by exporter, download permission)
 
 ## 7. Daily log
 
@@ -88,4 +114,6 @@ One line per day: date, branch name, work done.
 |---|---|---|
 | 10-11-2026 | incentive_engine_ui_10-11-2026 | Two-tab layout ("Plan a discount" and "Schemes"); two setup fixes; target.md created |
 | 12-11-2026 | incentive_engine_upgrade_12-11-2026 | Did it work? (all schemes); customer-readiness condition; merged team upgrade; schemes ending soon; Board note and trade notice drafts; growth check; 283 tests |
-| 13-11-2026 | berth_capacity_13-11-2026 | Billing check and competitor watch reviewed and tested; duplicates removed; berth capacity check; 291 tests |
+| 13-11-2026 | berth_capacity_13-11-2026 | Billing check and competitor watch reviewed and tested; duplicates removed; berth capacity check; shared budget pool; rebate claims; 298 tests |
+| 14-11-2026 | settlement_list_14-11-2026 | Monthly settlement list; ship stays rebuilt; NMPA berth capacity; public ship sizes in refresh; NMPA cost per tonne; turnaround benchmark; daily-report back-fill; approval route (references, nothing unconfirmed enforced); scheme history; Citizen's Charter standards; customer name review; prepare a claim from the settlement list; one-page brief on request; net benefit of schemes; uploads 13-11 pool and claims; 315 tests |
+| 17-11-2026 | board_note_17-11-2026 | Board note drafts with earlier schemes, net per tonne, berth room, approval route; NMPA data request; compare scheme designs; customer call sheet; NMPA circulars; container rebate history from NMPA notices; merged Bhaskar's work; 414 tests |

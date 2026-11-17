@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YellowSense Maritime Intelligence — Predictive Cargo & Decision Support System</title>
-  <link rel="stylesheet" href="styles.css?v=20261026">
+  <link rel="stylesheet" href="styles.css">
   <!-- Plotly.js CDN for high-performance interactive charting -->
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 </head>
@@ -50,6 +50,7 @@
       <button class="nav-tab" onclick="switchTab('tab-vessels')">Vessel Intelligence</button>
       <button class="nav-tab" onclick="switchTab('tab-cargo-forecasting')">Cargo Forecasting</button>
       <button class="nav-tab" onclick="switchTab('tab-cargo-routing')">Cargo Routing</button>
+      <button class="nav-tab" onclick="switchTab('tab-port-cost')">Port Cost &amp; Tariff</button>
       <button class="nav-tab" onclick="switchTab('tab-trade')">Trade Intelligence</button>
       <button class="nav-tab" onclick="switchTab('tab-anomaly')">Anomaly Detection</button>
       <button class="nav-tab" onclick="switchTab('tab-incentive')">Incentive Engine</button>
@@ -69,6 +70,9 @@
 
     <!-- TAB 4: Cargo Routing -->
     <div id="tab-cargo-routing" class="tab-content"></div>
+
+    <!-- TAB 4b: Port Cost & Tariff (NMPA SOR) -->
+    <div id="tab-port-cost" class="tab-content"></div>
 
     <!-- TAB 5: Trade Intelligence -->
     <div id="tab-trade" class="tab-content"></div>
@@ -90,6 +94,6 @@
 
   </main>
 
-  <script src="app.js?v=20261026"></script>
+  <script src="app.js"></script>
 </body>
 </html>
