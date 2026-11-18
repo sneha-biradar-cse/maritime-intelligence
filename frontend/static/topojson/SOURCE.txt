@@ -1,0 +1,3 @@
+Map outlines used by Plotly maps (asia_110m.json, world_110m.json), from the npm package sane-topojson 4.0.0
+(https://www.npmjs.com/package/sane-topojson), Natural Earth 1:110m data (public domain). Shipped with the platform so the
+major-ports map works without internet access.

@@ -1,0 +1,45 @@
+{
+  "file": "nmpa_public_data/Microsoft Word - NMPA SOR indexation 0.65.doc.pdf",
+  "lines": {
+    "crude_spm": {
+      "pdf_page": 39,
+      "printed_page": 39,
+      "line": "(j) Crude oil through Single Point Mooring  M.T.  34.89  34.90"
+    },
+    "pol_products": {
+      "pdf_page": 39,
+      "printed_page": 39,
+      "line": "(c) Diesel Oil/ HSD /HFHSD/Auto Motive  M.T.  96.60  96.60"
+    },
+    "lpg_lng_gas": {
+      "pdf_page": 40,
+      "printed_page": 40,
+      "line": "a)LPG/LNG or any gas in any other form  M.T.  147.61  245.57"
+    },
+    "iron_ore_fines_lumps": {
+      "pdf_page": 40,
+      "printed_page": 40,
+      "line": "(j) Iron Ore Fines/Lumps  M.T.  43.16  43.16"
+    },
+    "edible_oil": {
+      "pdf_page": 40,
+      "printed_page": 40,
+      "line": "a) Palm Oil, vegetable oil etc./ /Palm Acid  M.T.  41.59  68.45"
+    },
+    "fertilizer": {
+      "pdf_page": 40,
+      "printed_page": 40,
+      "line": "a) MOP, SOP, Urea ,DAP, NPK, CAN,  M.T  26.65  45.71"
+    },
+    "rock_phosphate_sulphate": {
+      "pdf_page": 40,
+      "printed_page": 40,
+      "line": "b) Sulphate/ Rock phosphate  M.T  30.47  52.04"
+    },
+    "food_grains": {
+      "pdf_page": 40,
+      "printed_page": 40,
+      "line": "a) Rice,Wheat, Maize, Pulses  M.T.  30.47  52.04"
+    }
+  }
+}

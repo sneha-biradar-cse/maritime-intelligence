@@ -1,0 +1,9 @@
+{
+  "portfolio_cap_pct_of_wharfage": null,
+  "max_combined_benefit_pct": null,
+  "allow_combination": false,
+  "default_clawback_rule": "proportional",
+  "set_by": "",
+  "approval_reference": "",
+  "note": "To be set by NMPA's Board. Example from Spain's ports law: commercial bonuses in a year at most 20% of fee income, and at most 40% together on one fee for one traffic. Until set, nothing is capped and discounts cannot be combined (as before)."
+}

@@ -1,0 +1,7 @@
+service,standard,unit,success_indicator,source
+Allotment of berths to vessels,30,minutes,"Time from receipt of VCN through the system to berth allotment (done at 10.30 am)","NMPA Citizen's Charter 2024-25, service standards"
+Pilotage,120,minutes,Average time from pilot boarding till berthing,"NMPA Citizen's Charter 2024-25, service standards"
+Cargo handling at wharves and oil jetties,16000,tonnes per ship berth-day,Average ship berth-day output,"NMPA Citizen's Charter 2024-25, service standards"
+Allotment of storage area inside the wharf (temporary),60,minutes,Time from request to allotment,"NMPA Citizen's Charter 2024-25, service standards"
+Allotment of gangs for cargo operations,30,minutes,Allotment of gang from the start of the shift,"NMPA Citizen's Charter 2024-25, service standards"
+Payments to suppliers/contractors,5,days,Time from receipt of bills in Finance to release of payment by e-payment,"NMPA Citizen's Charter 2024-25, service standards (suppliers and contractors; not a standard for rebates)"

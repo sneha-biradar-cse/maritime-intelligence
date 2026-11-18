@@ -1,0 +1,8 @@
+group,member,evidence,source
+# Related companies: customers that belong together, so a discount cannot be gamed by moving cargo between them.,,,
+# 'member' is the customer name exactly as the Incentive Engine shows it (from NMPA daily reports, after data/customer_aliases.csv).,,,
+# Add a row only with evidence (a company filing, a notice, NMPA's own confirmation).,,,
+Paradeep Phosphates Ltd,PPL (PARADEEP PHOSPHATES),Mangalore Chemicals & Fertilizers merged into Paradeep Phosphates effective 16 Oct 2025,nmpa_public_data/company_notices/Paradeep Phosphates merger with Mangalore Chemicals (effective 16.10.2025).pdf
+Paradeep Phosphates Ltd,MCF,Mangalore Chemicals & Fertilizers merged into Paradeep Phosphates effective 16 Oct 2025,nmpa_public_data/company_notices/Paradeep Phosphates merger with Mangalore Chemicals (effective 16.10.2025).pdf
+AWL Agri Business Ltd,AWL AGRI,Adani Wilmar renamed AWL Agri Business (17 Mar 2025),nmpa_public_data/company_notices/Adani Wilmar renamed AWL Agri Business (17.03.2025).pdf
+AWL Agri Business Ltd,ADANI,Every ADANI ship in the daily reports carried edible oil; Adani Wilmar renamed AWL Agri Business (17 Mar 2025); not yet confirmed by NMPA,data/customer_identity_proposals.csv

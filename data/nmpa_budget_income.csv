@@ -1,0 +1,19 @@
+# Source: New Mangalore Port Authority, Revised Estimate 2023-24 and Budget Estimate 2024-25, "Details of Revenue Account - Operating Income" (Rs in thousands). Original: nmpa_public_data/finance_and_policy/NMPA Budget RE 2023-24 BE 2024-25 (7-36).pdf (also https://newmangaloreport.gov.in/sites/default/files/2024-08/7-36.pdf). All 17 lines checked against the PDF; a dash in the PDF is left empty here.
+erp_code,description,actual_2022_23,be_2023_24,re_2023_24,be_2024_25
+61010201,Import wharfage of general cargo,71674,59460,72476,77398
+61010202,Export wharfage of general cargo,15191,9540,37910,55864
+61010207,Wharfage on iron ore/ pellets Import & Export cargo of KIOCL,213265,234835,220220,230230
+61010210,Wharfage (Royalty) on B N 10 - UPCL Cargo,76080,80190,80190,84210
+61010211,Charges for mobile harbour cranes,35022,75595,51001,55783
+61010215,Royalty - B N 16 - Coal Terminal,498860,428783,530496,562975
+61010221,P.O.L. import -wharfage(Finished products),78757,745354,126395,136693
+61010222,P.O.L. export -wharfage (Finished products),529807,466613,439624,510144
+61010228,Wharfage on Crude oil,830308,,886796,961985
+61010230,Wharfage on LPG,581389,577826,743411,790414
+61010249,Wharfage-SPM,214027,240802,231744,245717
+61010250,Royalty Income From Stevedores and Handling Agents,17334,13433,52649,57542
+61010308,Wharfage on other tankers(Chemical & other Liquids),78918,138899,144718,168025
+61030400,Royalty - B N 14 - Container Terminal,174463,177523,198906,224278
+TOTAL_CHSC,Total Cargo Handling & Storage Charges,3505542,3278372,3843968,4190792
+TOTAL_PDC,Total Port & Dock Charges,2699067,2611778,3031698,3251249
+TOTAL_OPINC,Total Operating Income,7431347,7122766,8175647,8771095

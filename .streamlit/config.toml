@@ -1,0 +1,11 @@
+[theme]
+base = "light"
+primaryColor = "#F59E0B"
+backgroundColor = "#FFFBEB"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1C1917"
+font = "sans serif"
+
+[server]
+# Serves frontend/static/ at /app/static/, so the port map's coastline loads from the platform itself (works offline).
+enableStaticServing = true

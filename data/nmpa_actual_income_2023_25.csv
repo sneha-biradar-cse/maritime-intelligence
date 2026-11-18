@@ -1,0 +1,18 @@
+# Source: NMPA Administration Report 2024-25, Table F-I 'Income & Expenditure of the Port' (PDF page 221; Rs crore). Original: nmpa_public_data/finance_and_policy/NMPA Administration Report 2024-25.pdf (scanned; its PDF structure needs repair to open, e.g. qpdf). Check: Income 819.25 + Royalty 102.11 = 921.36, the 'Total Operating Income' stated in the Finance Department section (PDF page 73); Total income = 1 + 4 + 5 holds for both years.
+line,head,fy_2024_25_rs_cr,fy_2023_24_rs_cr,status
+1,Income,819.25,769.41,"Actual (audited accounts year), transcribed from the page image"
+1A,Operating income,688.52,648.36,"Actual (audited accounts year), transcribed from the page image"
+1Aa(ii),Cargo handling: handling and storage charges (excluding royalty income),316.58,302.75,"Actual (audited accounts year), transcribed from the page image"
+1Aa(iii),Cargo handling: others,4.49,4.87,"Actual (audited accounts year), transcribed from the page image"
+1Ab,Vessel related income,355.84,329.62,"Actual (audited accounts year), transcribed from the page image"
+1Ac,Railway earning,11.61,11.12,"Actual (audited accounts year), transcribed from the page image"
+1B,Estate income,130.73,121.05,"Actual (audited accounts year), transcribed from the page image"
+2,Expenditure,310.35,292.76,"Actual (audited accounts year), transcribed from the page image"
+2A,Operating expenditure,294.04,278.67,"Actual (audited accounts year), transcribed from the page image"
+3,Operating surplus (1A-2A),394.47,369.69,"Actual (audited accounts year), transcribed from the page image"
+4,Finance & miscellaneous income,181.62,150.92,"Actual (audited accounts year), transcribed from the page image"
+5,Royalty income,102.11,93.25,"Actual (audited accounts year), transcribed from the page image"
+6,Finance & miscellaneous expenditure,146.17,150.56,"Actual (audited accounts year), transcribed from the page image"
+7,Total income (1+4+5),1102.98,1013.58,"Actual (audited accounts year), transcribed from the page image"
+8,Total expenditure (2+6),456.52,443.32,"Actual (audited accounts year), transcribed from the page image"
+9,Net surplus (7-8),646.46,570.26,"Actual (audited accounts year), transcribed from the page image"

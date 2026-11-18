@@ -1,0 +1,10 @@
+month,overseas_t,coastal_t,total_t,prev_year_overseas_t,prev_year_coastal_t,prev_year_total_t,basis,source
+2026-01,3474136,1245734,4719870,3499964,963165,4463129,advance_estimate,https://www.shipmin.gov.in/sites/default/files/Cargo%20handled%20at%20Major%20Ports%20January%202026.pdf
+2026-02,3153859,1116425,4270284,3652100,850300,4502400,advance_estimate,https://shipmin.gov.in/sites/default/files/Report%20Monthly%20Major%20Port%20February%202026.pdf
+2026-03,2982451,1291180,4273631,3810086,896987,4707073,advance_estimate,https://shipmin.gov.in/sites/default/files/Cargo%20handled%20at%20Major%20Ports%20March%202026.pdf
+2026-04,2706963,1264043,3971006,2879039,666515,3545554,derived_from_cumulative,"April-May cumulative minus May, both from https://shipmin.gov.in/sites/default/files/Cargo%20handled%20at%20Major%20Ports%20May%202026.pdf"
+2026-05,2598185,1629850,4228035,3056157,839781,3895938,advance_estimate,https://shipmin.gov.in/sites/default/files/Cargo%20handled%20at%20Major%20Ports%20May%202026.pdf
+2026-06,2311283,1263121,3574404,2514012,788737,3302749,advance_estimate,https://shipmin.gov.in/sites/default/files/Cargo%20handled%20at%20Major%20Ports%20June%202026.pdf
+2026-07,2749638,1247661,3997299,2616197,830097,3446294,advance_estimate,https://www.shipmin.gov.in/sites/default/files/Cargo%20handled%20at%20Major%20Ports%20July%202026.pdf
+2026-08,2600069,1285844,3885913,2989830,968628,3958458,derived_from_cumulative,April-September cumulative (Ministry September 2026 report) minus April-July cumulative (July 2026 report) minus September
+2026-09,3090963,1432578,4523541,3527939,934705,4462644,advance_estimate,"Ministry of Ports, Shipping and Waterways, Cargo handled at Major Ports September 2026, Table-1 (file supplied by the project team; nmpa_public_data/Cargo handled at Major Ports Sep 2026.pdf)"

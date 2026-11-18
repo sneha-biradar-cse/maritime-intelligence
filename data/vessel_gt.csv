@@ -1,0 +1,4 @@
+# Ship sizes (gross tonnage, GRT/GT) from NMPA's own records: the GRT is printed on every port-dues bill.
+# One row per ship. vessel_name as in the daily reports; imo if known; gt as a number; source = bill / certificate reference.
+# These are 'Official' and always win over data/vessel_gt_public.csv (public register, name match) and length estimates.
+vessel_name,imo,gt,source

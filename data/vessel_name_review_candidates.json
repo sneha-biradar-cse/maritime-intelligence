@@ -1,0 +1,751 @@
+[
+  {
+    "a": "RV SAMUDRA SHAUDHIKAMA",
+    "a_mentions": 104,
+    "b": "RV SAMUDRA SAUDHIKAMA",
+    "b_mentions": 3,
+    "similarity": 0.977
+  },
+  {
+    "a": "RV SAMUDRA SHAUDHIKAMA",
+    "a_mentions": 104,
+    "b": "RV SAMUDRA SHAUDIKAMA",
+    "b_mentions": 1,
+    "similarity": 0.977
+  },
+  {
+    "a": "SAMUDRA SHAUDHIKAMA",
+    "a_mentions": 58,
+    "b": "SAMUDRA SHADHIKAMA",
+    "b_mentions": 1,
+    "similarity": 0.973
+  },
+  {
+    "a": "ARDMORE GIBRALTAR",
+    "a_mentions": 13,
+    "b": "ARDMORE GIBRAL TAR",
+    "b_mentions": 1,
+    "similarity": 0.971
+  },
+  {
+    "a": "MSC PATNAREE III",
+    "a_mentions": 36,
+    "b": "MSC PAPTNAREE III",
+    "b_mentions": 2,
+    "similarity": 0.97
+  },
+  {
+    "a": "CMA CGM ZANZIIBAR",
+    "a_mentions": 2,
+    "b": "CMA CGM ZANZIBAR",
+    "b_mentions": 10,
+    "similarity": 0.97
+  },
+  {
+    "a": "SPIRIT OF BERTRAM",
+    "a_mentions": 101,
+    "b": "SPIRIT OF ERTRAM",
+    "b_mentions": 2,
+    "similarity": 0.97
+  },
+  {
+    "a": "DAWN MANSAROVAR",
+    "a_mentions": 28,
+    "b": "DAWN MANASAROVAR",
+    "b_mentions": 6,
+    "similarity": 0.968
+  },
+  {
+    "a": "AMNS TUFMAX PMHC",
+    "a_mentions": 3,
+    "b": "AMNS TUFMAX MHC",
+    "b_mentions": 1,
+    "similarity": 0.968
+  },
+  {
+    "a": "DAWN MANSARVAR",
+    "a_mentions": 40,
+    "b": "DAWN MANSAROVAR",
+    "b_mentions": 28,
+    "similarity": 0.966
+  },
+  {
+    "a": "SWARNA GODAVARI",
+    "a_mentions": 52,
+    "b": "SWARNA GODVARI",
+    "b_mentions": 1,
+    "similarity": 0.966
+  },
+  {
+    "a": "AFRAMAX RIVIERA",
+    "a_mentions": 5,
+    "b": "AFRAMAX RIVERA",
+    "b_mentions": 1,
+    "similarity": 0.966
+  },
+  {
+    "a": "VISHVA PRERNA",
+    "a_mentions": 53,
+    "b": "VISHVA PRERANA",
+    "b_mentions": 1,
+    "similarity": 0.963
+  },
+  {
+    "a": "VISHVA MALHAR",
+    "a_mentions": 56,
+    "b": "VISHVA MALAHAR",
+    "b_mentions": 2,
+    "similarity": 0.963
+  },
+  {
+    "a": "WILSON ECO II",
+    "a_mentions": 24,
+    "b": "WILSON ECO III",
+    "b_mentions": 28,
+    "similarity": 0.963
+  },
+  {
+    "a": "PENNA SURAKSHA",
+    "a_mentions": 82,
+    "b": "PENNA SUAKSHA",
+    "b_mentions": 2,
+    "similarity": 0.963
+  },
+  {
+    "a": "SANMAR SWARA",
+    "a_mentions": 10,
+    "b": "SANMAR SWARNA",
+    "b_mentions": 1,
+    "similarity": 0.96
+  },
+  {
+    "a": "SANMAR SRUTHI",
+    "a_mentions": 55,
+    "b": "SANMAR SRUTI",
+    "b_mentions": 1,
+    "similarity": 0.96
+  },
+  {
+    "a": "WILSON ECO VI",
+    "a_mentions": 35,
+    "b": "WILSON ECO V",
+    "b_mentions": 21,
+    "similarity": 0.96
+  },
+  {
+    "a": "WILSON ECO IV",
+    "a_mentions": 29,
+    "b": "WILSON ECO V",
+    "b_mentions": 21,
+    "similarity": 0.96
+  },
+  {
+    "a": "SWARNA PUSHP",
+    "a_mentions": 33,
+    "b": "SWARNA PUSHPA",
+    "b_mentions": 1,
+    "similarity": 0.96
+  },
+  {
+    "a": "APOLLO OCEAN",
+    "a_mentions": 51,
+    "b": "APOLLO O CEAN",
+    "b_mentions": 1,
+    "similarity": 0.96
+  },
+  {
+    "a": "C G AMARTYA",
+    "a_mentions": 31,
+    "b": "C G AMARTHYA",
+    "b_mentions": 1,
+    "similarity": 0.957
+  },
+  {
+    "a": "DESH GAURAV",
+    "a_mentions": 54,
+    "b": "DESH GAURAVE",
+    "b_mentions": 1,
+    "similarity": 0.957
+  },
+  {
+    "a": "TUG BURAQ 11",
+    "a_mentions": 292,
+    "b": "TUG BURAQ11",
+    "b_mentions": 1,
+    "similarity": 0.957
+  },
+  {
+    "a": "DARYA SHAAN",
+    "a_mentions": 149,
+    "b": "DARYA SHAAAN",
+    "b_mentions": 1,
+    "similarity": 0.957
+  },
+  {
+    "a": "OCEAN SPIRIT",
+    "a_mentions": 7,
+    "b": "OCEAN SPRIT",
+    "b_mentions": 1,
+    "similarity": 0.957
+  },
+  {
+    "a": "EVA RICHWAY",
+    "a_mentions": 5,
+    "b": "EVA RICHWWAY",
+    "b_mentions": 1,
+    "similarity": 0.957
+  },
+  {
+    "a": "RV SAMUDRA SAUDHIKAMA",
+    "a_mentions": 3,
+    "b": "RV SAMUDRA SHAUDIKAMA",
+    "b_mentions": 1,
+    "similarity": 0.952
+  },
+  {
+    "a": "SSL GUJARAT",
+    "a_mentions": 168,
+    "b": "SSL GUJAAT",
+    "b_mentions": 1,
+    "similarity": 0.952
+  },
+  {
+    "a": "JAG PUSHPA",
+    "a_mentions": 20,
+    "b": "JAG PURSHPA",
+    "b_mentions": 1,
+    "similarity": 0.952
+  },
+  {
+    "a": "JAG VASANT",
+    "a_mentions": 10,
+    "b": "JAG VASANTH",
+    "b_mentions": 4,
+    "similarity": 0.952
+  },
+  {
+    "a": "GABON PROSOERITY SPM",
+    "a_mentions": 4,
+    "b": "GABON PROSPERITY SPM",
+    "b_mentions": 1,
+    "similarity": 0.95
+  },
+  {
+    "a": "ZEAL START",
+    "a_mentions": 9,
+    "b": "ZEAL SART",
+    "b_mentions": 1,
+    "similarity": 0.947
+  },
+  {
+    "a": "CMA CGM MENDELLSOHN",
+    "a_mentions": 11,
+    "b": "CMA CGM MENDELISOHN",
+    "b_mentions": 2,
+    "similarity": 0.947
+  },
+  {
+    "a": "INS SUTLEJ",
+    "a_mentions": 2,
+    "b": "INS SUTEJ",
+    "b_mentions": 3,
+    "similarity": 0.947
+  },
+  {
+    "a": "NO 5 OCEAN PIONEER",
+    "a_mentions": 8,
+    "b": "NO 3 OCEAN PIONEER",
+    "b_mentions": 4,
+    "similarity": 0.944
+  },
+  {
+    "a": "SEA LION",
+    "a_mentions": 12,
+    "b": "SEA LIONS",
+    "b_mentions": 11,
+    "similarity": 0.941
+  },
+  {
+    "a": "ZHONG CHANG 258",
+    "a_mentions": 8,
+    "b": "ZHONG CHANG 258 8",
+    "b_mentions": 1,
+    "similarity": 0.938
+  },
+  {
+    "a": "GABON PROSOERITY",
+    "a_mentions": 1,
+    "b": "GABON PROSPERITY",
+    "b_mentions": 3,
+    "similarity": 0.938
+  },
+  {
+    "a": "DAWN MANSARVAR",
+    "a_mentions": 40,
+    "b": "DAWN MANASAROVAR",
+    "b_mentions": 6,
+    "similarity": 0.933
+  },
+  {
+    "a": "C G 48",
+    "a_mentions": 1,
+    "b": "C G 448",
+    "b_mentions": 2,
+    "similarity": 0.923
+  },
+  {
+    "a": "WILSON ECO VI",
+    "a_mentions": 35,
+    "b": "WILSON ECO II",
+    "b_mentions": 24,
+    "similarity": 0.923
+  },
+  {
+    "a": "WILSON ECO VI",
+    "a_mentions": 35,
+    "b": "WILSON ECO IV",
+    "b_mentions": 29,
+    "similarity": 0.923
+  },
+  {
+    "a": "WILSON ECO II",
+    "a_mentions": 24,
+    "b": "WILSON ECO IV",
+    "b_mentions": 29,
+    "similarity": 0.923
+  },
+  {
+    "a": "GREEN K MAX 1",
+    "a_mentions": 2,
+    "b": "GREEN K MAX I",
+    "b_mentions": 1,
+    "similarity": 0.923
+  },
+  {
+    "a": "OCEAN JUPITER",
+    "a_mentions": 6,
+    "b": "OCEAN JUPITOR",
+    "b_mentions": 2,
+    "similarity": 0.923
+  },
+  {
+    "a": "PYXIS POINEER",
+    "a_mentions": 1,
+    "b": "PYXIS PIONEER",
+    "b_mentions": 3,
+    "similarity": 0.923
+  },
+  {
+    "a": "TUG BURAQ 11",
+    "a_mentions": 292,
+    "b": "TUG BARAQ 11",
+    "b_mentions": 1,
+    "similarity": 0.917
+  },
+  {
+    "a": "C G VARAHA VIKRAM C 448",
+    "a_mentions": 2,
+    "b": "C G VARAHA VIKRAM C 420",
+    "b_mentions": 1,
+    "similarity": 0.913
+  },
+  {
+    "a": "C G VIKRAM C G AMARTYA RAJDOOT",
+    "a_mentions": 1,
+    "b": "C G VIKRAM C G AMARTYA RAJDOOT C 448",
+    "b_mentions": 1,
+    "similarity": 0.909
+  },
+  {
+    "a": "DARYA SHAAN",
+    "a_mentions": 149,
+    "b": "DARYA SHANN",
+    "b_mentions": 3,
+    "similarity": 0.909
+  },
+  {
+    "a": "SEVEN SEAS NAVIGATOR",
+    "a_mentions": 72,
+    "b": "SEVEN SEAS NAVIGATOR 6 0",
+    "b_mentions": 1,
+    "similarity": 0.909
+  },
+  {
+    "a": "GUO YUAN 12",
+    "a_mentions": 8,
+    "b": "GUO YUAN 18",
+    "b_mentions": 8,
+    "similarity": 0.909
+  },
+  {
+    "a": "GUO YUAN 12",
+    "a_mentions": 8,
+    "b": "GUO YUAN 32",
+    "b_mentions": 7,
+    "similarity": 0.909
+  },
+  {
+    "a": "NO 2 HEUNG A PIONEER 8 5",
+    "a_mentions": 1,
+    "b": "NO 2 HEUNG A PIONEER",
+    "b_mentions": 3,
+    "similarity": 0.909
+  },
+  {
+    "a": "BRAVEHEART I",
+    "a_mentions": 15,
+    "b": "BRAVEHEART",
+    "b_mentions": 1,
+    "similarity": 0.909
+  },
+  {
+    "a": "TORM SINGAPORE",
+    "a_mentions": 8,
+    "b": "TORM SINGAPORE 10",
+    "b_mentions": 3,
+    "similarity": 0.903
+  },
+  {
+    "a": "C G RAJDOOT C G VIKRAM",
+    "a_mentions": 2,
+    "b": "C G RAJDOOT VIKRAM",
+    "b_mentions": 1,
+    "similarity": 0.9
+  },
+  {
+    "a": "C G VIKRAM RAJDOOT",
+    "a_mentions": 6,
+    "b": "C G VIKRAM C G RAJDOOT",
+    "b_mentions": 1,
+    "similarity": 0.9
+  },
+  {
+    "a": "C G VIKRAM AMARTYA",
+    "a_mentions": 2,
+    "b": "C G VIKRAM C G AMARTYA",
+    "b_mentions": 1,
+    "similarity": 0.9
+  },
+  {
+    "a": "NEW LEGAND",
+    "a_mentions": 2,
+    "b": "NEW LEGEND",
+    "b_mentions": 2,
+    "similarity": 0.9
+  },
+  {
+    "a": "RV SAMUDRA SHAUDHIKAMA",
+    "a_mentions": 104,
+    "b": "RV SAMUDRA SHAUDHIKAMA 1 90",
+    "b_mentions": 5,
+    "similarity": 0.898
+  },
+  {
+    "a": "C G AMARTYA VIKRAM RAJDOOT",
+    "a_mentions": 4,
+    "b": "C G AMARTYA VIKRAM RAJDOOT C 427",
+    "b_mentions": 1,
+    "similarity": 0.897
+  },
+  {
+    "a": "C G VIKRAM C G VARAHA",
+    "a_mentions": 4,
+    "b": "C G VIKRAM VARAHA",
+    "b_mentions": 11,
+    "similarity": 0.895
+  },
+  {
+    "a": "WILSON ECO VI",
+    "a_mentions": 35,
+    "b": "WILSON ECO III",
+    "b_mentions": 28,
+    "similarity": 0.889
+  },
+  {
+    "a": "WILSON ECO IV",
+    "a_mentions": 29,
+    "b": "WILSON ECO III",
+    "b_mentions": 28,
+    "similarity": 0.889
+  },
+  {
+    "a": "SAN PARADISE",
+    "a_mentions": 4,
+    "b": "SAN PARADISE RE",
+    "b_mentions": 1,
+    "similarity": 0.889
+  },
+  {
+    "a": "GABON PROSOERITY",
+    "a_mentions": 1,
+    "b": "GABON PROSOERITY SPM",
+    "b_mentions": 4,
+    "similarity": 0.889
+  },
+  {
+    "a": "GABON PROSPERITY SPM",
+    "a_mentions": 1,
+    "b": "GABON PROSPERITY",
+    "b_mentions": 3,
+    "similarity": 0.889
+  },
+  {
+    "a": "AFRAMAX RIVIERA SPM",
+    "a_mentions": 1,
+    "b": "AFRAMAX RIVIERA",
+    "b_mentions": 5,
+    "similarity": 0.882
+  },
+  {
+    "a": "ADVANTAGE VALUE",
+    "a_mentions": 5,
+    "b": "ADVANTAGE VALUE SPM",
+    "b_mentions": 3,
+    "similarity": 0.882
+  },
+  {
+    "a": "C G VIKRAM C G RAJDOOT C 448",
+    "a_mentions": 1,
+    "b": "C G VIKRAM C G RAJDOOT",
+    "b_mentions": 1,
+    "similarity": 0.88
+  },
+  {
+    "a": "C G VIKRAM C G AMARTYA",
+    "a_mentions": 1,
+    "b": "C G VIKRAM C G AMARTYA C 448",
+    "b_mentions": 5,
+    "similarity": 0.88
+  },
+  {
+    "a": "MSC KETA II",
+    "a_mentions": 46,
+    "b": "MSC AKITETA II",
+    "b_mentions": 5,
+    "similarity": 0.88
+  },
+  {
+    "a": "WILSON ECO II",
+    "a_mentions": 24,
+    "b": "WILSON ECO V",
+    "b_mentions": 21,
+    "similarity": 0.88
+  },
+  {
+    "a": "C G VIKRAM C G RAJDOOT C 448",
+    "a_mentions": 1,
+    "b": "C G VIKRAM C G AMARTYA RAJDOOT C 448",
+    "b_mentions": 1,
+    "similarity": 0.875
+  },
+  {
+    "a": "C G VIKRAM C 448",
+    "a_mentions": 1,
+    "b": "C G VIKRAM C 452",
+    "b_mentions": 1,
+    "similarity": 0.875
+  },
+  {
+    "a": "C G VIKRAM C G VARAHA",
+    "a_mentions": 4,
+    "b": "C G VIKRAM C G VARAHA C 448",
+    "b_mentions": 1,
+    "similarity": 0.875
+  },
+  {
+    "a": "C G VIKRAM C G AMARTYA RAJDOOT C 448",
+    "a_mentions": 1,
+    "b": "C G VIKRAM C G AMARTYA C 448",
+    "b_mentions": 5,
+    "similarity": 0.875
+  },
+  {
+    "a": "RV SAMUDRA SHAUDHIKAMA 1 90",
+    "a_mentions": 5,
+    "b": "RV SAMUDRA SAUDHIKAMA",
+    "b_mentions": 3,
+    "similarity": 0.875
+  },
+  {
+    "a": "RV SAMUDRA SHAUDHIKAMA 1 90",
+    "a_mentions": 5,
+    "b": "RV SAMUDRA SHAUDIKAMA",
+    "b_mentions": 1,
+    "similarity": 0.875
+  },
+  {
+    "a": "3 TUG SAN PARADISE",
+    "a_mentions": 1,
+    "b": "3 SAN PARADISE",
+    "b_mentions": 1,
+    "similarity": 0.875
+  },
+  {
+    "a": "2 TUG SAN PARADISE",
+    "a_mentions": 4,
+    "b": "2 SAN PARADISE",
+    "b_mentions": 1,
+    "similarity": 0.875
+  },
+  {
+    "a": "UNION EXPLORER",
+    "a_mentions": 7,
+    "b": "UNION EXPLORER PMC",
+    "b_mentions": 4,
+    "similarity": 0.875
+  },
+  {
+    "a": "C G VIKRAM C G AMARTYA C 448",
+    "a_mentions": 5,
+    "b": "C G VIKRAM C G VARAHA C 448",
+    "b_mentions": 1,
+    "similarity": 0.873
+  },
+  {
+    "a": "C G VARAHA VIKRAM C 155",
+    "a_mentions": 1,
+    "b": "C G VARAHA VIKRAM C 448",
+    "b_mentions": 2,
+    "similarity": 0.87
+  },
+  {
+    "a": "C G VARAHA VIKRAM C 155",
+    "a_mentions": 1,
+    "b": "C G VARAHA VIKRAM C 420",
+    "b_mentions": 1,
+    "similarity": 0.87
+  },
+  {
+    "a": "C G SAMARTH",
+    "a_mentions": 3,
+    "b": "C G AMARTHYA",
+    "b_mentions": 1,
+    "similarity": 0.87
+  },
+  {
+    "a": "TUG BARAQ 11",
+    "a_mentions": 1,
+    "b": "TUG BURAQ11",
+    "b_mentions": 1,
+    "similarity": 0.87
+  },
+  {
+    "a": "DARYA SHAAAN",
+    "a_mentions": 1,
+    "b": "DARYA SHANN",
+    "b_mentions": 3,
+    "similarity": 0.87
+  },
+  {
+    "a": "C G RAJDOOT C G ARYAMAN",
+    "a_mentions": 1,
+    "b": "C G RAJDOOT C G ARYAMAN VARAHA",
+    "b_mentions": 2,
+    "similarity": 0.868
+  },
+  {
+    "a": "IONIAN SAILOR",
+    "a_mentions": 9,
+    "b": "IONIAN SAILOR SPM",
+    "b_mentions": 2,
+    "similarity": 0.867
+  },
+  {
+    "a": "C G RAJDOOT AMARTYA",
+    "a_mentions": 3,
+    "b": "C G RAJDOOT AMARTYA C 448",
+    "b_mentions": 2,
+    "similarity": 0.864
+  },
+  {
+    "a": "C G VIKRAM AMARTYA",
+    "a_mentions": 2,
+    "b": "C G VIKRAM ADAMYA",
+    "b_mentions": 1,
+    "similarity": 0.857
+  },
+  {
+    "a": "C G VARAHA ADAMYA",
+    "a_mentions": 1,
+    "b": "C G VARAHA AMARTYA",
+    "b_mentions": 6,
+    "similarity": 0.857
+  },
+  {
+    "a": "SCI MUKTA",
+    "a_mentions": 90,
+    "b": "SCI MUKTA RE",
+    "b_mentions": 1,
+    "similarity": 0.857
+  },
+  {
+    "a": "TUG BURAQ11",
+    "a_mentions": 1,
+    "b": "TUG BURAQE",
+    "b_mentions": 1,
+    "similarity": 0.857
+  },
+  {
+    "a": "SEA GULL 9",
+    "a_mentions": 7,
+    "b": "SEA GULL 18",
+    "b_mentions": 17,
+    "similarity": 0.857
+  },
+  {
+    "a": "NEW STRENGTH",
+    "a_mentions": 5,
+    "b": "NEW STRENGTH SPM",
+    "b_mentions": 2,
+    "similarity": 0.857
+  },
+  {
+    "a": "AURORA",
+    "a_mentions": 20,
+    "b": "AURORA I",
+    "b_mentions": 9,
+    "similarity": 0.857
+  },
+  {
+    "a": "FUXING",
+    "a_mentions": 6,
+    "b": "FUXING V",
+    "b_mentions": 9,
+    "similarity": 0.857
+  },
+  {
+    "a": "C G SAVITRIBAI PHULE",
+    "a_mentions": 6,
+    "b": "C G VIKRAM SAVITRIBAI PHULE",
+    "b_mentions": 1,
+    "similarity": 0.851
+  },
+  {
+    "a": "C G VARAHA VIKRAM C 155",
+    "a_mentions": 1,
+    "b": "C G VARAHA VIKRAM",
+    "b_mentions": 20,
+    "similarity": 0.85
+  },
+  {
+    "a": "C G VARAHA VIKRAM",
+    "a_mentions": 20,
+    "b": "C G VARAHA VIKRAM C 448",
+    "b_mentions": 2,
+    "similarity": 0.85
+  },
+  {
+    "a": "C G VARAHA VIKRAM",
+    "a_mentions": 20,
+    "b": "C G VARAHA VIKRAM C 420",
+    "b_mentions": 1,
+    "similarity": 0.85
+  },
+  {
+    "a": "C 444 C G VIKRAM VARAHA",
+    "a_mentions": 1,
+    "b": "C G VIKRAM VARAHA",
+    "b_mentions": 11,
+    "similarity": 0.85
+  }
+]

@@ -1,0 +1,1212 @@
+month,direction,commodity,teu_month,t_month,teu_month_prev,t_month_prev,teu_ytd,t_ytd,teu_ytd_prev,t_ytd_prev,source
+2025-02,import,Raw Cashew,534.0,6372.0,1560.0,24320.0,22574.0,308263.0,31932.0,478673.0,container traffic during Feb 2025.pdf
+2025-02,import,Personal Effects,20.0,62.0,18.0,125.0,137.0,620.0,97.0,631.0,container traffic during Feb 2025.pdf
+2025-02,import,Machinery,55.0,475.0,14.0,68.0,166.0,1040.0,231.0,1578.0,container traffic during Feb 2025.pdf
+2025-02,import,Wood,192.0,2885.0,302.0,4922.0,2647.0,42451.0,2609.0,43826.0,container traffic during Feb 2025.pdf
+2025-02,import,Paraffin Wax,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,import,Rice,5.0,135.0,8.0,244.0,91.0,2531.0,126.0,3778.0,container traffic during Feb 2025.pdf
+2025-02,import,Wheat,14.0,395.0,33.0,993.0,190.0,5313.0,342.0,10345.0,container traffic during Feb 2025.pdf
+2025-02,import,Chemicals,139.0,2149.0,247.0,4439.0,2683.0,41435.0,1925.0,36516.0,container traffic during Feb 2025.pdf
+2025-02,import,Packing Materials,0.0,0.0,0.0,0.0,13.0,173.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,import,Food Stuff,56.0,632.0,61.0,758.0,521.0,6090.0,598.0,7632.0,container traffic during Feb 2025.pdf
+2025-02,import,News Print/Paper,18.0,244.0,102.0,1454.0,498.0,6010.0,312.0,4434.0,container traffic during Feb 2025.pdf
+2025-02,import,Tiles,1210.0,33672.0,1226.0,36669.0,16254.0,454404.0,17488.0,525404.0,container traffic during Feb 2025.pdf
+2025-02,import,Wax,0.0,0.0,0.0,0.0,14.0,185.0,8.0,120.0,container traffic during Feb 2025.pdf
+2025-02,import,Cotton,0.0,0.0,0.0,0.0,4.0,43.0,42.0,512.0,container traffic during Feb 2025.pdf
+2025-02,import,Bentonite Powder/Lumps,31.0,864.0,124.0,3754.0,723.0,20254.0,910.0,27405.0,container traffic during Feb 2025.pdf
+2025-02,import,Salt,183.0,5110.0,201.0,6102.0,1724.0,48163.0,1962.0,59218.0,container traffic during Feb 2025.pdf
+2025-02,import,Polypropylene,56.0,783.0,106.0,1680.0,987.0,13857.0,761.0,11948.0,container traffic during Feb 2025.pdf
+2025-02,import,Fertilizer,3.0,71.0,0.0,0.0,27.0,689.0,381.0,9706.0,container traffic during Feb 2025.pdf
+2025-02,import,Seafood,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,import,Calcite Powder,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,import,Flexible Carry Bags,0.0,0.0,3.0,45.0,22.0,269.0,31.0,381.0,container traffic during Feb 2025.pdf
+2025-02,import,Reefer cargo,0.0,0.0,0.0,0.0,20.0,230.0,10.0,155.0,container traffic during Feb 2025.pdf
+2025-02,import,Fish Meal,0.0,0.0,6.0,77.0,18.0,213.0,206.0,3017.0,container traffic during Feb 2025.pdf
+2025-02,import,Coffee,43.0,753.0,30.0,627.0,678.0,11490.0,696.0,14345.0,container traffic during Feb 2025.pdf
+2025-02,import,Ply wood,2.0,28.0,20.0,310.0,66.0,872.0,133.0,2085.0,container traffic during Feb 2025.pdf
+2025-02,import,Lead,86.0,2278.0,149.0,4153.0,1196.0,29381.0,1305.0,35525.0,container traffic during Feb 2025.pdf
+2025-02,import,Limestone,0.0,0.0,0.0,0.0,0.0,0.0,24.0,674.0,container traffic during Feb 2025.pdf
+2025-02,import,Fish Oil,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,import,Garments,0.0,0.0,4.0,28.0,10.0,71.0,21.0,159.0,container traffic during Feb 2025.pdf
+2025-02,import,Granite/Marble,70.0,1925.0,70.0,2086.0,641.0,17711.0,684.0,20326.0,container traffic during Feb 2025.pdf
+2025-02,import,Dolomite Powder,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,import,China Clay,0.0,0.0,0.0,0.0,6.0,167.0,69.0,1861.0,container traffic during Feb 2025.pdf
+2025-02,import,Cocoa Beans,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,import,Others,477.0,18233.0,425.0,7294.0,8396.0,156217.0,5172.0,103862.0,container traffic during Feb 2025.pdf
+2025-02,export,Coffee,1115.0,20494.0,1388.0,28860.0,10391.0,194324.0,9300.0,190045.0,container traffic during Feb 2025.pdf
+2025-02,export,Reefer Cargo,340.0,4610.0,389.0,5899.0,5378.0,73965.0,5934.0,91936.0,container traffic during Feb 2025.pdf
+2025-02,export,Cashew Kernels,146.0,2056.0,76.0,1460.0,573.0,8577.0,444.0,8125.0,container traffic during Feb 2025.pdf
+2025-02,export,Leaf Springs,7.0,153.0,5.0,131.0,87.0,1869.0,86.0,2037.0,container traffic during Feb 2025.pdf
+2025-02,export,Plywood,24.0,458.0,43.0,890.0,284.0,5359.0,227.0,4776.0,container traffic during Feb 2025.pdf
+2025-02,export,Beer,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,export,Garments,20.0,185.0,32.0,338.0,197.0,1950.0,165.0,1625.0,container traffic during Feb 2025.pdf
+2025-02,export,Chemicals,160.0,2774.0,152.0,2641.0,1513.0,25797.0,1435.0,26564.0,container traffic during Feb 2025.pdf
+2025-02,export,Fish Meal,426.0,7206.0,443.0,8568.0,5969.0,98517.0,8740.0,167639.0,container traffic during Feb 2025.pdf
+2025-02,export,Granite/Marble,11.0,288.0,23.0,614.0,80.0,2049.0,208.0,5667.0,container traffic during Feb 2025.pdf
+2025-02,export,Fish Oil,20.0,392.0,15.0,346.0,397.0,7902.0,462.0,10521.0,container traffic during Feb 2025.pdf
+2025-02,export,Salt,4.0,96.0,2.0,46.0,48.0,1142.0,21.0,506.0,container traffic during Feb 2025.pdf
+2025-02,export,Wax Candle,0.0,0.0,2.0,27.0,24.0,227.0,2.0,27.0,container traffic during Feb 2025.pdf
+2025-02,export,Gherkins / Cucumbers,483.0,9668.0,454.0,10503.0,4474.0,87405.0,3809.0,82009.0,container traffic during Feb 2025.pdf
+2025-02,export,Bio Plate,10.0,69.0,17.0,141.0,173.0,1255.0,191.0,1779.0,container traffic during Feb 2025.pdf
+2025-02,export,Cotton,160.0,933.0,184.0,1251.0,1556.0,7775.0,1994.0,12771.0,container traffic during Feb 2025.pdf
+2025-02,export,Spices,0.0,0.0,0.0,0.0,5.0,83.0,1.0,8.0,container traffic during Feb 2025.pdf
+2025-02,export,Machinery,180.0,1512.0,231.0,2465.0,2187.0,18875.0,899.0,10419.0,container traffic during Feb 2025.pdf
+2025-02,export,Cucumber,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,container traffic during Feb 2025.pdf
+2025-02,export,Lead,144.0,3470.0,115.0,3058.0,1158.0,27692.0,932.0,24182.0,container traffic during Feb 2025.pdf
+2025-02,export,Printed Books/Newspaper,29.0,345.0,49.0,588.0,358.0,3595.0,198.0,2244.0,container traffic during Feb 2025.pdf
+2025-02,export,Roof Tiles,0.0,0.0,0.0,0.0,0.0,0.0,1.0,30.0,container traffic during Feb 2025.pdf
+2025-02,export,Food Stuff,183.0,2214.0,298.0,3667.0,2558.0,28359.0,2596.0,33307.0,container traffic during Feb 2025.pdf
+2025-02,export,Maize,0.0,0.0,0.0,0.0,0.0,0.0,4.0,117.0,container traffic during Feb 2025.pdf
+2025-02,export,Rice,2.0,55.0,1.0,29.0,60.0,1619.0,22.0,609.0,container traffic during Feb 2025.pdf
+2025-02,export,Wood,21.0,431.0,15.0,230.0,416.0,9481.0,1563.0,33510.0,container traffic during Feb 2025.pdf
+2025-02,export,Polypropylene,0.0,0.0,0.0,0.0,3.0,28.0,2.0,23.0,container traffic during Feb 2025.pdf
+2025-02,export,Brake Drums,0.0,0.0,0.0,0.0,0.0,0.0,5.0,114.0,container traffic during Feb 2025.pdf
+2025-02,export,Personal Effects,18.0,149.0,8.0,85.0,86.0,822.0,73.0,801.0,container traffic during Feb 2025.pdf
+2025-02,export,Seafood,36.0,756.0,30.0,622.0,250.0,4653.0,229.0,4801.0,container traffic during Feb 2025.pdf
+2025-02,export,Flexible Carry Bags,129.0,1320.0,129.0,1505.0,1287.0,12883.0,1315.0,15408.0,container traffic during Feb 2025.pdf
+2025-02,export,Fertilizer,0.0,0.0,0.0,0.0,3.0,49.0,1.0,15.0,container traffic during Feb 2025.pdf
+2025-02,export,Wheat,0.0,0.0,3.0,91.0,1.0,26.0,4.0,107.0,container traffic during Feb 2025.pdf
+2025-02,export,Others,484.0,17099.0,442.0,8144.0,4770.0,87398.0,4259.0,68768.0,container traffic during Feb 2025.pdf
+2025-01,import,Tiles,1591.0,44113.0,1897.0,56997.0,15044.0,420732.0,16262.0,488735.0,container traffic during Jan 2025.pdf
+2025-01,import,Raw Cashew,506.0,6782.0,1507.0,22851.0,22040.0,301891.0,30372.0,454353.0,container traffic during Jan 2025.pdf
+2025-01,import,Salt,161.0,4492.0,356.0,10775.0,1541.0,43053.0,1761.0,53116.0,container traffic during Jan 2025.pdf
+2025-01,import,Wood,192.0,3304.0,132.0,2348.0,2455.0,39566.0,2307.0,38903.0,container traffic during Jan 2025.pdf
+2025-01,import,Chemicals,160.0,2805.0,207.0,3776.0,2544.0,39286.0,1678.0,32077.0,container traffic during Jan 2025.pdf
+2025-01,import,Lead,83.0,2026.0,116.0,3088.0,1110.0,27102.0,1156.0,31372.0,container traffic during Jan 2025.pdf
+2025-01,import,Bentonite Powder/Lumps,60.0,1674.0,109.0,3245.0,692.0,19390.0,786.0,23651.0,container traffic during Jan 2025.pdf
+2025-01,import,Granite/Marble,52.0,1427.0,138.0,4092.0,571.0,15785.0,614.0,18241.0,container traffic during Jan 2025.pdf
+2025-01,import,Polypropylene,2.0,27.0,114.0,1805.0,931.0,13074.0,655.0,10268.0,container traffic during Jan 2025.pdf
+2025-01,import,Coffee,52.0,876.0,35.0,833.0,635.0,10737.0,666.0,13718.0,container traffic during Jan 2025.pdf
+2025-01,import,News Print/Paper,38.0,461.0,9.0,135.0,480.0,5765.0,210.0,2980.0,container traffic during Jan 2025.pdf
+2025-01,import,Food Stuff,57.0,570.0,66.0,798.0,465.0,5458.0,537.0,6874.0,container traffic during Jan 2025.pdf
+2025-01,import,Wheat,0.0,0.0,65.0,1966.0,176.0,4918.0,309.0,9352.0,container traffic during Jan 2025.pdf
+2025-01,import,Rice,9.0,243.0,14.0,426.0,86.0,2396.0,118.0,3535.0,container traffic during Jan 2025.pdf
+2025-01,import,Ply wood,4.0,53.0,26.0,427.0,64.0,844.0,113.0,1775.0,container traffic during Jan 2025.pdf
+2025-01,import,Fertilizer,0.0,0.0,0.0,0.0,24.0,618.0,381.0,9706.0,container traffic during Jan 2025.pdf
+2025-01,import,Machinery,17.0,46.0,52.0,438.0,111.0,565.0,217.0,1509.0,container traffic during Jan 2025.pdf
+2025-01,import,Personal Effects,11.0,55.0,5.0,33.0,117.0,558.0,79.0,505.0,container traffic during Jan 2025.pdf
+2025-01,import,Flexible Carry Bags,1.0,21.0,4.0,38.0,22.0,269.0,28.0,336.0,container traffic during Jan 2025.pdf
+2025-01,import,Reefer cargo,8.0,98.0,2.0,31.0,20.0,230.0,10.0,155.0,container traffic during Jan 2025.pdf
+2025-01,import,Fish Meal,0.0,0.0,38.0,359.0,18.0,213.0,200.0,2941.0,container traffic during Jan 2025.pdf
+2025-01,import,Wax,2.0,25.0,4.0,61.0,14.0,185.0,8.0,120.0,container traffic during Jan 2025.pdf
+2025-01,import,Packing Materials,0.0,0.0,0.0,0.0,13.0,173.0,0.0,0.0,container traffic during Jan 2025.pdf
+2025-01,import,China Clay,0.0,0.0,2.0,60.0,6.0,167.0,69.0,1861.0,container traffic during Jan 2025.pdf
+2025-01,import,Garments,2.0,30.0,1.0,26.0,10.0,71.0,17.0,131.0,container traffic during Jan 2025.pdf
+2025-01,import,Cotton,0.0,0.0,0.0,0.0,4.0,43.0,42.0,512.0,container traffic during Jan 2025.pdf
+2025-01,import,Limestone,0.0,0.0,0.0,0.0,0.0,0.0,24.0,674.0,container traffic during Jan 2025.pdf
+2025-01,import,Others,1111.0,32164.0,378.0,8403.0,7919.0,137984.0,4747.0,96568.0,container traffic during Jan 2025.pdf
+2025-01,export,Coffee,538.0,9042.0,412.0,7842.0,9276.0,173830.0,7912.0,161185.0,container traffic during Jan 2025.pdf
+2025-01,export,Fish Meal,533.0,8236.0,315.0,5553.0,5543.0,91311.0,8297.0,159072.0,container traffic during Jan 2025.pdf
+2025-01,export,Gherkins / Cucumbers,486.0,9572.0,420.0,9166.0,3991.0,77738.0,3355.0,71506.0,container traffic during Jan 2025.pdf
+2025-01,export,Reefer Cargo,434.0,5870.0,398.0,6070.0,5038.0,69355.0,5545.0,86036.0,container traffic during Jan 2025.pdf
+2025-01,export,Food Stuff,167.0,2249.0,327.0,4149.0,2375.0,26145.0,2298.0,29640.0,container traffic during Jan 2025.pdf
+2025-01,export,Lead,98.0,2388.0,80.0,2128.0,1014.0,24222.0,817.0,21124.0,container traffic during Jan 2025.pdf
+2025-01,export,Chemicals,132.0,2290.0,127.0,2339.0,1353.0,23023.0,1283.0,23923.0,container traffic during Jan 2025.pdf
+2025-01,export,Machinery,79.0,719.0,189.0,1926.0,2007.0,17362.0,668.0,7955.0,container traffic during Jan 2025.pdf
+2025-01,export,Flexible Carry Bags,123.0,1247.0,153.0,1739.0,1158.0,11563.0,1186.0,13903.0,container traffic during Jan 2025.pdf
+2025-01,export,Wood,37.0,853.0,35.0,507.0,395.0,9050.0,1548.0,33280.0,container traffic during Jan 2025.pdf
+2025-01,export,Fish Oil,35.0,657.0,11.0,231.0,377.0,7509.0,447.0,10175.0,container traffic during Jan 2025.pdf
+2025-01,export,Cotton,165.0,846.0,247.0,1988.0,1396.0,6842.0,1810.0,11520.0,container traffic during Jan 2025.pdf
+2025-01,export,Cashew Kernels,49.0,738.0,65.0,1268.0,427.0,6521.0,368.0,6665.0,container traffic during Jan 2025.pdf
+2025-01,export,Plywood,28.0,528.0,54.0,1085.0,260.0,4901.0,184.0,3887.0,container traffic during Jan 2025.pdf
+2025-01,export,Seafood,50.0,1003.0,38.0,813.0,214.0,3897.0,199.0,4179.0,container traffic during Jan 2025.pdf
+2025-01,export,Printed Books/Newspaper,85.0,913.0,25.0,313.0,329.0,3250.0,149.0,1656.0,container traffic during Jan 2025.pdf
+2025-01,export,Garments,18.0,188.0,26.0,314.0,177.0,1765.0,133.0,1287.0,container traffic during Jan 2025.pdf
+2025-01,export,Granite/Marble,6.0,143.0,20.0,546.0,69.0,1762.0,185.0,5052.0,container traffic during Jan 2025.pdf
+2025-01,export,Leaf Springs,5.0,118.0,5.0,113.0,80.0,1716.0,81.0,1906.0,container traffic during Jan 2025.pdf
+2025-01,export,Rice,2.0,52.0,1.0,29.0,58.0,1564.0,21.0,579.0,container traffic during Jan 2025.pdf
+2025-01,export,Bio Plate,9.0,74.0,12.0,110.0,163.0,1186.0,174.0,1637.0,container traffic during Jan 2025.pdf
+2025-01,export,Salt,1.0,26.0,0.0,0.0,44.0,1046.0,19.0,460.0,container traffic during Jan 2025.pdf
+2025-01,export,Personal Effects,20.0,181.0,6.0,62.0,68.0,673.0,65.0,716.0,container traffic during Jan 2025.pdf
+2025-01,export,Wax Candle,0.0,0.0,0.0,0.0,24.0,227.0,0.0,0.0,container traffic during Jan 2025.pdf
+2025-01,export,Spices,2.0,39.0,1.0,8.0,5.0,83.0,1.0,8.0,container traffic during Jan 2025.pdf
+2025-01,export,Fertilizer,0.0,0.0,0.0,0.0,3.0,49.0,1.0,15.0,container traffic during Jan 2025.pdf
+2025-01,export,Polypropylene,0.0,0.0,0.0,0.0,3.0,28.0,2.0,23.0,container traffic during Jan 2025.pdf
+2025-01,export,Wheat,0.0,0.0,0.0,0.0,1.0,26.0,1.0,16.0,container traffic during Jan 2025.pdf
+2025-01,export,Roof Tiles,0.0,0.0,0.0,0.0,0.0,0.0,1.0,30.0,container traffic during Jan 2025.pdf
+2025-01,export,Maize,0.0,0.0,0.0,0.0,0.0,0.0,4.0,117.0,container traffic during Jan 2025.pdf
+2025-01,export,Brake Drums,0.0,0.0,0.0,0.0,0.0,0.0,5.0,114.0,container traffic during Jan 2025.pdf
+2025-01,export,Others,481.0,23397.0,415.0,7023.0,4286.0,70299.0,3817.0,60624.0,container traffic during Jan 2025.pdf
+2025-03,import,Tiles,1739.0,48417.0,1843.0,55406.0,17993.0,502821.0,19331.0,580809.0,container traffic during March  2025.pdf
+2025-03,import,Raw Cashew,951.0,12765.0,1253.0,20307.0,23525.0,321028.0,33185.0,498980.0,container traffic during March  2025.pdf
+2025-03,import,Salt,181.0,5046.0,89.0,2684.0,1905.0,53209.0,2051.0,61902.0,container traffic during March  2025.pdf
+2025-03,import,Chemicals,311.0,4358.0,247.0,4312.0,2994.0,45793.0,2172.0,40828.0,container traffic during March  2025.pdf
+2025-03,import,Wood,141.0,2433.0,212.0,3421.0,2788.0,44884.0,2821.0,47247.0,container traffic during March  2025.pdf
+2025-03,import,Lead,87.0,1835.0,70.0,1830.0,1283.0,31216.0,1375.0,37355.0,container traffic during March  2025.pdf
+2025-03,import,Bentonite Powder/Lumps,126.0,3535.0,62.0,1878.0,849.0,23789.0,972.0,29283.0,container traffic during March  2025.pdf
+2025-03,import,Granite/Marble,107.0,2920.0,53.0,1575.0,748.0,20631.0,737.0,21901.0,container traffic during March  2025.pdf
+2025-03,import,Polypropylene,201.0,2819.0,66.0,1047.0,1188.0,16676.0,827.0,12995.0,container traffic during March  2025.pdf
+2025-03,import,Coffee,39.0,700.0,34.0,682.0,717.0,12191.0,730.0,15027.0,container traffic during March  2025.pdf
+2025-03,import,Food Stuff,26.0,467.0,57.0,666.0,547.0,6557.0,655.0,8298.0,container traffic during March  2025.pdf
+2025-03,import,News Print/Paper,30.0,364.0,89.0,965.0,528.0,6374.0,401.0,5399.0,container traffic during March  2025.pdf
+2025-03,import,Wheat,5.0,130.0,38.0,1156.0,195.0,5443.0,380.0,11500.0,container traffic during March  2025.pdf
+2025-03,import,Rice,5.0,139.0,4.0,122.0,96.0,2670.0,130.0,3900.0,container traffic during March  2025.pdf
+2025-03,import,Machinery,8.0,18.0,8.0,35.0,174.0,1058.0,239.0,1612.0,container traffic during March  2025.pdf
+2025-03,import,Ply wood,10.0,134.0,14.0,216.0,76.0,1007.0,147.0,2301.0,container traffic during March  2025.pdf
+2025-03,import,Fertilizer,0.0,0.0,0.0,0.0,27.0,689.0,381.0,9706.0,container traffic during March  2025.pdf
+2025-03,import,Personal Effects,1.0,1.0,6.0,38.0,138.0,621.0,103.0,668.0,container traffic during March  2025.pdf
+2025-03,import,Flexible Carry Bags,9.0,113.0,2.0,22.0,31.0,382.0,33.0,403.0,container traffic during March  2025.pdf
+2025-03,import,Reefer cargo,0.0,0.0,0.0,0.0,20.0,230.0,10.0,155.0,container traffic during March  2025.pdf
+2025-03,import,Fish Meal,0.0,0.0,4.0,64.0,18.0,213.0,210.0,3081.0,container traffic during March  2025.pdf
+2025-03,import,Wax,2.0,26.0,0.0,0.0,16.0,211.0,8.0,120.0,container traffic during March  2025.pdf
+2025-03,import,Packing Materials,0.0,0.0,0.0,0.0,13.0,173.0,0.0,0.0,container traffic during March  2025.pdf
+2025-03,import,China Clay,0.0,0.0,1.0,30.0,6.0,167.0,70.0,1891.0,container traffic during March  2025.pdf
+2025-03,import,Garments,0.0,0.0,0.0,0.0,10.0,71.0,21.0,159.0,container traffic during March  2025.pdf
+2025-03,import,Cotton,0.0,0.0,0.0,0.0,4.0,43.0,42.0,512.0,container traffic during March  2025.pdf
+2025-03,import,Limestone,0.0,0.0,0.0,0.0,0.0,0.0,24.0,674.0,container traffic during March  2025.pdf
+2025-03,import,Others,638.0,12358.0,473.0,10487.0,9034.0,168575.0,5645.0,114349.0,container traffic during March  2025.pdf
+2025-03,export,Coffee,1626.0,29822.0,1613.0,33829.0,12017.0,224146.0,10913.0,223875.0,container traffic during March  2025.pdf
+2025-03,export,Fish Meal,823.0,12363.0,325.0,6669.0,6792.0,110880.0,9065.0,174309.0,container traffic during March  2025.pdf
+2025-03,export,Gherkins / Cucumbers,579.0,11101.0,366.0,8401.0,5053.0,98506.0,4175.0,90410.0,container traffic during March  2025.pdf
+2025-03,export,Reefer Cargo,516.0,6992.0,404.0,6204.0,5894.0,80957.0,6338.0,98139.0,container traffic during March  2025.pdf
+2025-03,export,Food Stuff,292.0,3267.0,377.0,4898.0,2850.0,31626.0,2973.0,38205.0,container traffic during March  2025.pdf
+2025-03,export,Lead,125.0,2966.0,146.0,3867.0,1283.0,30658.0,1078.0,28048.0,container traffic during March  2025.pdf
+2025-03,export,Chemicals,184.0,3087.0,140.0,2558.0,1697.0,28884.0,1575.0,29122.0,container traffic during March  2025.pdf
+2025-03,export,Machinery,82.0,811.0,165.0,1779.0,2269.0,19686.0,1064.0,12198.0,container traffic during March  2025.pdf
+2025-03,export,Flexible Carry Bags,159.0,1644.0,114.0,1286.0,1446.0,14527.0,1429.0,16694.0,container traffic during March  2025.pdf
+2025-03,export,Fish Oil,126.0,2583.0,1.0,19.0,523.0,10484.0,463.0,10540.0,container traffic during March  2025.pdf
+2025-03,export,Wood,38.0,793.0,10.0,169.0,454.0,10274.0,1573.0,33679.0,container traffic during March  2025.pdf
+2025-03,export,Cashew Kernels,23.0,367.0,107.0,1889.0,596.0,8944.0,551.0,10014.0,container traffic during March  2025.pdf
+2025-03,export,Cotton,211.0,1084.0,148.0,874.0,1767.0,8858.0,2142.0,13644.0,container traffic during March  2025.pdf
+2025-03,export,Plywood,42.0,870.0,38.0,765.0,326.0,6229.0,265.0,5541.0,container traffic during March  2025.pdf
+2025-03,export,Seafood,35.0,711.0,9.0,155.0,285.0,5364.0,238.0,4956.0,container traffic during March  2025.pdf
+2025-03,export,Printed Books/Newspaper,16.0,175.0,32.0,415.0,374.0,3770.0,230.0,2659.0,container traffic during March  2025.pdf
+2025-03,export,Granite/Marble,36.0,919.0,14.0,391.0,116.0,2969.0,222.0,6058.0,container traffic during March  2025.pdf
+2025-03,export,Garments,24.0,218.0,28.0,288.0,221.0,2168.0,193.0,1913.0,container traffic during March  2025.pdf
+2025-03,export,Leaf Springs,8.0,188.0,12.0,273.0,95.0,2057.0,98.0,2309.0,container traffic during March  2025.pdf
+2025-03,export,Rice,10.0,156.0,0.0,0.0,70.0,1774.0,22.0,609.0,container traffic during March  2025.pdf
+2025-03,export,Bio Plate,15.0,105.0,10.0,84.0,188.0,1359.0,201.0,1863.0,container traffic during March  2025.pdf
+2025-03,export,Salt,2.0,52.0,9.0,240.0,50.0,1194.0,30.0,746.0,container traffic during March  2025.pdf
+2025-03,export,Personal Effects,30.0,313.0,2.0,23.0,116.0,1135.0,75.0,824.0,container traffic during March  2025.pdf
+2025-03,export,Wax Candle,0.0,0.0,0.0,0.0,24.0,227.0,2.0,27.0,container traffic during March  2025.pdf
+2025-03,export,Spices,0.0,0.0,1.0,25.0,5.0,83.0,2.0,33.0,container traffic during March  2025.pdf
+2025-03,export,Fertilizer,0.0,0.0,0.0,0.0,3.0,49.0,1.0,15.0,container traffic during March  2025.pdf
+2025-03,export,Polypropylene,2.0,13.0,0.0,0.0,5.0,41.0,2.0,23.0,container traffic during March  2025.pdf
+2025-03,export,Wheat,0.0,0.0,0.0,0.0,1.0,26.0,4.0,107.0,container traffic during March  2025.pdf
+2025-03,export,Roof Tiles,0.0,0.0,0.0,0.0,0.0,0.0,1.0,30.0,container traffic during March  2025.pdf
+2025-03,export,Maize,0.0,0.0,0.0,0.0,0.0,0.0,4.0,117.0,container traffic during March  2025.pdf
+2025-03,export,Brake Drums,0.0,0.0,0.0,0.0,0.0,0.0,5.0,114.0,container traffic during March  2025.pdf
+2025-03,export,Others,542.0,7835.0,541.0,9012.0,5312.0,95233.0,4800.0,77780.0,container traffic during March  2025.pdf
+2025-05,import,Tiles,1361.0,37915.0,1082.0,30038.0,2838.0,79055.0,2872.0,79770.0,container traffic for May 2025.pdf
+2025-05,import,Raw Cashew,3918.0,52571.0,2041.0,27978.0,5252.0,69896.0,2488.0,34114.0,container traffic for May 2025.pdf
+2025-05,import,Salt,184.0,5106.0,179.0,4981.0,404.0,11241.0,301.0,8400.0,container traffic for May 2025.pdf
+2025-05,import,Chemicals,281.0,4195.0,330.0,4683.0,617.0,9091.0,707.0,10200.0,container traffic for May 2025.pdf
+2025-05,import,Bentonite Powder/Lumps,136.0,3808.0,91.0,2544.0,240.0,6715.0,199.0,5570.0,container traffic for May 2025.pdf
+2025-05,import,Polypropylene,170.0,2373.0,81.0,1115.0,319.0,4466.0,247.0,3444.0,container traffic for May 2025.pdf
+2025-05,import,Wood,143.0,2537.0,172.0,2751.0,273.0,4457.0,348.0,5434.0,container traffic for May 2025.pdf
+2025-05,import,Lead,64.0,1597.0,39.0,947.0,131.0,3243.0,69.0,1696.0,container traffic for May 2025.pdf
+2025-05,import,Wheat,34.0,928.0,35.0,975.0,110.0,3029.0,118.0,3294.0,container traffic for May 2025.pdf
+2025-05,import,Granite/Marble,62.0,1705.0,71.0,1963.0,100.0,2745.0,121.0,3339.0,container traffic for May 2025.pdf
+2025-05,import,Coffee,36.0,667.0,44.0,774.0,87.0,1568.0,81.0,1436.0,container traffic for May 2025.pdf
+2025-05,import,Fertilizer,0.0,0.0,0.0,0.0,50.0,1332.0,0.0,0.0,container traffic for May 2025.pdf
+2025-05,import,Food Stuff,62.0,647.0,53.0,585.0,100.0,1089.0,105.0,1270.0,container traffic for May 2025.pdf
+2025-05,import,News Print/Paper,16.0,192.0,25.0,304.0,16.0,192.0,102.0,1295.0,container traffic for May 2025.pdf
+2025-05,import,China Clay,0.0,0.0,0.0,0.0,6.0,166.0,0.0,0.0,container traffic for May 2025.pdf
+2025-05,import,Ply wood,8.0,111.0,2.0,28.0,10.0,140.0,12.0,153.0,container traffic for May 2025.pdf
+2025-05,import,Machinery,17.0,59.0,5.0,29.0,37.0,128.0,17.0,107.0,container traffic for May 2025.pdf
+2025-05,import,Reefer cargo,6.0,67.0,0.0,0.0,8.0,93.0,2.0,26.0,container traffic for May 2025.pdf
+2025-05,import,Packing Materials,4.0,66.0,2.0,30.0,6.0,92.0,2.0,30.0,container traffic for May 2025.pdf
+2025-05,import,Personal Effects,3.0,11.0,5.0,13.0,11.0,29.0,20.0,95.0,container traffic for May 2025.pdf
+2025-05,import,Rice,0.0,0.0,15.0,421.0,1.0,26.0,28.0,785.0,container traffic for May 2025.pdf
+2025-05,import,Wax,2.0,25.0,2.0,25.0,2.0,25.0,6.0,82.0,container traffic for May 2025.pdf
+2025-05,import,Flexible Carry Bags,0.0,0.0,1.0,17.0,1.0,18.0,2.0,26.0,container traffic for May 2025.pdf
+2025-05,import,Cotton,0.0,0.0,0.0,0.0,0.0,0.0,4.0,43.0,container traffic for May 2025.pdf
+2025-05,import,Others,428.0,8377.0,470.0,9444.0,902.0,16982.0,837.0,15997.0,container traffic for May 2025.pdf
+2025-05,export,Coffee,966.0,18220.0,1407.0,26892.0,2018.0,38016.0,2770.0,52661.0,container traffic for May 2025.pdf
+2025-05,export,Fish Meal,583.0,9473.0,680.0,11450.0,1486.0,22632.0,1124.0,18381.0,container traffic for May 2025.pdf
+2025-05,export,Gherkins / Cucumbers,176.0,2945.0,226.0,3832.0,405.0,7179.0,530.0,9111.0,container traffic for May 2025.pdf
+2025-05,export,Food Stuff,185.0,2747.0,174.0,1894.0,510.0,7043.0,430.0,4829.0,container traffic for May 2025.pdf
+2025-05,export,Reefer Cargo,260.0,3470.0,424.0,5657.0,506.0,6754.0,846.0,11394.0,container traffic for May 2025.pdf
+2025-05,export,Lead,82.0,1914.0,108.0,2602.0,189.0,4489.0,166.0,4016.0,container traffic for May 2025.pdf
+2025-05,export,Chemicals,99.0,1718.0,147.0,2354.0,227.0,4016.0,294.0,4783.0,container traffic for May 2025.pdf
+2025-05,export,Machinery,180.0,1927.0,110.0,1026.0,245.0,2616.0,312.0,2706.0,container traffic for May 2025.pdf
+2025-05,export,Flexible Carry Bags,121.0,1186.0,95.0,885.0,225.0,2221.0,211.0,1993.0,container traffic for May 2025.pdf
+2025-05,export,Wood,43.0,985.0,7.0,85.0,94.0,2154.0,16.0,253.0,container traffic for May 2025.pdf
+2025-05,export,Plywood,59.0,1254.0,25.0,485.0,101.0,2138.0,45.0,877.0,container traffic for May 2025.pdf
+2025-05,export,Fish Oil,18.0,360.0,39.0,796.0,99.0,1997.0,74.0,1506.0,container traffic for May 2025.pdf
+2025-05,export,Cotton,197.0,977.0,127.0,576.0,341.0,1716.0,221.0,1027.0,container traffic for May 2025.pdf
+2025-05,export,Granite/Marble,25.0,660.0,6.0,155.0,37.0,964.0,14.0,373.0,container traffic for May 2025.pdf
+2025-05,export,Seafood,14.0,263.0,9.0,120.0,52.0,812.0,12.0,160.0,container traffic for May 2025.pdf
+2025-05,export,Personal Effects,27.0,245.0,0.0,0.0,49.0,479.0,6.0,54.0,container traffic for May 2025.pdf
+2025-05,export,Cashew Kernels,17.0,269.0,21.0,310.0,32.0,478.0,49.0,791.0,container traffic for May 2025.pdf
+2025-05,export,Garments,13.0,78.0,18.0,186.0,84.0,447.0,42.0,356.0,container traffic for May 2025.pdf
+2025-05,export,Printed Books/Newspaper,20.0,177.0,25.0,232.0,32.0,290.0,64.0,604.0,container traffic for May 2025.pdf
+2025-05,export,Leaf Springs,8.0,197.0,4.0,95.0,11.0,272.0,11.0,243.0,container traffic for May 2025.pdf
+2025-05,export,Bio Plate,10.0,63.0,10.0,68.0,37.0,249.0,22.0,149.0,container traffic for May 2025.pdf
+2025-05,export,Wheat,9.0,232.0,1.0,26.0,9.0,232.0,1.0,26.0,container traffic for May 2025.pdf
+2025-05,export,Fertilizer,12.0,172.0,1.0,14.0,15.0,196.0,1.0,14.0,container traffic for May 2025.pdf
+2025-05,export,Salt,1.0,20.0,0.0,0.0,3.0,60.0,0.0,0.0,container traffic for May 2025.pdf
+2025-05,export,Spices,0.0,0.0,2.0,23.0,0.0,0.0,2.0,23.0,container traffic for May 2025.pdf
+2025-05,export,Polypropylene,0.0,0.0,0.0,0.0,0.0,0.0,2.0,19.0,container traffic for May 2025.pdf
+2025-05,export,Others,509.0,6777.0,413.0,5381.0,903.0,12120.0,960.0,12350.0,container traffic for May 2025.pdf
+2025-04,import,Tiles,1477.0,41140.0,1790.0,49732.0,1477.0,41140.0,1790.0,49732.0,container traffic for april 2025.pdf
+2025-04,import,Raw Cashew,1334.0,17326.0,447.0,6136.0,1334.0,17326.0,447.0,6136.0,container traffic for april 2025.pdf
+2025-04,import,Salt,220.0,6135.0,122.0,3419.0,220.0,6135.0,122.0,3419.0,container traffic for april 2025.pdf
+2025-04,import,Chemicals,336.0,4896.0,377.0,5517.0,336.0,4896.0,377.0,5517.0,container traffic for april 2025.pdf
+2025-04,import,Bentonite Powder/Lumps,104.0,2907.0,108.0,3027.0,104.0,2907.0,108.0,3027.0,container traffic for april 2025.pdf
+2025-04,import,Wheat,76.0,2102.0,83.0,2319.0,76.0,2102.0,83.0,2319.0,container traffic for april 2025.pdf
+2025-04,import,Polypropylene,149.0,2093.0,166.0,2329.0,149.0,2093.0,166.0,2329.0,container traffic for april 2025.pdf
+2025-04,import,Wood,130.0,1920.0,176.0,2683.0,130.0,1920.0,176.0,2683.0,container traffic for april 2025.pdf
+2025-04,import,Lead,67.0,1646.0,30.0,749.0,67.0,1646.0,30.0,749.0,container traffic for april 2025.pdf
+2025-04,import,Fertilizer,50.0,1332.0,0.0,0.0,50.0,1332.0,0.0,0.0,container traffic for april 2025.pdf
+2025-04,import,Granite/Marble,38.0,1040.0,50.0,1376.0,38.0,1040.0,50.0,1376.0,container traffic for april 2025.pdf
+2025-04,import,Coffee,51.0,901.0,37.0,662.0,51.0,901.0,37.0,662.0,container traffic for april 2025.pdf
+2025-04,import,Food Stuff,38.0,443.0,52.0,685.0,38.0,443.0,52.0,685.0,container traffic for april 2025.pdf
+2025-04,import,China Clay,6.0,166.0,0.0,0.0,6.0,166.0,0.0,0.0,container traffic for april 2025.pdf
+2025-04,import,Machinery,20.0,69.0,12.0,78.0,20.0,69.0,12.0,78.0,container traffic for april 2025.pdf
+2025-04,import,Ply wood,2.0,29.0,10.0,125.0,2.0,29.0,10.0,125.0,container traffic for april 2025.pdf
+2025-04,import,Reefer cargo,2.0,26.0,2.0,26.0,2.0,26.0,2.0,26.0,container traffic for april 2025.pdf
+2025-04,import,Packing Materials,2.0,26.0,0.0,0.0,2.0,26.0,0.0,0.0,container traffic for april 2025.pdf
+2025-04,import,Rice,1.0,26.0,13.0,364.0,1.0,26.0,13.0,364.0,container traffic for april 2025.pdf
+2025-04,import,Flexible Carry Bags,1.0,18.0,1.0,9.0,1.0,18.0,1.0,9.0,container traffic for april 2025.pdf
+2025-04,import,Personal Effects,8.0,17.0,15.0,82.0,8.0,17.0,15.0,82.0,container traffic for april 2025.pdf
+2025-04,import,News Print/Paper,0.0,0.0,77.0,991.0,0.0,0.0,77.0,991.0,container traffic for april 2025.pdf
+2025-04,import,Wax,0.0,0.0,4.0,56.0,0.0,0.0,4.0,56.0,container traffic for april 2025.pdf
+2025-04,import,Cotton,0.0,0.0,4.0,43.0,0.0,0.0,4.0,43.0,container traffic for april 2025.pdf
+2025-04,import,Others,474.0,8605.0,367.0,6553.0,474.0,8605.0,367.0,6553.0,container traffic for april 2025.pdf
+2025-04,export,Coffee,1052.0,19796.0,1363.0,25768.0,1052.0,19796.0,1363.0,25768.0,container traffic for april 2025.pdf
+2025-04,export,Fish Meal,903.0,13159.0,444.0,6931.0,903.0,13159.0,444.0,6931.0,container traffic for april 2025.pdf
+2025-04,export,Food Stuff,325.0,4296.0,256.0,2935.0,325.0,4296.0,256.0,2935.0,container traffic for april 2025.pdf
+2025-04,export,Gherkins / Cucumbers,229.0,4234.0,304.0,5279.0,229.0,4234.0,304.0,5279.0,container traffic for april 2025.pdf
+2025-04,export,Reefer Cargo,246.0,3284.0,422.0,5736.0,246.0,3284.0,422.0,5736.0,container traffic for april 2025.pdf
+2025-04,export,Lead,107.0,2574.0,58.0,1414.0,107.0,2574.0,58.0,1414.0,container traffic for april 2025.pdf
+2025-04,export,Chemicals,128.0,2298.0,147.0,2429.0,128.0,2298.0,147.0,2429.0,container traffic for april 2025.pdf
+2025-04,export,Fish Oil,81.0,1637.0,35.0,709.0,81.0,1637.0,35.0,709.0,container traffic for april 2025.pdf
+2025-04,export,Wood,51.0,1170.0,9.0,168.0,51.0,1170.0,9.0,168.0,container traffic for april 2025.pdf
+2025-04,export,Flexible Carry Bags,104.0,1035.0,116.0,1108.0,104.0,1035.0,116.0,1108.0,container traffic for april 2025.pdf
+2025-04,export,Plywood,42.0,884.0,20.0,393.0,42.0,884.0,20.0,393.0,container traffic for april 2025.pdf
+2025-04,export,Cotton,144.0,739.0,94.0,451.0,144.0,739.0,94.0,451.0,container traffic for april 2025.pdf
+2025-04,export,Machinery,65.0,689.0,202.0,1680.0,65.0,689.0,202.0,1680.0,container traffic for april 2025.pdf
+2025-04,export,Seafood,38.0,549.0,3.0,40.0,38.0,549.0,3.0,40.0,container traffic for april 2025.pdf
+2025-04,export,Garments,71.0,369.0,24.0,170.0,71.0,369.0,24.0,170.0,container traffic for april 2025.pdf
+2025-04,export,Granite/Marble,12.0,304.0,8.0,218.0,12.0,304.0,8.0,218.0,container traffic for april 2025.pdf
+2025-04,export,Personal Effects,22.0,233.0,6.0,54.0,22.0,233.0,6.0,54.0,container traffic for april 2025.pdf
+2025-04,export,Cashew Kernels,15.0,210.0,28.0,481.0,15.0,210.0,28.0,481.0,container traffic for april 2025.pdf
+2025-04,export,Bio Plate,27.0,186.0,12.0,81.0,27.0,186.0,12.0,81.0,container traffic for april 2025.pdf
+2025-04,export,Printed Books/Newspaper,12.0,114.0,39.0,372.0,12.0,114.0,39.0,372.0,container traffic for april 2025.pdf
+2025-04,export,Leaf Springs,3.0,74.0,7.0,148.0,3.0,74.0,7.0,148.0,container traffic for april 2025.pdf
+2025-04,export,Salt,2.0,40.0,0.0,0.0,2.0,40.0,0.0,0.0,container traffic for april 2025.pdf
+2025-04,export,Fertilizer,3.0,25.0,0.0,0.0,3.0,25.0,0.0,0.0,container traffic for april 2025.pdf
+2025-04,export,Polypropylene,0.0,0.0,2.0,19.0,0.0,0.0,2.0,19.0,container traffic for april 2025.pdf
+2025-04,export,Others,394.0,5343.0,547.0,6969.0,394.0,5343.0,547.0,6969.0,container traffic for april 2025.pdf
+2026-08,import,Raw Cashew,3168.0,41582.0,3281.0,43236.0,17433.0,226576.0,20119.0,263168.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Tiles,1402.0,40783.0,929.0,25838.0,5854.0,164549.0,6383.0,177307.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Bentonite Powder/Lumps,85.0,2411.0,61.0,1668.0,751.0,21054.0,401.0,11179.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Salt,82.0,2331.0,104.0,2904.0,403.0,11258.0,831.0,23151.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Wood,160.0,2754.0,202.0,3034.0,690.0,10982.0,967.0,17969.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Coffee,113.0,1911.0,26.0,493.0,516.0,8583.0,203.0,3743.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Polypropylene,126.0,1764.0,232.0,3235.0,574.0,7927.0,885.0,12389.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Lead,78.0,1807.0,89.0,1986.0,282.0,6540.0,405.0,9815.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Chemicals,33.0,609.0,100.0,1715.0,270.0,5756.0,551.0,8824.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Polyethylene,10.0,126.0,66.0,921.0,331.0,5214.0,578.0,7968.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Granite/Marble,38.0,1043.0,41.0,1131.0,173.0,4790.0,229.0,6310.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Fertilizer,0.0,0.0,0.0,0.0,140.0,3787.0,50.0,1332.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Food Stuff,38.0,349.0,79.0,666.0,263.0,2682.0,319.0,3041.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Fish Meal,85.0,1084.0,0.0,0.0,158.0,1986.0,0.0,0.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Wheat,0.0,0.0,18.0,502.0,72.0,1968.0,154.0,4254.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Calcite Powder,26.0,677.0,14.0,387.0,67.0,1800.0,35.0,969.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Rice,12.0,343.0,3.0,80.0,44.0,1234.0,18.0,487.0,container traffic for the month of  August  2026.pdf
+2026-08,import,News Print/Paper,4.0,48.0,8.0,97.0,98.0,1222.0,64.0,784.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Cotton,2.0,18.0,1.0,23.0,80.0,1016.0,1.0,23.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Ply wood,2.0,32.0,31.0,435.0,47.0,602.0,91.0,1286.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Machinery,0.0,0.0,46.0,189.0,78.0,544.0,167.0,913.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Reefer cargo,0.0,0.0,6.0,76.0,16.0,208.0,18.0,209.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Personal Effects,5.0,61.0,6.0,20.0,12.0,163.0,35.0,141.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Flexible Carry Bags,2.0,27.0,0.0,0.0,8.0,109.0,4.0,54.0,container traffic for the month of  August  2026.pdf
+2026-08,import,China Clay,0.0,0.0,0.0,0.0,2.0,56.0,12.0,335.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Packing Materials,4.0,51.0,0.0,0.0,4.0,51.0,8.0,115.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Wax,0.0,0.0,0.0,0.0,2.0,28.0,4.0,51.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Seafood,0.0,0.0,0.0,0.0,0.0,0.0,10.0,201.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Garments,0.0,0.0,0.0,0.0,0.0,0.0,2.0,9.0,container traffic for the month of  August  2026.pdf
+2026-08,import,Others,484.0,9046.0,555.0,9571.0,2554.0,48816.0,2514.0,47275.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Coffee,895.0,16349.0,800.0,14402.0,5567.0,102776.0,4800.0,89476.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Fish Meal,924.0,13625.0,355.0,6317.0,4865.0,75536.0,2902.0,45990.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Gherkins / Cucumbers,307.0,6483.0,428.0,8804.0,1213.0,25009.0,1407.0,27612.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Reefer Cargo,150.0,2059.0,190.0,2623.0,1450.0,19277.0,1159.0,15524.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Food Stuff,275.0,3491.0,271.0,3342.0,1379.0,14622.0,1400.0,18662.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Machinery,336.0,2856.0,342.0,3439.0,1800.0,14084.0,1083.0,11461.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Lead,115.0,2886.0,128.0,3038.0,501.0,12324.0,595.0,14013.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Chemicals,133.0,2306.0,157.0,2879.0,665.0,10928.0,687.0,12073.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Fish Oil,42.0,902.0,48.0,1022.0,412.0,8584.0,239.0,4883.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Flexible Carry Bags,171.0,1671.0,86.0,845.0,639.0,6138.0,538.0,5311.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Rice,0.0,0.0,0.0,0.0,248.0,5888.0,3.0,73.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Seafood,49.0,972.0,3.0,60.0,170.0,3336.0,76.0,1208.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Plywood,61.0,1118.0,62.0,962.0,172.0,3256.0,278.0,5302.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Cotton,117.0,377.0,180.0,848.0,749.0,2707.0,808.0,3875.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Printed Books/Newspaper,44.0,418.0,84.0,806.0,180.0,1660.0,181.0,1745.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Cashew Kernels,55.0,814.0,24.0,323.0,90.0,1309.0,104.0,1515.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Wood,8.0,166.0,26.0,592.0,53.0,1174.0,215.0,4843.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Leaf Springs,8.0,183.0,5.0,120.0,36.0,799.0,30.0,678.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Salt,3.0,85.0,1.0,26.0,21.0,575.0,6.0,135.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Bio Plate,15.0,101.0,7.0,42.0,55.0,367.0,65.0,443.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Garments,2.0,27.0,29.0,275.0,23.0,276.0,175.0,1232.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Wheat,0.0,0.0,0.0,0.0,10.0,264.0,9.0,232.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Granite/Marble,1.0,19.0,11.0,260.0,10.0,250.0,80.0,2060.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Personal Effects,3.0,24.0,15.0,145.0,24.0,236.0,96.0,963.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Spices,0.0,0.0,2.0,24.0,4.0,68.0,3.0,47.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Fertilizer,0.0,0.0,26.0,263.0,5.0,46.0,59.0,640.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Brake Drums,0.0,0.0,3.0,53.0,1.0,18.0,3.0,53.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Wax Candle,0.0,0.0,0.0,0.0,1.0,7.0,0.0,0.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Polypropylene,0.0,0.0,0.0,0.0,0.0,0.0,1.0,20.0,container traffic for the month of  August  2026.pdf
+2026-08,export,Others,700.0,12999.0,390.0,5602.0,3638.0,51139.0,2221.0,28898.0,container traffic for the month of  August  2026.pdf
+2026-09,import,Raw Cashew,3209.0,41672.0,3509.0,45254.0,20642.0,268248.0,23628.0,308422.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Tiles,1869.0,53316.0,1014.0,27539.0,7723.0,217866.0,7397.0,204846.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Bentonite Powder/Lumps,79.0,2199.0,108.0,3016.0,830.0,23253.0,509.0,14195.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Wood,222.0,3113.0,112.0,2111.0,912.0,14095.0,1079.0,20080.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Salt,64.0,1793.0,107.0,2959.0,467.0,13051.0,938.0,26111.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Coffee,135.0,2050.0,6.0,115.0,651.0,10634.0,209.0,3859.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Polypropylene,0.0,0.0,196.0,2729.0,574.0,7927.0,1081.0,15119.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Lead,50.0,1226.0,90.0,2148.0,332.0,7766.0,495.0,11963.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Polyethylene,63.0,1283.0,93.0,1274.0,394.0,6497.0,671.0,9242.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Chemicals,22.0,462.0,23.0,461.0,292.0,6218.0,574.0,9285.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Granite/Marble,19.0,530.0,39.0,1072.0,192.0,5319.0,268.0,7382.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Fertilizer,2.0,19.0,0.0,0.0,142.0,3806.0,50.0,1332.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Food Stuff,34.0,330.0,14.0,137.0,297.0,3013.0,333.0,3178.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Wheat,22.0,627.0,6.0,168.0,94.0,2595.0,160.0,4422.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Fish Meal,12.0,228.0,0.0,0.0,170.0,2214.0,0.0,0.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Calcite Powder,12.0,336.0,14.0,386.0,79.0,2135.0,49.0,1355.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,News Print/Paper,30.0,405.0,1.0,18.0,128.0,1627.0,65.0,802.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Rice,4.0,114.0,6.0,164.0,48.0,1347.0,24.0,650.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Cotton,0.0,0.0,0.0,0.0,80.0,1016.0,1.0,23.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Ply wood,10.0,140.0,0.0,0.0,57.0,742.0,91.0,1286.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Machinery,22.0,129.0,31.0,209.0,100.0,673.0,198.0,1122.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Reefer cargo,0.0,0.0,8.0,103.0,16.0,208.0,26.0,312.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Personal Effects,0.0,0.0,1.0,4.0,12.0,163.0,36.0,144.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Flexible Carry Bags,0.0,0.0,0.0,0.0,8.0,109.0,4.0,54.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,China Clay,0.0,0.0,0.0,0.0,2.0,56.0,12.0,335.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Packing Materials,0.0,0.0,4.0,13.0,4.0,51.0,12.0,127.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Wax,0.0,0.0,0.0,0.0,2.0,28.0,4.0,51.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Seafood,0.0,0.0,0.0,0.0,0.0,0.0,10.0,201.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Garments,0.0,0.0,0.0,0.0,0.0,0.0,2.0,9.0,container traffic for the month of  Sept  2026.pdf
+2026-09,import,Others,462.0,8754.0,212.0,3557.0,3016.0,57570.0,2726.0,50832.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Coffee,707.0,12108.0,794.0,14347.0,6274.0,114884.0,5594.0,103823.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Reefer Cargo,576.0,8139.0,626.0,8708.0,2026.0,27416.0,1785.0,24232.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Cashew Kernels,89.0,1787.0,110.0,1504.0,179.0,3097.0,214.0,3019.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Leaf Springs,6.0,138.0,7.0,160.0,42.0,938.0,37.0,838.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Plywood,66.0,1330.0,29.0,453.0,238.0,4586.0,307.0,5755.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Garments,2.0,44.0,5.0,59.0,25.0,320.0,180.0,1291.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Chemicals,128.0,2093.0,160.0,2757.0,793.0,13021.0,847.0,14830.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Fish Meal,847.0,13183.0,610.0,9521.0,5712.0,88718.0,3512.0,55511.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Granite/Marble,1.0,25.0,35.0,879.0,11.0,274.0,115.0,2938.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Fish Oil,89.0,1858.0,56.0,1172.0,501.0,10442.0,295.0,6055.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Salt,5.0,139.0,0.0,0.0,26.0,714.0,6.0,135.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Wax Candle,0.0,0.0,0.0,0.0,1.0,7.0,0.0,0.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Gherkins / Cucumbers,207.0,4278.0,342.0,7164.0,1420.0,29287.0,1749.0,34777.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Bio Plate,6.0,41.0,11.0,75.0,61.0,409.0,76.0,518.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Cotton,134.0,481.0,161.0,668.0,883.0,3188.0,969.0,4543.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Spices,2.0,50.0,0.0,0.0,6.0,118.0,3.0,47.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Machinery,250.0,2366.0,347.0,3084.0,2050.0,16450.0,1430.0,14545.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Lead,45.0,1134.0,130.0,3162.0,546.0,13458.0,725.0,17175.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Printed Books/Newspaper,18.0,165.0,46.0,477.0,198.0,1826.0,227.0,2221.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Food Stuff,229.0,2800.0,235.0,2639.0,1608.0,17422.0,1635.0,21302.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Rice,1.0,28.0,0.0,0.0,249.0,5916.0,3.0,73.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Wood,8.0,195.0,13.0,305.0,61.0,1368.0,228.0,5148.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Polypropylene,0.0,0.0,1.0,7.0,0.0,0.0,2.0,28.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Brake Drums,0.0,0.0,3.0,52.0,1.0,18.0,6.0,105.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Personal Effects,2.0,26.0,12.0,98.0,26.0,263.0,108.0,1061.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Seafood,29.0,546.0,6.0,118.0,199.0,3882.0,82.0,1326.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Flexible Carry Bags,143.0,1396.0,154.0,1521.0,782.0,7533.0,692.0,6833.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Fertilizer,1.0,20.0,16.0,201.0,6.0,66.0,75.0,841.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Wheat,1.0,27.0,0.0,0.0,11.0,291.0,9.0,232.0,container traffic for the month of  Sept  2026.pdf
+2026-09,export,Others,528.0,9027.0,550.0,6572.0,4166.0,60166.0,2771.0,35470.0,container traffic for the month of  Sept  2026.pdf
+2026-04,import,Tiles,790.0,21993.0,1477.0,41140.0,790.0,21993.0,1477.0,41140.0,container traffic for the month of April  2026.pdf
+2026-04,import,Raw Cashew,1154.0,14402.0,1334.0,17326.0,1154.0,14402.0,1334.0,17326.0,container traffic for the month of April  2026.pdf
+2026-04,import,Bentonite Powder/Lumps,292.0,8183.0,104.0,2907.0,292.0,8183.0,104.0,2907.0,container traffic for the month of April  2026.pdf
+2026-04,import,Polyethylene,182.0,2833.0,170.0,2349.0,182.0,2833.0,170.0,2349.0,container traffic for the month of April  2026.pdf
+2026-04,import,Salt,85.0,2356.0,220.0,6135.0,85.0,2356.0,220.0,6135.0,container traffic for the month of April  2026.pdf
+2026-04,import,Fertilizer,80.0,2164.0,50.0,1332.0,80.0,2164.0,50.0,1332.0,container traffic for the month of April  2026.pdf
+2026-04,import,Wood,139.0,2023.0,130.0,1920.0,139.0,2023.0,130.0,1920.0,container traffic for the month of April  2026.pdf
+2026-04,import,Chemicals,68.0,1554.0,166.0,2547.0,68.0,1554.0,166.0,2547.0,container traffic for the month of April  2026.pdf
+2026-04,import,Coffee,80.0,1517.0,51.0,901.0,80.0,1517.0,51.0,901.0,container traffic for the month of April  2026.pdf
+2026-04,import,Wheat,45.0,1255.0,76.0,2102.0,45.0,1255.0,76.0,2102.0,container traffic for the month of April  2026.pdf
+2026-04,import,Cotton,66.0,880.0,0.0,0.0,66.0,880.0,0.0,0.0,container traffic for the month of April  2026.pdf
+2026-04,import,Granite/Marble,22.0,611.0,38.0,1040.0,22.0,611.0,38.0,1040.0,container traffic for the month of April  2026.pdf
+2026-04,import,Food Stuff,56.0,561.0,38.0,443.0,56.0,561.0,38.0,443.0,container traffic for the month of April  2026.pdf
+2026-04,import,Polypropylene,40.0,560.0,149.0,2093.0,40.0,560.0,149.0,2093.0,container traffic for the month of April  2026.pdf
+2026-04,import,Lead,18.0,398.0,67.0,1646.0,18.0,398.0,67.0,1646.0,container traffic for the month of April  2026.pdf
+2026-04,import,Calcite Powder,14.0,366.0,1.0,28.0,14.0,366.0,1.0,28.0,container traffic for the month of April  2026.pdf
+2026-04,import,Fish Meal,10.0,200.0,0.0,0.0,10.0,200.0,0.0,0.0,container traffic for the month of April  2026.pdf
+2026-04,import,Rice,5.0,139.0,1.0,26.0,5.0,139.0,1.0,26.0,container traffic for the month of April  2026.pdf
+2026-04,import,Machinery,23.0,110.0,20.0,69.0,23.0,110.0,20.0,69.0,container traffic for the month of April  2026.pdf
+2026-04,import,Ply wood,6.0,78.0,2.0,29.0,6.0,78.0,2.0,29.0,container traffic for the month of April  2026.pdf
+2026-04,import,Wax,2.0,28.0,0.0,0.0,2.0,28.0,0.0,0.0,container traffic for the month of April  2026.pdf
+2026-04,import,News Print/Paper,2.0,24.0,0.0,0.0,2.0,24.0,0.0,0.0,container traffic for the month of April  2026.pdf
+2026-04,import,Personal Effects,0.0,0.0,8.0,17.0,0.0,0.0,8.0,17.0,container traffic for the month of April  2026.pdf
+2026-04,import,Packing Materials,0.0,0.0,2.0,26.0,0.0,0.0,2.0,26.0,container traffic for the month of April  2026.pdf
+2026-04,import,Flexible Carry Bags,0.0,0.0,1.0,18.0,0.0,0.0,1.0,18.0,container traffic for the month of April  2026.pdf
+2026-04,import,Reefer cargo,0.0,0.0,2.0,26.0,0.0,0.0,2.0,26.0,container traffic for the month of April  2026.pdf
+2026-04,import,China Clay,0.0,0.0,6.0,166.0,0.0,0.0,6.0,166.0,container traffic for the month of April  2026.pdf
+2026-04,import,Others,500.0,9789.0,473.0,8577.0,500.0,9789.0,473.0,8577.0,container traffic for the month of April  2026.pdf
+2026-04,export,Coffee,1393.0,26295.0,1052.0,19796.0,1393.0,26295.0,1052.0,19796.0,container traffic for the month of April  2026.pdf
+2026-04,export,Fish Meal,974.0,15331.0,903.0,13159.0,974.0,15331.0,903.0,13159.0,container traffic for the month of April  2026.pdf
+2026-04,export,Reefer Cargo,400.0,5363.0,246.0,3284.0,400.0,5363.0,246.0,3284.0,container traffic for the month of April  2026.pdf
+2026-04,export,Gherkins / Cucumbers,233.0,4861.0,229.0,4234.0,233.0,4861.0,229.0,4234.0,container traffic for the month of April  2026.pdf
+2026-04,export,Food Stuff,297.0,3375.0,325.0,4296.0,297.0,3375.0,325.0,4296.0,container traffic for the month of April  2026.pdf
+2026-04,export,Lead,132.0,3253.0,107.0,2574.0,132.0,3253.0,107.0,2574.0,container traffic for the month of April  2026.pdf
+2026-04,export,Machinery,340.0,2664.0,65.0,689.0,340.0,2664.0,65.0,689.0,container traffic for the month of April  2026.pdf
+2026-04,export,Fish Oil,127.0,2658.0,81.0,1637.0,127.0,2658.0,81.0,1637.0,container traffic for the month of April  2026.pdf
+2026-04,export,Chemicals,117.0,1931.0,128.0,2298.0,117.0,1931.0,128.0,2298.0,container traffic for the month of April  2026.pdf
+2026-04,export,Flexible Carry Bags,101.0,956.0,104.0,1035.0,101.0,956.0,104.0,1035.0,container traffic for the month of April  2026.pdf
+2026-04,export,Rice,36.0,855.0,0.0,0.0,36.0,855.0,0.0,0.0,container traffic for the month of April  2026.pdf
+2026-04,export,Printed Books/Newspaper,46.0,406.0,12.0,114.0,46.0,406.0,12.0,114.0,container traffic for the month of April  2026.pdf
+2026-04,export,Cotton,128.0,387.0,144.0,739.0,128.0,387.0,144.0,739.0,container traffic for the month of April  2026.pdf
+2026-04,export,Seafood,19.0,369.0,38.0,549.0,19.0,369.0,38.0,549.0,container traffic for the month of April  2026.pdf
+2026-04,export,Plywood,19.0,368.0,42.0,884.0,19.0,368.0,42.0,884.0,container traffic for the month of April  2026.pdf
+2026-04,export,Leaf Springs,8.0,154.0,3.0,74.0,8.0,154.0,3.0,74.0,container traffic for the month of April  2026.pdf
+2026-04,export,Wood,5.0,119.0,51.0,1170.0,5.0,119.0,51.0,1170.0,container traffic for the month of April  2026.pdf
+2026-04,export,Cashew Kernels,8.0,85.0,15.0,210.0,8.0,85.0,15.0,210.0,container traffic for the month of April  2026.pdf
+2026-04,export,Personal Effects,7.0,83.0,22.0,233.0,7.0,83.0,22.0,233.0,container traffic for the month of April  2026.pdf
+2026-04,export,Granite/Marble,3.0,82.0,12.0,304.0,3.0,82.0,12.0,304.0,container traffic for the month of April  2026.pdf
+2026-04,export,Bio Plate,8.0,52.0,27.0,186.0,8.0,52.0,27.0,186.0,container traffic for the month of April  2026.pdf
+2026-04,export,Garments,6.0,44.0,71.0,369.0,6.0,44.0,71.0,369.0,container traffic for the month of April  2026.pdf
+2026-04,export,Wheat,1.0,12.0,0.0,0.0,1.0,12.0,0.0,0.0,container traffic for the month of April  2026.pdf
+2026-04,export,Fertilizer,1.0,7.0,3.0,25.0,1.0,7.0,3.0,25.0,container traffic for the month of April  2026.pdf
+2026-04,export,Salt,0.0,0.0,2.0,40.0,0.0,0.0,2.0,40.0,container traffic for the month of April  2026.pdf
+2026-04,export,Others,460.0,6069.0,394.0,5343.0,460.0,6069.0,394.0,5343.0,container traffic for the month of April  2026.pdf
+2026-07,import,Raw Cashew,3703.0,49389.0,6777.0,88257.0,14265.0,184994.0,16838.0,219933.0,container traffic for the month of July 2026.pdf
+2026-07,import,Tiles,1658.0,46153.0,1297.0,36040.0,4452.0,123766.0,5454.0,151469.0,container traffic for the month of July 2026.pdf
+2026-07,import,Bentonite Powder/Lumps,134.0,3739.0,41.0,1145.0,666.0,18643.0,340.0,9510.0,container traffic for the month of July 2026.pdf
+2026-07,import,Salt,64.0,1779.0,146.0,4071.0,321.0,8927.0,727.0,20247.0,container traffic for the month of July 2026.pdf
+2026-07,import,Wood,137.0,1996.0,380.0,8548.0,530.0,8228.0,765.0,14935.0,container traffic for the month of July 2026.pdf
+2026-07,import,Coffee,129.0,1891.0,17.0,312.0,403.0,6672.0,177.0,3250.0,container traffic for the month of July 2026.pdf
+2026-07,import,Polypropylene,64.0,891.0,111.0,1540.0,448.0,6163.0,653.0,9154.0,container traffic for the month of July 2026.pdf
+2026-07,import,Chemicals,56.0,1173.0,64.0,1049.0,237.0,5148.0,451.0,7108.0,container traffic for the month of July 2026.pdf
+2026-07,import,Polyethylene,72.0,990.0,64.0,830.0,321.0,5088.0,512.0,7047.0,container traffic for the month of July 2026.pdf
+2026-07,import,Lead,78.0,1776.0,101.0,2503.0,204.0,4733.0,316.0,7829.0,container traffic for the month of July 2026.pdf
+2026-07,import,Fertilizer,0.0,0.0,0.0,0.0,140.0,3787.0,50.0,1332.0,container traffic for the month of July 2026.pdf
+2026-07,import,Granite/Marble,40.0,1112.0,35.0,957.0,135.0,3747.0,188.0,5179.0,container traffic for the month of July 2026.pdf
+2026-07,import,Food Stuff,40.0,544.0,44.0,431.0,225.0,2334.0,240.0,2374.0,container traffic for the month of July 2026.pdf
+2026-07,import,Wheat,11.0,303.0,17.0,476.0,72.0,1968.0,136.0,3753.0,container traffic for the month of July 2026.pdf
+2026-07,import,News Print/Paper,10.0,112.0,6.0,82.0,94.0,1174.0,56.0,687.0,container traffic for the month of July 2026.pdf
+2026-07,import,Calcite Powder,16.0,449.0,5.0,139.0,41.0,1123.0,21.0,582.0,container traffic for the month of July 2026.pdf
+2026-07,import,Cotton,2.0,18.0,0.0,0.0,78.0,998.0,0.0,0.0,container traffic for the month of July 2026.pdf
+2026-07,import,Fish Meal,4.0,80.0,0.0,0.0,73.0,902.0,0.0,0.0,container traffic for the month of July 2026.pdf
+2026-07,import,Rice,11.0,307.0,4.0,104.0,32.0,891.0,15.0,406.0,container traffic for the month of July 2026.pdf
+2026-07,import,Ply wood,8.0,81.0,23.0,333.0,45.0,570.0,60.0,851.0,container traffic for the month of July 2026.pdf
+2026-07,import,Machinery,10.0,79.0,24.0,116.0,78.0,544.0,121.0,724.0,container traffic for the month of July 2026.pdf
+2026-07,import,Reefer cargo,10.0,130.0,4.0,39.0,16.0,208.0,12.0,133.0,container traffic for the month of July 2026.pdf
+2026-07,import,Personal Effects,4.0,57.0,12.0,53.0,7.0,103.0,29.0,121.0,container traffic for the month of July 2026.pdf
+2026-07,import,Flexible Carry Bags,0.0,0.0,2.0,27.0,6.0,82.0,4.0,54.0,container traffic for the month of July 2026.pdf
+2026-07,import,China Clay,1.0,28.0,0.0,0.0,2.0,56.0,12.0,335.0,container traffic for the month of July 2026.pdf
+2026-07,import,Wax,0.0,0.0,2.0,26.0,2.0,28.0,4.0,51.0,container traffic for the month of July 2026.pdf
+2026-07,import,Packing Materials,0.0,0.0,2.0,22.0,0.0,0.0,8.0,115.0,container traffic for the month of July 2026.pdf
+2026-07,import,Seafood,0.0,0.0,10.0,201.0,0.0,0.0,10.0,201.0,container traffic for the month of July 2026.pdf
+2026-07,import,Garments,0.0,0.0,2.0,9.0,0.0,0.0,2.0,9.0,container traffic for the month of July 2026.pdf
+2026-07,import,Others,500.0,9056.0,589.0,11079.0,2070.0,39770.0,1959.0,37703.0,container traffic for the month of July 2026.pdf
+2026-07,export,Coffee,766.0,13575.0,888.0,16438.0,4672.0,86427.0,4000.0,75074.0,container traffic for the month of July 2026.pdf
+2026-07,export,Fish Meal,1045.0,15481.0,509.0,8531.0,3941.0,61911.0,2547.0,39673.0,container traffic for the month of July 2026.pdf
+2026-07,export,Gherkins / Cucumbers,324.0,6720.0,381.0,7923.0,906.0,18525.0,979.0,18808.0,container traffic for the month of July 2026.pdf
+2026-07,export,Reefer Cargo,190.0,2521.0,184.0,2380.0,1300.0,17218.0,969.0,12901.0,container traffic for the month of July 2026.pdf
+2026-07,export,Machinery,274.0,2105.0,188.0,2013.0,1464.0,11229.0,741.0,8023.0,container traffic for the month of July 2026.pdf
+2026-07,export,Food Stuff,193.0,2189.0,289.0,3588.0,1104.0,11131.0,1129.0,15320.0,container traffic for the month of July 2026.pdf
+2026-07,export,Lead,65.0,1575.0,152.0,3467.0,386.0,9438.0,467.0,10976.0,container traffic for the month of July 2026.pdf
+2026-07,export,Chemicals,117.0,1921.0,145.0,2468.0,532.0,8623.0,530.0,9194.0,container traffic for the month of July 2026.pdf
+2026-07,export,Fish Oil,138.0,2882.0,62.0,1256.0,370.0,7682.0,191.0,3860.0,container traffic for the month of July 2026.pdf
+2026-07,export,Rice,22.0,523.0,2.0,46.0,248.0,5888.0,3.0,73.0,container traffic for the month of July 2026.pdf
+2026-07,export,Flexible Carry Bags,121.0,1161.0,84.0,815.0,468.0,4467.0,452.0,4466.0,container traffic for the month of July 2026.pdf
+2026-07,export,Seafood,60.0,1175.0,9.0,143.0,121.0,2364.0,73.0,1147.0,container traffic for the month of July 2026.pdf
+2026-07,export,Cotton,122.0,468.0,104.0,461.0,632.0,2329.0,628.0,3026.0,container traffic for the month of July 2026.pdf
+2026-07,export,Plywood,52.0,1004.0,53.0,1032.0,111.0,2138.0,216.0,4340.0,container traffic for the month of July 2026.pdf
+2026-07,export,Printed Books/Newspaper,24.0,220.0,48.0,479.0,136.0,1242.0,97.0,939.0,container traffic for the month of July 2026.pdf
+2026-07,export,Wood,9.0,171.0,46.0,1024.0,45.0,1008.0,189.0,4252.0,container traffic for the month of July 2026.pdf
+2026-07,export,Leaf Springs,7.0,166.0,8.0,141.0,28.0,616.0,25.0,558.0,container traffic for the month of July 2026.pdf
+2026-07,export,Cashew Kernels,10.0,160.0,30.0,432.0,35.0,495.0,80.0,1192.0,container traffic for the month of July 2026.pdf
+2026-07,export,Salt,11.0,298.0,2.0,49.0,18.0,491.0,5.0,110.0,container traffic for the month of July 2026.pdf
+2026-07,export,Bio Plate,10.0,62.0,7.0,47.0,40.0,266.0,58.0,401.0,container traffic for the month of July 2026.pdf
+2026-07,export,Wheat,0.0,0.0,0.0,0.0,10.0,264.0,9.0,232.0,container traffic for the month of July 2026.pdf
+2026-07,export,Garments,0.0,0.0,42.0,357.0,21.0,249.0,146.0,958.0,container traffic for the month of July 2026.pdf
+2026-07,export,Granite/Marble,1.0,28.0,20.0,528.0,9.0,230.0,69.0,1799.0,container traffic for the month of July 2026.pdf
+2026-07,export,Personal Effects,6.0,47.0,18.0,202.0,21.0,212.0,81.0,819.0,container traffic for the month of July 2026.pdf
+2026-07,export,Spices,0.0,0.0,0.0,0.0,4.0,68.0,1.0,23.0,container traffic for the month of July 2026.pdf
+2026-07,export,Fertilizer,2.0,20.0,16.0,160.0,5.0,46.0,33.0,376.0,container traffic for the month of July 2026.pdf
+2026-07,export,Brake Drums,0.0,0.0,0.0,0.0,1.0,18.0,0.0,0.0,container traffic for the month of July 2026.pdf
+2026-07,export,Wax Candle,0.0,0.0,0.0,0.0,1.0,7.0,0.0,0.0,container traffic for the month of July 2026.pdf
+2026-07,export,Polypropylene,0.0,0.0,1.0,20.0,0.0,0.0,1.0,20.0,container traffic for the month of July 2026.pdf
+2026-07,export,Others,888.0,11961.0,431.0,4688.0,2938.0,38140.0,1831.0,23296.0,container traffic for the month of July 2026.pdf
+2026-06,import,Raw Cashew,6065.0,78890.0,4809.0,61779.0,10562.0,135605.0,10061.0,131675.0,container traffic for the month of June 2026.pdf
+2026-06,import,Tiles,1272.0,35299.0,1319.0,36374.0,2794.0,77614.0,4157.0,115429.0,container traffic for the month of June 2026.pdf
+2026-06,import,Bentonite Powder/Lumps,96.0,2684.0,59.0,1651.0,532.0,14903.0,299.0,8366.0,container traffic for the month of June 2026.pdf
+2026-06,import,Salt,103.0,2867.0,177.0,4934.0,257.0,7148.0,581.0,16176.0,container traffic for the month of June 2026.pdf
+2026-06,import,Wood,132.0,2223.0,112.0,1930.0,393.0,6232.0,385.0,6387.0,container traffic for the month of June 2026.pdf
+2026-06,import,Polypropylene,204.0,2779.0,223.0,3148.0,384.0,5273.0,542.0,7613.0,container traffic for the month of June 2026.pdf
+2026-06,import,Coffee,113.0,1765.0,73.0,1370.0,274.0,4781.0,160.0,2938.0,container traffic for the month of June 2026.pdf
+2026-06,import,Polyethylene,12.0,169.0,72.0,1032.0,249.0,4098.0,448.0,6216.0,container traffic for the month of June 2026.pdf
+2026-06,import,Chemicals,62.0,1213.0,153.0,2345.0,181.0,3975.0,387.0,6059.0,container traffic for the month of June 2026.pdf
+2026-06,import,Fertilizer,0.0,0.0,0.0,0.0,140.0,3787.0,50.0,1332.0,container traffic for the month of June 2026.pdf
+2026-06,import,Lead,79.0,1872.0,84.0,2084.0,126.0,2957.0,215.0,5326.0,container traffic for the month of June 2026.pdf
+2026-06,import,Granite/Marble,41.0,1138.0,53.0,1476.0,95.0,2636.0,153.0,4221.0,container traffic for the month of June 2026.pdf
+2026-06,import,Food Stuff,61.0,636.0,96.0,854.0,185.0,1789.0,196.0,1944.0,container traffic for the month of June 2026.pdf
+2026-06,import,Wheat,7.0,159.0,9.0,248.0,61.0,1665.0,119.0,3277.0,container traffic for the month of June 2026.pdf
+2026-06,import,News Print/Paper,42.0,495.0,34.0,413.0,84.0,1062.0,50.0,605.0,container traffic for the month of June 2026.pdf
+2026-06,import,Cotton,10.0,100.0,0.0,0.0,76.0,980.0,0.0,0.0,container traffic for the month of June 2026.pdf
+2026-06,import,Fish Meal,59.0,623.0,0.0,0.0,69.0,822.0,0.0,0.0,container traffic for the month of June 2026.pdf
+2026-06,import,Calcite Powder,4.0,112.0,8.0,222.0,25.0,674.0,16.0,443.0,container traffic for the month of June 2026.pdf
+2026-06,import,Rice,10.0,278.0,10.0,277.0,21.0,584.0,11.0,303.0,container traffic for the month of June 2026.pdf
+2026-06,import,Ply wood,25.0,337.0,27.0,379.0,37.0,489.0,37.0,518.0,container traffic for the month of June 2026.pdf
+2026-06,import,Machinery,37.0,249.0,60.0,480.0,68.0,465.0,97.0,608.0,container traffic for the month of June 2026.pdf
+2026-06,import,Flexible Carry Bags,6.0,82.0,1.0,9.0,6.0,82.0,2.0,27.0,container traffic for the month of June 2026.pdf
+2026-06,import,Reefer cargo,6.0,78.0,0.0,0.0,6.0,78.0,8.0,93.0,container traffic for the month of June 2026.pdf
+2026-06,import,Personal Effects,3.0,46.0,6.0,39.0,3.0,46.0,17.0,67.0,container traffic for the month of June 2026.pdf
+2026-06,import,Wax,0.0,0.0,0.0,0.0,2.0,28.0,2.0,25.0,container traffic for the month of June 2026.pdf
+2026-06,import,China Clay,0.0,0.0,6.0,169.0,1.0,28.0,12.0,335.0,container traffic for the month of June 2026.pdf
+2026-06,import,Packing Materials,0.0,0.0,0.0,0.0,0.0,0.0,6.0,92.0,container traffic for the month of June 2026.pdf
+2026-06,import,Others,495.0,9842.0,469.0,9671.0,1570.0,30715.0,1370.0,26625.0,container traffic for the month of June 2026.pdf
+2026-06,export,Coffee,1473.0,26893.0,1094.0,20620.0,3906.0,72851.0,3112.0,58636.0,container traffic for the month of June 2026.pdf
+2026-06,export,Fish Meal,943.0,15220.0,552.0,8509.0,2896.0,46430.0,2038.0,31142.0,container traffic for the month of June 2026.pdf
+2026-06,export,Reefer Cargo,340.0,4552.0,279.0,3768.0,1110.0,14697.0,785.0,10521.0,container traffic for the month of June 2026.pdf
+2026-06,export,Gherkins / Cucumbers,186.0,3840.0,193.0,3706.0,582.0,11806.0,598.0,10885.0,container traffic for the month of June 2026.pdf
+2026-06,export,Machinery,581.0,4148.0,308.0,3394.0,1190.0,9124.0,553.0,6009.0,container traffic for the month of June 2026.pdf
+2026-06,export,Food Stuff,412.0,3610.0,330.0,4689.0,911.0,8943.0,840.0,11732.0,container traffic for the month of June 2026.pdf
+2026-06,export,Lead,63.0,1542.0,126.0,3020.0,321.0,7863.0,315.0,7509.0,container traffic for the month of June 2026.pdf
+2026-06,export,Chemicals,143.0,2261.0,158.0,2710.0,415.0,6702.0,385.0,6726.0,container traffic for the month of June 2026.pdf
+2026-06,export,Rice,61.0,1452.0,1.0,28.0,226.0,5365.0,1.0,28.0,container traffic for the month of June 2026.pdf
+2026-06,export,Fish Oil,56.0,1177.0,30.0,607.0,232.0,4800.0,129.0,2605.0,container traffic for the month of June 2026.pdf
+2026-06,export,Flexible Carry Bags,157.0,1510.0,143.0,1431.0,347.0,3306.0,368.0,3652.0,container traffic for the month of June 2026.pdf
+2026-06,export,Cotton,249.0,900.0,183.0,849.0,510.0,1862.0,524.0,2565.0,container traffic for the month of June 2026.pdf
+2026-06,export,Seafood,16.0,304.0,12.0,192.0,61.0,1189.0,64.0,1005.0,container traffic for the month of June 2026.pdf
+2026-06,export,Plywood,17.0,350.0,62.0,1170.0,59.0,1133.0,163.0,3308.0,container traffic for the month of June 2026.pdf
+2026-06,export,Printed Books/Newspaper,40.0,351.0,17.0,169.0,112.0,1023.0,49.0,460.0,container traffic for the month of June 2026.pdf
+2026-06,export,Wood,27.0,624.0,49.0,1073.0,36.0,837.0,143.0,3227.0,container traffic for the month of June 2026.pdf
+2026-06,export,Leaf Springs,7.0,167.0,6.0,145.0,21.0,451.0,17.0,416.0,container traffic for the month of June 2026.pdf
+2026-06,export,Cashew Kernels,11.0,166.0,18.0,283.0,25.0,335.0,50.0,761.0,container traffic for the month of June 2026.pdf
+2026-06,export,Wheat,2.0,57.0,0.0,0.0,10.0,264.0,9.0,232.0,container traffic for the month of June 2026.pdf
+2026-06,export,Garments,15.0,205.0,20.0,154.0,21.0,249.0,104.0,601.0,container traffic for the month of June 2026.pdf
+2026-06,export,Bio Plate,14.0,94.0,14.0,105.0,30.0,204.0,51.0,354.0,container traffic for the month of June 2026.pdf
+2026-06,export,Granite/Marble,5.0,121.0,12.0,307.0,8.0,203.0,49.0,1271.0,container traffic for the month of June 2026.pdf
+2026-06,export,Salt,7.0,192.0,0.0,0.0,7.0,192.0,3.0,60.0,container traffic for the month of June 2026.pdf
+2026-06,export,Personal Effects,2.0,26.0,14.0,138.0,15.0,165.0,63.0,617.0,container traffic for the month of June 2026.pdf
+2026-06,export,Spices,1.0,28.0,1.0,23.0,4.0,68.0,1.0,23.0,container traffic for the month of June 2026.pdf
+2026-06,export,Fertilizer,0.0,0.0,2.0,20.0,3.0,27.0,17.0,216.0,container traffic for the month of June 2026.pdf
+2026-06,export,Brake Drums,1.0,18.0,0.0,0.0,1.0,18.0,0.0,0.0,container traffic for the month of June 2026.pdf
+2026-06,export,Wax Candle,1.0,7.0,0.0,0.0,1.0,7.0,0.0,0.0,container traffic for the month of June 2026.pdf
+2026-06,export,Others,1081.0,14183.0,497.0,6488.0,2050.0,26179.0,1400.0,18609.0,container traffic for the month of June 2026.pdf
+2026-03,import,Tiles,1954.0,52795.0,1739.0,48417.0,17595.0,487882.0,17993.0,502821.0,container traffic for the month of March 2026.pdf
+2026-03,import,Raw Cashew,952.0,12504.0,951.0,12765.0,27530.0,359770.0,23525.0,321028.0,container traffic for the month of March 2026.pdf
+2026-03,import,Salt,154.0,4154.0,181.0,5046.0,1852.0,51145.0,1905.0,53209.0,container traffic for the month of March 2026.pdf
+2026-03,import,Bentonite Powder/Lumps,218.0,6011.0,126.0,3535.0,1558.0,43675.0,849.0,23789.0,container traffic for the month of March 2026.pdf
+2026-03,import,Wood,153.0,2724.0,141.0,2433.0,2444.0,41810.0,2788.0,44884.0,container traffic for the month of March 2026.pdf
+2026-03,import,Chemicals,78.0,1735.0,311.0,4358.0,1905.0,29786.0,2994.0,45793.0,container traffic for the month of March 2026.pdf
+2026-03,import,Polypropylene,171.0,2696.0,201.0,2819.0,2034.0,28771.0,1188.0,16676.0,container traffic for the month of March 2026.pdf
+2026-03,import,Lead,48.0,1148.0,87.0,1835.0,1084.0,25373.0,1283.0,31216.0,container traffic for the month of March 2026.pdf
+2026-03,import,Granite/Marble,69.0,1900.0,107.0,2920.0,605.0,16655.0,748.0,20631.0,container traffic for the month of March 2026.pdf
+2026-03,import,Wheat,73.0,2039.0,5.0,130.0,397.0,10961.0,195.0,5443.0,container traffic for the month of March 2026.pdf
+2026-03,import,Coffee,38.0,703.0,39.0,700.0,449.0,8340.0,717.0,12191.0,container traffic for the month of March 2026.pdf
+2026-03,import,Food Stuff,18.0,224.0,26.0,467.0,573.0,5669.0,547.0,6557.0,container traffic for the month of March 2026.pdf
+2026-03,import,Ply wood,58.0,806.0,10.0,134.0,333.0,4612.0,76.0,1007.0,container traffic for the month of March 2026.pdf
+2026-03,import,Calcite Powder,14.0,389.0,0.0,0.0,139.0,3859.0,0.0,0.0,container traffic for the month of March 2026.pdf
+2026-03,import,Fish Meal,33.0,559.0,0.0,0.0,159.0,2551.0,18.0,213.0,container traffic for the month of March 2026.pdf
+2026-03,import,News Print/Paper,10.0,124.0,30.0,364.0,152.0,1980.0,528.0,6374.0,container traffic for the month of March 2026.pdf
+2026-03,import,Machinery,5.0,35.0,8.0,18.0,302.0,1718.0,174.0,1058.0,container traffic for the month of March 2026.pdf
+2026-03,import,Rice,6.0,168.0,5.0,139.0,59.0,1608.0,96.0,2670.0,container traffic for the month of March 2026.pdf
+2026-03,import,Fertilizer,0.0,0.0,0.0,0.0,50.0,1332.0,27.0,689.0,container traffic for the month of March 2026.pdf
+2026-03,import,Personal Effects,4.0,9.0,1.0,1.0,109.0,503.0,138.0,621.0,container traffic for the month of March 2026.pdf
+2026-03,import,China Clay,0.0,0.0,0.0,0.0,13.0,363.0,6.0,167.0,container traffic for the month of March 2026.pdf
+2026-03,import,Reefer cargo,0.0,0.0,0.0,0.0,28.0,333.0,20.0,230.0,container traffic for the month of March 2026.pdf
+2026-03,import,Flexible Carry Bags,0.0,0.0,9.0,113.0,16.0,213.0,31.0,382.0,container traffic for the month of March 2026.pdf
+2026-03,import,Seafood,0.0,0.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for the month of March 2026.pdf
+2026-03,import,Packing Materials,0.0,0.0,0.0,0.0,14.0,147.0,13.0,173.0,container traffic for the month of March 2026.pdf
+2026-03,import,Cotton,5.0,72.0,0.0,0.0,10.0,134.0,4.0,43.0,container traffic for the month of March 2026.pdf
+2026-03,import,Limestone,0.0,0.0,0.0,0.0,5.0,127.0,0.0,0.0,container traffic for the month of March 2026.pdf
+2026-03,import,Wax,0.0,0.0,2.0,26.0,8.0,104.0,16.0,211.0,container traffic for the month of March 2026.pdf
+2026-03,import,Garments,0.0,0.0,0.0,0.0,2.0,9.0,10.0,71.0,container traffic for the month of March 2026.pdf
+2026-03,import,Others,472.0,8390.0,638.0,12358.0,5972.0,105920.0,9034.0,168575.0,container traffic for the month of March 2026.pdf
+2026-03,export,Coffee,1410.0,26437.0,1626.0,29822.0,11208.0,205750.0,12017.0,224146.0,container traffic for the month of March 2026.pdf
+2026-03,export,Fish Meal,850.0,13580.0,823.0,12363.0,11441.0,178453.0,6792.0,110880.0,container traffic for the month of March 2026.pdf
+2026-03,export,Gherkins / Cucumbers,421.0,8795.0,579.0,11101.0,4007.0,79558.0,5053.0,98506.0,container traffic for the month of March 2026.pdf
+2026-03,export,Reefer Cargo,500.0,6708.0,516.0,6992.0,5142.0,70285.0,5894.0,80957.0,container traffic for the month of March 2026.pdf
+2026-03,export,Lead,156.0,3820.0,125.0,2966.0,1730.0,41837.0,1283.0,30658.0,container traffic for the month of March 2026.pdf
+2026-03,export,Food Stuff,316.0,4133.0,292.0,3267.0,3183.0,40003.0,2850.0,31626.0,container traffic for the month of March 2026.pdf
+2026-03,export,Machinery,332.0,2880.0,82.0,811.0,3209.0,31626.0,2269.0,19686.0,container traffic for the month of March 2026.pdf
+2026-03,export,Chemicals,203.0,3214.0,184.0,3087.0,1797.0,30825.0,1697.0,28884.0,container traffic for the month of March 2026.pdf
+2026-03,export,Fish Oil,94.0,1989.0,126.0,2583.0,766.0,15641.0,523.0,10484.0,container traffic for the month of March 2026.pdf
+2026-03,export,Flexible Carry Bags,148.0,1417.0,159.0,1644.0,1522.0,15244.0,1446.0,14527.0,container traffic for the month of March 2026.pdf
+2026-03,export,Cashew Kernels,6.0,74.0,23.0,367.0,969.0,13738.0,596.0,8944.0,container traffic for the month of March 2026.pdf
+2026-03,export,Plywood,42.0,765.0,42.0,870.0,622.0,11275.0,326.0,6229.0,container traffic for the month of March 2026.pdf
+2026-03,export,Wood,51.0,1192.0,38.0,793.0,443.0,10138.0,454.0,10274.0,container traffic for the month of March 2026.pdf
+2026-03,export,Cotton,67.0,268.0,211.0,1084.0,1602.0,7242.0,1767.0,8858.0,container traffic for the month of March 2026.pdf
+2026-03,export,Printed Books/Newspaper,19.0,192.0,16.0,175.0,519.0,5128.0,374.0,3770.0,container traffic for the month of March 2026.pdf
+2026-03,export,Seafood,35.0,695.0,35.0,711.0,247.0,4519.0,285.0,5364.0,container traffic for the month of March 2026.pdf
+2026-03,export,Granite/Marble,2.0,49.0,36.0,919.0,127.0,3238.0,116.0,2969.0,container traffic for the month of March 2026.pdf
+2026-03,export,Garments,8.0,45.0,24.0,218.0,226.0,1623.0,221.0,2168.0,container traffic for the month of March 2026.pdf
+2026-03,export,Personal Effects,3.0,26.0,30.0,313.0,167.0,1612.0,116.0,1135.0,container traffic for the month of March 2026.pdf
+2026-03,export,Leaf Springs,5.0,118.0,8.0,188.0,67.0,1532.0,95.0,2057.0,container traffic for the month of March 2026.pdf
+2026-03,export,Fertilizer,0.0,0.0,0.0,0.0,77.0,864.0,3.0,49.0,container traffic for the month of March 2026.pdf
+2026-03,export,Bio Plate,5.0,38.0,15.0,105.0,125.0,840.0,188.0,1359.0,container traffic for the month of March 2026.pdf
+2026-03,export,Spices,1.0,23.0,0.0,0.0,25.0,481.0,5.0,83.0,container traffic for the month of March 2026.pdf
+2026-03,export,Brake Drums,0.0,0.0,0.0,0.0,25.0,437.0,0.0,0.0,container traffic for the month of March 2026.pdf
+2026-03,export,Salt,5.0,113.0,2.0,52.0,18.0,415.0,50.0,1194.0,container traffic for the month of March 2026.pdf
+2026-03,export,Rice,1.0,27.0,10.0,156.0,13.0,265.0,70.0,1774.0,container traffic for the month of March 2026.pdf
+2026-03,export,Wheat,0.0,0.0,0.0,0.0,10.0,260.0,1.0,26.0,container traffic for the month of March 2026.pdf
+2026-03,export,Maize,9.0,208.0,0.0,0.0,9.0,208.0,0.0,0.0,container traffic for the month of March 2026.pdf
+2026-03,export,Polypropylene,0.0,0.0,2.0,13.0,2.0,28.0,5.0,41.0,container traffic for the month of March 2026.pdf
+2026-03,export,Wax Candle,0.0,0.0,0.0,0.0,2.0,27.0,24.0,227.0,container traffic for the month of March 2026.pdf
+2026-03,export,Others,382.0,5370.0,542.0,7835.0,5664.0,74039.0,5312.0,95233.0,container traffic for the month of March 2026.pdf
+2026-05,import,Raw Cashew,3343.0,42313.0,3918.0,52571.0,4497.0,56715.0,5252.0,69896.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Tiles,732.0,20322.0,1361.0,37915.0,1522.0,42315.0,2838.0,79055.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Bentonite Powder/Lumps,144.0,4036.0,136.0,3808.0,436.0,12220.0,240.0,6715.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Salt,69.0,1924.0,184.0,5106.0,154.0,4280.0,404.0,11241.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Wood,122.0,1987.0,143.0,2537.0,261.0,4010.0,273.0,4457.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Polyethylene,55.0,1096.0,206.0,2835.0,237.0,3929.0,376.0,5184.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Fertilizer,60.0,1623.0,0.0,0.0,140.0,3787.0,50.0,1332.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Coffee,81.0,1499.0,36.0,667.0,161.0,3016.0,87.0,1568.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Chemicals,51.0,1208.0,68.0,1166.0,119.0,2762.0,234.0,3714.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Polypropylene,140.0,1934.0,170.0,2373.0,180.0,2494.0,319.0,4466.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Wheat,9.0,251.0,34.0,928.0,54.0,1506.0,110.0,3029.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Granite/Marble,32.0,888.0,62.0,1705.0,54.0,1498.0,100.0,2745.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Food Stuff,68.0,592.0,62.0,647.0,124.0,1154.0,100.0,1089.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Lead,29.0,686.0,64.0,1597.0,47.0,1085.0,131.0,3243.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Cotton,0.0,0.0,0.0,0.0,66.0,880.0,0.0,0.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,News Print/Paper,40.0,543.0,16.0,192.0,42.0,567.0,16.0,192.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Calcite Powder,7.0,197.0,7.0,193.0,21.0,562.0,8.0,221.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Rice,6.0,167.0,0.0,0.0,11.0,306.0,1.0,26.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Machinery,8.0,105.0,17.0,59.0,31.0,216.0,37.0,128.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Fish Meal,0.0,0.0,0.0,0.0,10.0,200.0,0.0,0.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Ply wood,6.0,75.0,8.0,111.0,12.0,153.0,10.0,140.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Wax,0.0,0.0,2.0,25.0,2.0,28.0,2.0,25.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,China Clay,1.0,28.0,0.0,0.0,1.0,28.0,6.0,166.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Personal Effects,0.0,0.0,3.0,11.0,0.0,0.0,11.0,29.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Packing Materials,0.0,0.0,4.0,66.0,0.0,0.0,6.0,92.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Flexible Carry Bags,0.0,0.0,0.0,0.0,0.0,0.0,1.0,18.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Reefer cargo,0.0,0.0,6.0,67.0,0.0,0.0,8.0,93.0,container traffic for the month of May  2026_1.pdf
+2026-05,import,Others,575.0,11084.0,428.0,8377.0,1075.0,20873.0,901.0,16954.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Coffee,1040.0,19663.0,966.0,18220.0,2433.0,45958.0,2018.0,38016.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Fish Meal,979.0,15879.0,583.0,9473.0,1953.0,31210.0,1486.0,22632.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Reefer Cargo,370.0,4782.0,260.0,3470.0,770.0,10145.0,506.0,6754.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Gherkins / Cucumbers,163.0,3104.0,176.0,2945.0,396.0,7966.0,405.0,7179.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Lead,126.0,3068.0,82.0,1914.0,258.0,6321.0,189.0,4489.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Food Stuff,202.0,1958.0,185.0,2747.0,499.0,5333.0,510.0,7043.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Machinery,269.0,2311.0,180.0,1927.0,609.0,4975.0,245.0,2616.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Chemicals,155.0,2509.0,99.0,1718.0,272.0,4441.0,227.0,4016.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Rice,129.0,3058.0,0.0,0.0,165.0,3913.0,0.0,0.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Fish Oil,49.0,965.0,18.0,360.0,176.0,3622.0,99.0,1997.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Flexible Carry Bags,89.0,839.0,121.0,1186.0,190.0,1795.0,225.0,2221.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Cotton,133.0,574.0,197.0,977.0,261.0,962.0,341.0,1716.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Seafood,26.0,515.0,14.0,263.0,45.0,884.0,52.0,812.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Plywood,23.0,416.0,59.0,1254.0,42.0,783.0,101.0,2138.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Printed Books/Newspaper,26.0,265.0,20.0,177.0,72.0,671.0,32.0,290.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Leaf Springs,6.0,131.0,8.0,197.0,14.0,284.0,11.0,272.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Wood,4.0,95.0,43.0,985.0,9.0,214.0,94.0,2154.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Wheat,7.0,195.0,9.0,232.0,8.0,207.0,9.0,232.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Cashew Kernels,6.0,84.0,17.0,269.0,14.0,169.0,32.0,478.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Personal Effects,6.0,56.0,27.0,245.0,13.0,139.0,49.0,479.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Bio Plate,8.0,57.0,10.0,63.0,16.0,110.0,37.0,249.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Granite/Marble,0.0,0.0,25.0,660.0,3.0,82.0,37.0,964.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Garments,0.0,0.0,13.0,78.0,6.0,44.0,84.0,447.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Spices,3.0,40.0,0.0,0.0,3.0,40.0,0.0,0.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Fertilizer,2.0,20.0,12.0,172.0,3.0,27.0,15.0,196.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Salt,0.0,0.0,1.0,20.0,0.0,0.0,3.0,60.0,container traffic for the month of May  2026_1.pdf
+2026-05,export,Others,509.0,5927.0,509.0,6777.0,969.0,11996.0,903.0,12120.0,container traffic for the month of May  2026_1.pdf
+2025-08,import,Raw Cashew,3281.0,43236.0,3357.0,45133.0,20119.0,263168.0,13282.0,182926.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Tiles,929.0,25838.0,1250.0,36412.0,6383.0,177307.0,6985.0,195903.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Salt,104.0,2904.0,78.0,2255.0,831.0,23151.0,692.0,19412.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Wood,202.0,3034.0,240.0,3474.0,967.0,17969.0,1229.0,20633.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Chemicals,180.0,3024.0,273.0,4003.0,1162.0,17705.0,1538.0,22417.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Polypropylene,232.0,3235.0,96.0,1338.0,885.0,12389.0,647.0,9117.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Bentonite Powder/Lumps,61.0,1668.0,25.0,705.0,401.0,11179.0,387.0,10855.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Lead,89.0,1986.0,162.0,4056.0,405.0,9815.0,464.0,11507.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Granite/Marble,41.0,1131.0,57.0,1613.0,229.0,6310.0,276.0,7703.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Wheat,18.0,502.0,0.0,0.0,154.0,4254.0,155.0,4333.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Coffee,26.0,493.0,54.0,1060.0,203.0,3743.0,246.0,4532.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Food Stuff,79.0,666.0,23.0,220.0,319.0,3041.0,249.0,2889.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Fertilizer,0.0,0.0,0.0,0.0,50.0,1332.0,5.0,129.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Ply wood,31.0,435.0,8.0,121.0,91.0,1286.0,33.0,454.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Machinery,46.0,189.0,8.0,58.0,167.0,913.0,65.0,366.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,News Print/Paper,8.0,97.0,56.0,660.0,64.0,784.0,258.0,3195.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Rice,3.0,80.0,7.0,200.0,18.0,487.0,60.0,1687.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,China Clay,0.0,0.0,0.0,0.0,12.0,335.0,6.0,167.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Reefer cargo,6.0,76.0,0.0,0.0,18.0,209.0,4.0,49.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Seafood,0.0,0.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Personal Effects,6.0,20.0,2.0,31.0,35.0,141.0,69.0,289.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Packing Materials,0.0,0.0,2.0,25.0,8.0,115.0,10.0,134.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Flexible Carry Bags,0.0,0.0,0.0,0.0,4.0,54.0,20.0,230.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Wax,0.0,0.0,0.0,0.0,4.0,51.0,8.0,110.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Cotton,1.0,23.0,0.0,0.0,1.0,23.0,4.0,43.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Garments,0.0,0.0,0.0,0.0,2.0,9.0,2.0,5.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,import,Others,555.0,9571.0,370.0,6216.0,2516.0,47330.0,2168.0,40824.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Coffee,800.0,14402.0,866.0,15980.0,4800.0,89476.0,5824.0,111400.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Fish Meal,355.0,6317.0,235.0,4602.0,2902.0,45990.0,2580.0,42543.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Gherkins / Cucumbers,428.0,8804.0,480.0,10252.0,1407.0,27612.0,1376.0,26649.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Food Stuff,271.0,3342.0,264.0,2802.0,1400.0,18662.0,1131.0,11811.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Reefer Cargo,190.0,2623.0,224.0,3133.0,1159.0,15524.0,1721.0,23326.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Lead,128.0,3038.0,96.0,2370.0,595.0,14013.0,455.0,10890.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Chemicals,157.0,2879.0,146.0,2685.0,687.0,12073.0,711.0,12128.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Machinery,342.0,3439.0,229.0,1715.0,1083.0,11461.0,1186.0,9730.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Flexible Carry Bags,86.0,845.0,74.0,720.0,538.0,5311.0,475.0,4548.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Plywood,62.0,962.0,27.0,508.0,278.0,5302.0,135.0,2525.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Fish Oil,48.0,1022.0,1.0,17.0,239.0,4883.0,124.0,2568.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Wood,26.0,592.0,59.0,1497.0,215.0,4843.0,97.0,2240.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Cotton,180.0,848.0,126.0,529.0,808.0,3875.0,689.0,3085.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Granite/Marble,11.0,260.0,2.0,55.0,80.0,2060.0,30.0,798.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Printed Books/Newspaper,84.0,806.0,13.0,122.0,181.0,1745.0,115.0,1086.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Cashew Kernels,24.0,323.0,53.0,761.0,104.0,1515.0,184.0,2852.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Garments,29.0,275.0,25.0,397.0,175.0,1232.0,97.0,1030.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Seafood,3.0,60.0,0.0,0.0,76.0,1208.0,15.0,224.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Personal Effects,15.0,145.0,13.0,110.0,96.0,963.0,26.0,207.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Leaf Springs,5.0,120.0,7.0,167.0,30.0,678.0,34.0,789.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Fertilizer,26.0,263.0,1.0,13.0,59.0,640.0,2.0,26.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Bio Plate,7.0,42.0,26.0,165.0,65.0,443.0,69.0,442.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Wheat,0.0,0.0,0.0,0.0,9.0,232.0,1.0,26.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Salt,1.0,26.0,12.0,305.0,6.0,135.0,30.0,703.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Rice,0.0,0.0,7.0,189.0,3.0,73.0,44.0,1215.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Brake Drums,3.0,53.0,0.0,0.0,3.0,53.0,0.0,0.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Spices,2.0,24.0,0.0,0.0,3.0,47.0,2.0,23.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Polypropylene,0.0,0.0,0.0,0.0,1.0,20.0,2.0,19.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-08,export,Others,390.0,5602.0,295.0,3858.0,2221.0,28898.0,2000.0,25280.0,container traffic for trhe month of Aug 2025_0.pdf
+2025-12,import,Tiles,1857.0,51722.0,1857.0,51631.0,12424.0,345408.0,13453.0,376619.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Raw Cashew,291.0,3928.0,2142.0,28930.0,25747.0,336300.0,21534.0,295109.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Salt,224.0,6132.0,203.0,5664.0,1452.0,40368.0,1380.0,38561.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Wood,182.0,3082.0,216.0,3176.0,1710.0,30349.0,2263.0,36262.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Bentonite Powder/Lumps,367.0,10261.0,76.0,2125.0,1072.0,29939.0,632.0,17716.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Chemicals,197.0,3306.0,224.0,4222.0,1771.0,27972.0,2384.0,36481.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Polypropylene,148.0,1970.0,76.0,1062.0,1631.0,22818.0,929.0,13047.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Lead,138.0,3281.0,128.0,3082.0,908.0,21354.0,1027.0,25076.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Granite/Marble,97.0,2665.0,69.0,1892.0,439.0,12093.0,519.0,14358.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Wheat,56.0,1504.0,0.0,0.0,254.0,6956.0,176.0,4918.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Coffee,65.0,1231.0,83.0,1155.0,336.0,6273.0,583.0,9861.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Food Stuff,51.0,545.0,54.0,707.0,452.0,4459.0,408.0,4888.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Ply wood,22.0,300.0,0.0,0.0,271.0,3749.0,60.0,791.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,News Print/Paper,47.0,605.0,29.0,358.0,118.0,1489.0,442.0,5304.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Machinery,12.0,45.0,5.0,19.0,261.0,1408.0,94.0,518.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Fertilizer,0.0,0.0,10.0,249.0,50.0,1332.0,24.0,618.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Rice,2.0,49.0,8.0,217.0,46.0,1253.0,77.0,2153.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Fish Meal,8.0,108.0,0.0,0.0,31.0,610.0,18.0,213.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Personal Effects,13.0,85.0,7.0,59.0,91.0,367.0,106.0,503.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,China Clay,0.0,0.0,0.0,0.0,13.0,363.0,6.0,167.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Reefer cargo,0.0,0.0,2.0,22.0,26.0,312.0,12.0,132.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Seafood,0.0,0.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Packing Materials,0.0,0.0,0.0,0.0,14.0,147.0,13.0,173.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Wax,2.0,25.0,0.0,0.0,8.0,104.0,12.0,160.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Flexible Carry Bags,0.0,0.0,0.0,0.0,4.0,54.0,21.0,249.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Cotton,0.0,0.0,0.0,0.0,3.0,41.0,4.0,43.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Garments,0.0,0.0,0.0,0.0,2.0,9.0,8.0,42.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,import,Others,530.0,9053.0,2045.0,27344.0,4507.0,80600.0,6808.0,105820.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Coffee,730.0,12546.0,572.0,9809.0,7460.0,136538.0,8738.0,164788.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Fish Meal,1696.0,28089.0,403.0,6654.0,7759.0,123805.0,5010.0,83075.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Gherkins / Cucumbers,383.0,7490.0,588.0,11005.0,2755.0,54824.0,3505.0,68166.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Reefer Cargo,734.0,10125.0,556.0,7760.0,3906.0,53475.0,4604.0,63485.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Food Stuff,228.0,2946.0,286.0,3511.0,2371.0,29908.0,2208.0,23895.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Lead,190.0,4668.0,119.0,2795.0,1192.0,28647.0,916.0,21834.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Machinery,326.0,3269.0,281.0,2569.0,2284.0,22746.0,1928.0,16644.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Chemicals,179.0,3100.0,150.0,2432.0,1274.0,22460.0,1221.0,20733.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Cashew Kernels,159.0,2174.0,122.0,1787.0,832.0,11426.0,378.0,5783.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Flexible Carry Bags,171.0,1669.0,151.0,1589.0,1129.0,11320.0,1035.0,10315.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Fish Oil,54.0,1115.0,129.0,2444.0,472.0,9471.0,342.0,6853.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Plywood,77.0,1269.0,25.0,503.0,499.0,9197.0,232.0,4373.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Wood,9.0,214.0,64.0,1367.0,289.0,6559.0,358.0,8197.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Cotton,133.0,567.0,243.0,1155.0,1283.0,6103.0,1231.0,5996.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Printed Books/Newspaper,79.0,832.0,55.0,595.0,392.0,3854.0,244.0,2336.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Seafood,30.0,588.0,58.0,1070.0,200.0,3582.0,164.0,2893.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Granite/Marble,1.0,27.0,19.0,483.0,124.0,3168.0,63.0,1619.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Garments,4.0,30.0,14.0,152.0,213.0,1526.0,159.0,1577.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Personal Effects,11.0,97.0,7.0,74.0,149.0,1441.0,48.0,492.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Leaf Springs,9.0,198.0,8.0,187.0,55.0,1251.0,75.0,1598.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Fertilizer,1.0,16.0,1.0,23.0,77.0,864.0,3.0,49.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Bio Plate,5.0,41.0,11.0,89.0,95.0,646.0,154.0,1112.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Brake Drums,0.0,0.0,0.0,0.0,25.0,437.0,0.0,0.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Spices,3.0,68.0,0.0,0.0,15.0,283.0,3.0,44.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Salt,0.0,0.0,3.0,79.0,12.0,281.0,43.0,1020.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Wheat,0.0,0.0,0.0,0.0,9.0,232.0,1.0,26.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Rice,1.0,27.0,2.0,44.0,7.0,171.0,56.0,1512.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Polypropylene,0.0,0.0,0.0,0.0,2.0,28.0,3.0,28.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Wax Candle,0.0,0.0,2.0,26.0,2.0,27.0,24.0,227.0,container traffic for trhe month of Dec. 2025.pdf
+2025-12,export,Others,528.0,6900.0,574.0,7171.0,4237.0,55453.0,3805.0,46902.0,container traffic for trhe month of Dec. 2025.pdf
+2026-02,import,Tiles,1509.0,41987.0,1210.0,33672.0,15641.0,435087.0,16254.0,454404.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Raw Cashew,296.0,3887.0,534.0,6372.0,26578.0,347266.0,22574.0,308263.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Salt,99.0,2754.0,183.0,5110.0,1698.0,46991.0,1724.0,48163.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Wood,232.0,3683.0,192.0,2885.0,2291.0,39085.0,2647.0,42451.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Bentonite Powder/Lumps,102.0,2843.0,31.0,864.0,1340.0,37664.0,723.0,20254.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Chemicals,62.0,1430.0,139.0,2149.0,1948.0,31409.0,2683.0,41435.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Polypropylene,54.0,739.0,56.0,783.0,1863.0,26074.0,987.0,13857.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Lead,60.0,1429.0,86.0,2278.0,1036.0,24225.0,1196.0,29381.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Granite/Marble,49.0,1346.0,70.0,1925.0,536.0,14755.0,641.0,17711.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Wheat,21.0,583.0,14.0,395.0,324.0,8922.0,190.0,5313.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Coffee,31.0,556.0,43.0,753.0,411.0,7637.0,678.0,11490.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Food Stuff,71.0,635.0,56.0,632.0,555.0,5445.0,521.0,6090.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Ply wood,4.0,57.0,2.0,28.0,275.0,3806.0,66.0,872.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Fish Meal,55.0,775.0,0.0,0.0,126.0,1992.0,18.0,213.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,News Print/Paper,6.0,77.0,18.0,244.0,142.0,1856.0,498.0,6010.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Machinery,23.0,196.0,55.0,475.0,297.0,1683.0,166.0,1040.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Rice,6.0,160.0,5.0,135.0,53.0,1441.0,91.0,2531.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Fertilizer,0.0,0.0,3.0,71.0,50.0,1332.0,27.0,689.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Personal Effects,3.0,7.0,20.0,62.0,105.0,494.0,137.0,620.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,China Clay,0.0,0.0,0.0,0.0,13.0,363.0,6.0,167.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Reefer cargo,0.0,0.0,0.0,0.0,28.0,333.0,20.0,230.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Flexible Carry Bags,6.0,82.0,0.0,0.0,16.0,213.0,22.0,269.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Seafood,0.0,0.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Packing Materials,0.0,0.0,0.0,0.0,14.0,147.0,13.0,173.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Limestone,5.0,127.0,0.0,0.0,5.0,127.0,0.0,0.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Wax,0.0,0.0,0.0,0.0,8.0,104.0,14.0,185.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Cotton,2.0,21.0,0.0,0.0,5.0,62.0,4.0,43.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Garments,0.0,0.0,0.0,0.0,2.0,9.0,10.0,71.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,import,Others,469.0,8254.0,477.0,18233.0,5504.0,97642.0,8396.0,156217.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Coffee,1443.0,26790.0,1115.0,20494.0,9798.0,179313.0,10391.0,194324.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Fish Meal,1075.0,15580.0,426.0,7206.0,10591.0,164873.0,5969.0,98517.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Gherkins / Cucumbers,452.0,8497.0,483.0,9668.0,3586.0,70763.0,4474.0,87405.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Reefer Cargo,356.0,4863.0,340.0,4610.0,4642.0,63578.0,5378.0,73965.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Lead,162.0,3988.0,144.0,3470.0,1574.0,38017.0,1158.0,27692.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Food Stuff,206.0,2428.0,183.0,2214.0,2867.0,35870.0,2558.0,28359.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Machinery,246.0,2690.0,180.0,1512.0,2877.0,28746.0,2187.0,18875.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Chemicals,185.0,2904.0,160.0,2774.0,1594.0,27611.0,1513.0,25797.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Flexible Carry Bags,114.0,1107.0,129.0,1320.0,1374.0,13827.0,1287.0,12883.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Cashew Kernels,109.0,1818.0,146.0,2056.0,963.0,13665.0,573.0,8577.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Fish Oil,87.0,1822.0,20.0,392.0,672.0,13652.0,397.0,7902.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Plywood,40.0,692.0,24.0,458.0,580.0,10510.0,284.0,5359.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Wood,51.0,1211.0,21.0,431.0,392.0,8946.0,416.0,9481.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Cotton,88.0,317.0,160.0,933.0,1535.0,6973.0,1556.0,7775.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Printed Books/Newspaper,50.0,487.0,29.0,345.0,500.0,4936.0,358.0,3595.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Seafood,7.0,138.0,36.0,756.0,212.0,3824.0,250.0,4653.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Granite/Marble,0.0,0.0,11.0,288.0,125.0,3189.0,80.0,2049.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Personal Effects,5.0,43.0,18.0,149.0,164.0,1585.0,86.0,822.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Garments,5.0,52.0,20.0,185.0,218.0,1578.0,197.0,1950.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Leaf Springs,4.0,93.0,7.0,153.0,62.0,1415.0,87.0,1869.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Fertilizer,0.0,0.0,0.0,0.0,77.0,864.0,3.0,49.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Bio Plate,12.0,67.0,10.0,69.0,120.0,802.0,173.0,1255.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Spices,4.0,61.0,0.0,0.0,24.0,458.0,5.0,83.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Brake Drums,0.0,0.0,0.0,0.0,25.0,437.0,0.0,0.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Salt,1.0,20.0,4.0,96.0,13.0,301.0,48.0,1142.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Wheat,0.0,0.0,0.0,0.0,10.0,260.0,1.0,26.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Rice,5.0,67.0,2.0,55.0,12.0,238.0,60.0,1619.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Polypropylene,0.0,0.0,0.0,0.0,2.0,28.0,3.0,28.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Wax Candle,0.0,0.0,0.0,0.0,2.0,27.0,24.0,227.0,container traffic for trhe month of Feb 2026.pdf
+2026-02,export,Others,499.0,5491.0,484.0,17099.0,5282.0,68669.0,4770.0,87398.0,container traffic for trhe month of Feb 2026.pdf
+2026-01,import,Tiles,1708.0,47693.0,1591.0,44113.0,14132.0,393101.0,15044.0,420732.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Raw Cashew,535.0,7079.0,506.0,6782.0,26282.0,343379.0,22040.0,301891.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Salt,147.0,3869.0,161.0,4492.0,1599.0,44237.0,1541.0,43053.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Wood,349.0,5053.0,192.0,3304.0,2059.0,35402.0,2455.0,39566.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Bentonite Powder/Lumps,166.0,4882.0,60.0,1674.0,1238.0,34821.0,692.0,19390.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Chemicals,115.0,2008.0,160.0,2805.0,1886.0,29980.0,2544.0,39286.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Polypropylene,178.0,2517.0,2.0,27.0,1809.0,25335.0,931.0,13074.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Lead,68.0,1442.0,83.0,2026.0,976.0,22796.0,1110.0,27102.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Granite/Marble,48.0,1315.0,52.0,1427.0,487.0,13408.0,571.0,15785.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Wheat,49.0,1383.0,0.0,0.0,303.0,8339.0,176.0,4918.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Coffee,44.0,808.0,52.0,876.0,380.0,7081.0,635.0,10737.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Food Stuff,32.0,350.0,57.0,570.0,484.0,4810.0,465.0,5458.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Ply wood,0.0,0.0,4.0,53.0,271.0,3749.0,64.0,844.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,News Print/Paper,18.0,290.0,38.0,461.0,136.0,1779.0,480.0,5765.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Machinery,13.0,79.0,17.0,46.0,274.0,1487.0,111.0,565.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Fertilizer,0.0,0.0,0.0,0.0,50.0,1332.0,24.0,618.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Rice,1.0,28.0,9.0,243.0,47.0,1280.0,86.0,2396.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Fish Meal,40.0,607.0,0.0,0.0,71.0,1217.0,18.0,213.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Personal Effects,11.0,121.0,11.0,55.0,102.0,487.0,117.0,558.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,China Clay,0.0,0.0,0.0,0.0,13.0,363.0,6.0,167.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Reefer cargo,2.0,21.0,8.0,98.0,28.0,333.0,20.0,230.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Seafood,0.0,0.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Packing Materials,0.0,0.0,0.0,0.0,14.0,147.0,13.0,173.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Flexible Carry Bags,6.0,76.0,1.0,21.0,10.0,131.0,22.0,269.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Wax,0.0,0.0,2.0,25.0,8.0,104.0,14.0,185.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Cotton,0.0,0.0,0.0,0.0,3.0,41.0,4.0,43.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Garments,0.0,0.0,2.0,30.0,2.0,9.0,10.0,71.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,import,Others,528.0,8787.0,1111.0,32164.0,5035.0,89387.0,7919.0,137984.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Coffee,895.0,15985.0,538.0,9042.0,8355.0,152523.0,9276.0,173830.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Fish Meal,1757.0,25488.0,533.0,8236.0,9516.0,149293.0,5543.0,91311.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Gherkins / Cucumbers,379.0,7442.0,486.0,9572.0,3134.0,62266.0,3991.0,77738.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Reefer Cargo,380.0,5240.0,434.0,5870.0,4286.0,58715.0,5038.0,69355.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Lead,220.0,5382.0,98.0,2388.0,1412.0,34029.0,1014.0,24222.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Food Stuff,290.0,3534.0,167.0,2249.0,2661.0,33442.0,2375.0,26145.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Machinery,347.0,3310.0,79.0,719.0,2631.0,26056.0,2007.0,17362.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Chemicals,135.0,2247.0,132.0,2290.0,1409.0,24707.0,1353.0,23023.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Flexible Carry Bags,131.0,1400.0,123.0,1247.0,1260.0,12720.0,1158.0,11563.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Cashew Kernels,22.0,421.0,49.0,738.0,854.0,11847.0,427.0,6521.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Fish Oil,113.0,2359.0,35.0,657.0,585.0,11829.0,377.0,7509.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Plywood,41.0,621.0,28.0,528.0,540.0,9818.0,260.0,4901.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Wood,52.0,1176.0,37.0,853.0,341.0,7735.0,395.0,9050.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Cotton,164.0,554.0,165.0,846.0,1447.0,6656.0,1396.0,6842.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Printed Books/Newspaper,58.0,595.0,85.0,913.0,450.0,4449.0,329.0,3250.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Seafood,5.0,103.0,50.0,1003.0,205.0,3686.0,214.0,3897.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Granite/Marble,1.0,21.0,6.0,143.0,125.0,3189.0,69.0,1762.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Personal Effects,10.0,102.0,20.0,181.0,159.0,1543.0,68.0,673.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Garments,0.0,0.0,18.0,188.0,213.0,1526.0,177.0,1765.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Leaf Springs,3.0,71.0,5.0,118.0,58.0,1322.0,80.0,1716.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Fertilizer,0.0,0.0,0.0,0.0,77.0,864.0,3.0,49.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Bio Plate,13.0,89.0,9.0,74.0,108.0,735.0,163.0,1186.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Brake Drums,0.0,0.0,0.0,0.0,25.0,437.0,0.0,0.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Spices,5.0,114.0,2.0,39.0,20.0,397.0,5.0,83.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Salt,0.0,0.0,1.0,26.0,12.0,281.0,44.0,1046.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Wheat,1.0,28.0,0.0,0.0,10.0,260.0,1.0,26.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Rice,0.0,0.0,2.0,52.0,7.0,171.0,58.0,1564.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Polypropylene,0.0,0.0,0.0,0.0,2.0,28.0,3.0,28.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Wax Candle,0.0,0.0,0.0,0.0,2.0,27.0,24.0,227.0,container traffic for trhe month of Jan 2026.pdf
+2026-01,export,Others,546.0,7725.0,481.0,23397.0,4783.0,63178.0,4286.0,70299.0,container traffic for trhe month of Jan 2026.pdf
+2025-07,import,Raw Cashew,6777.0,88257.0,4904.0,69420.0,16838.0,219933.0,9925.0,137793.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Tiles,1297.0,36040.0,1245.0,34836.0,5454.0,151469.0,5735.0,159492.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Salt,146.0,4071.0,85.0,2393.0,727.0,20247.0,614.0,17157.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Wood,380.0,8548.0,277.0,4434.0,765.0,14935.0,989.0,17159.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Chemicals,133.0,2018.0,352.0,5132.0,982.0,14681.0,1265.0,18413.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Bentonite Powder/Lumps,41.0,1145.0,64.0,1808.0,340.0,9510.0,362.0,10150.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Polypropylene,111.0,1540.0,188.0,2719.0,653.0,9154.0,551.0,7779.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Lead,101.0,2503.0,94.0,2344.0,316.0,7829.0,302.0,7452.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Granite/Marble,35.0,957.0,59.0,1685.0,188.0,5179.0,219.0,6090.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Wheat,17.0,476.0,13.0,371.0,136.0,3753.0,155.0,4333.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Coffee,17.0,312.0,81.0,1506.0,177.0,3250.0,192.0,3472.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Food Stuff,44.0,431.0,50.0,449.0,240.0,2374.0,226.0,2669.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Fertilizer,0.0,0.0,5.0,129.0,50.0,1332.0,5.0,129.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Ply wood,23.0,333.0,2.0,28.0,60.0,851.0,25.0,332.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Machinery,24.0,116.0,40.0,202.0,121.0,724.0,57.0,308.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,News Print/Paper,6.0,82.0,84.0,1081.0,56.0,687.0,202.0,2535.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Rice,4.0,104.0,12.0,340.0,15.0,406.0,53.0,1487.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,China Clay,0.0,0.0,0.0,0.0,12.0,335.0,6.0,167.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Seafood,10.0,201.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Reefer cargo,4.0,39.0,0.0,0.0,12.0,133.0,4.0,49.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Personal Effects,12.0,53.0,23.0,59.0,29.0,121.0,67.0,258.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Packing Materials,2.0,22.0,6.0,78.0,8.0,115.0,8.0,108.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Flexible Carry Bags,2.0,27.0,4.0,33.0,4.0,54.0,20.0,230.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Wax,2.0,26.0,0.0,0.0,4.0,51.0,8.0,110.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Garments,2.0,9.0,0.0,0.0,2.0,9.0,2.0,5.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Cotton,0.0,0.0,0.0,0.0,0.0,0.0,4.0,43.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,import,Others,589.0,11079.0,422.0,8254.0,1961.0,37759.0,1798.0,34608.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Coffee,888.0,16438.0,828.0,16081.0,4000.0,75074.0,4958.0,95421.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Fish Meal,509.0,8531.0,456.0,8086.0,2547.0,39673.0,2345.0,37941.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Gherkins / Cucumbers,381.0,7923.0,266.0,5540.0,979.0,18808.0,896.0,16397.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Food Stuff,289.0,3588.0,202.0,2141.0,1129.0,15320.0,867.0,9009.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Reefer Cargo,184.0,2380.0,238.0,3298.0,969.0,12901.0,1497.0,20193.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Lead,152.0,3467.0,62.0,1485.0,467.0,10976.0,359.0,8520.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Chemicals,145.0,2468.0,145.0,2601.0,530.0,9194.0,565.0,9443.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Machinery,188.0,2013.0,514.0,3830.0,741.0,8023.0,957.0,8015.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Flexible Carry Bags,84.0,815.0,98.0,940.0,452.0,4466.0,401.0,3828.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Plywood,53.0,1032.0,39.0,711.0,216.0,4340.0,108.0,2018.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Wood,46.0,1024.0,18.0,388.0,189.0,4252.0,38.0,744.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Fish Oil,62.0,1256.0,33.0,718.0,191.0,3860.0,123.0,2551.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Cotton,104.0,461.0,164.0,675.0,628.0,3026.0,563.0,2556.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Granite/Marble,20.0,528.0,3.0,79.0,69.0,1799.0,28.0,744.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Cashew Kernels,30.0,432.0,32.0,521.0,80.0,1192.0,131.0,2090.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Seafood,9.0,143.0,0.0,0.0,73.0,1147.0,15.0,224.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Garments,42.0,357.0,20.0,180.0,146.0,958.0,72.0,633.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Printed Books/Newspaper,48.0,479.0,6.0,50.0,97.0,939.0,102.0,963.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Personal Effects,18.0,202.0,2.0,18.0,81.0,819.0,13.0,97.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Leaf Springs,8.0,141.0,10.0,240.0,25.0,558.0,27.0,622.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Bio Plate,7.0,47.0,4.0,27.0,58.0,401.0,43.0,276.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Fertilizer,16.0,160.0,0.0,0.0,33.0,376.0,1.0,14.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Wheat,0.0,0.0,0.0,0.0,9.0,232.0,1.0,26.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Salt,2.0,49.0,17.0,385.0,5.0,110.0,18.0,398.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Rice,2.0,46.0,33.0,920.0,3.0,73.0,37.0,1027.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Spices,0.0,0.0,0.0,0.0,1.0,23.0,2.0,23.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Polypropylene,1.0,20.0,0.0,0.0,1.0,20.0,2.0,19.0,container traffic for trhe month of Jly 2025.pdf
+2025-07,export,Others,431.0,4688.0,441.0,4950.0,1831.0,23296.0,1705.0,21422.0,container traffic for trhe month of Jly 2025.pdf
+2025-06,import,Raw Cashew,4809.0,61779.0,2533.0,34259.0,10061.0,131675.0,5021.0,68373.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Tiles,1319.0,36374.0,1618.0,44886.0,4157.0,115429.0,4490.0,124656.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Salt,177.0,4934.0,228.0,6364.0,581.0,16176.0,529.0,14764.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Chemicals,232.0,3571.0,206.0,3081.0,849.0,12663.0,913.0,13282.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Bentonite Powder/Lumps,59.0,1651.0,99.0,2772.0,299.0,8366.0,298.0,8342.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Polypropylene,223.0,3148.0,116.0,1615.0,542.0,7613.0,363.0,5060.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Wood,112.0,1930.0,364.0,7290.0,385.0,6387.0,712.0,12724.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Lead,84.0,2084.0,139.0,3412.0,215.0,5326.0,208.0,5108.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Granite/Marble,53.0,1476.0,39.0,1066.0,153.0,4221.0,160.0,4405.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Wheat,9.0,248.0,24.0,668.0,119.0,3277.0,142.0,3962.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Coffee,73.0,1370.0,30.0,530.0,160.0,2938.0,111.0,1966.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Food Stuff,96.0,854.0,71.0,949.0,196.0,1944.0,176.0,2219.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Fertilizer,0.0,0.0,0.0,0.0,50.0,1332.0,0.0,0.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Machinery,60.0,480.0,0.0,0.0,97.0,608.0,17.0,107.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,News Print/Paper,34.0,413.0,16.0,159.0,50.0,605.0,118.0,1454.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Ply wood,27.0,379.0,11.0,151.0,37.0,518.0,23.0,304.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,China Clay,6.0,169.0,6.0,167.0,12.0,335.0,6.0,167.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Rice,10.0,277.0,13.0,362.0,11.0,303.0,41.0,1147.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Reefer cargo,0.0,0.0,2.0,24.0,8.0,93.0,4.0,49.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Packing Materials,0.0,0.0,0.0,0.0,6.0,92.0,2.0,30.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Personal Effects,6.0,39.0,24.0,104.0,17.0,67.0,44.0,199.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Flexible Carry Bags,1.0,9.0,14.0,172.0,2.0,27.0,16.0,198.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Wax,0.0,0.0,2.0,28.0,2.0,25.0,8.0,110.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Cotton,0.0,0.0,0.0,0.0,0.0,0.0,4.0,43.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Garments,0.0,0.0,2.0,5.0,0.0,0.0,2.0,5.0,container traffic for trhe month of June 2025.pdf
+2025-06,import,Others,470.0,9699.0,539.0,10357.0,1372.0,26681.0,1376.0,26354.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Coffee,1094.0,20620.0,1360.0,26679.0,3112.0,58636.0,4130.0,79339.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Fish Meal,552.0,8509.0,765.0,11474.0,2038.0,31142.0,1889.0,29856.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Food Stuff,330.0,4689.0,235.0,2039.0,840.0,11732.0,665.0,6868.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Gherkins / Cucumbers,193.0,3706.0,100.0,1746.0,598.0,10885.0,630.0,10857.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Reefer Cargo,279.0,3768.0,413.0,5501.0,785.0,10521.0,1259.0,16894.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Lead,126.0,3020.0,131.0,3019.0,315.0,7509.0,297.0,7035.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Chemicals,158.0,2710.0,126.0,2059.0,385.0,6726.0,420.0,6842.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Machinery,308.0,3394.0,131.0,1479.0,553.0,6009.0,443.0,4185.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Flexible Carry Bags,143.0,1431.0,92.0,895.0,368.0,3652.0,303.0,2888.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Plywood,62.0,1170.0,24.0,429.0,163.0,3308.0,69.0,1307.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Wood,49.0,1073.0,4.0,103.0,143.0,3227.0,20.0,356.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Fish Oil,30.0,607.0,16.0,328.0,129.0,2605.0,90.0,1834.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Cotton,183.0,849.0,178.0,854.0,524.0,2565.0,399.0,1881.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Granite/Marble,12.0,307.0,11.0,292.0,49.0,1271.0,25.0,665.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Seafood,12.0,192.0,3.0,64.0,64.0,1005.0,15.0,224.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Cashew Kernels,18.0,283.0,50.0,779.0,50.0,761.0,99.0,1569.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Personal Effects,14.0,138.0,5.0,24.0,63.0,617.0,11.0,79.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Garments,20.0,154.0,10.0,97.0,104.0,601.0,52.0,453.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Printed Books/Newspaper,17.0,169.0,32.0,309.0,49.0,460.0,96.0,914.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Leaf Springs,6.0,145.0,6.0,140.0,17.0,416.0,17.0,383.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Bio Plate,14.0,105.0,17.0,100.0,51.0,354.0,39.0,249.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Wheat,0.0,0.0,0.0,0.0,9.0,232.0,1.0,26.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Fertilizer,2.0,20.0,0.0,0.0,17.0,216.0,1.0,14.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Salt,0.0,0.0,1.0,14.0,3.0,60.0,1.0,14.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Rice,1.0,28.0,4.0,107.0,1.0,28.0,4.0,107.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Spices,1.0,23.0,0.0,0.0,1.0,23.0,2.0,23.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Polypropylene,0.0,0.0,0.0,0.0,0.0,0.0,2.0,19.0,container traffic for trhe month of June 2025.pdf
+2025-06,export,Others,497.0,6488.0,304.0,4122.0,1400.0,18609.0,1264.0,16472.0,container traffic for trhe month of June 2025.pdf
+2025-11,import,Raw Cashew,238.0,3239.0,2028.0,27319.0,25456.0,332372.0,19392.0,266179.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Tiles,1462.0,41260.0,1646.0,45829.0,10567.0,293686.0,11596.0,324988.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Salt,123.0,3498.0,209.0,5799.0,1228.0,34236.0,1177.0,32897.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Wood,213.0,3321.0,185.0,3186.0,1528.0,27267.0,2047.0,33086.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Chemicals,231.0,3875.0,188.0,3137.0,1574.0,24666.0,2160.0,32259.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Polypropylene,182.0,2677.0,110.0,1543.0,1483.0,20849.0,853.0,11986.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Bentonite Powder/Lumps,102.0,2860.0,60.0,1679.0,705.0,19678.0,556.0,15591.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Lead,102.0,2371.0,134.0,3227.0,770.0,18073.0,899.0,21993.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Granite/Marble,38.0,1066.0,65.0,1776.0,342.0,9428.0,450.0,12466.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Wheat,20.0,526.0,7.0,195.0,198.0,5453.0,176.0,4918.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Coffee,16.0,343.0,81.0,1224.0,271.0,5042.0,500.0,8706.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Food Stuff,20.0,216.0,34.0,411.0,401.0,3914.0,354.0,4181.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Ply wood,58.0,753.0,8.0,105.0,249.0,3448.0,60.0,791.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Machinery,12.0,36.0,10.0,42.0,249.0,1362.0,89.0,500.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Fertilizer,0.0,0.0,0.0,0.0,50.0,1332.0,14.0,369.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Rice,2.0,54.0,1.0,26.0,44.0,1204.0,69.0,1936.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,News Print/Paper,6.0,82.0,93.0,1022.0,71.0,884.0,413.0,4946.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Fish Meal,23.0,502.0,0.0,0.0,23.0,502.0,18.0,213.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,China Clay,1.0,28.0,0.0,0.0,13.0,363.0,6.0,167.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Reefer cargo,0.0,0.0,2.0,26.0,26.0,312.0,10.0,109.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Personal Effects,26.0,86.0,3.0,31.0,78.0,282.0,99.0,444.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Seafood,0.0,0.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Packing Materials,2.0,20.0,3.0,40.0,14.0,147.0,13.0,173.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Wax,2.0,28.0,0.0,0.0,6.0,79.0,12.0,160.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Flexible Carry Bags,0.0,0.0,0.0,0.0,4.0,54.0,21.0,249.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Cotton,2.0,19.0,0.0,0.0,3.0,41.0,4.0,43.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Garments,0.0,0.0,4.0,27.0,2.0,9.0,8.0,42.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,import,Others,613.0,10148.0,942.0,13991.0,3977.0,71547.0,4763.0,78476.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Coffee,558.0,9932.0,541.0,9747.0,6730.0,123992.0,8166.0,154979.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Fish Meal,1209.0,19247.0,895.0,14382.0,6063.0,95716.0,4607.0,76422.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Gherkins / Cucumbers,328.0,6587.0,540.0,10387.0,2372.0,47334.0,2917.0,57161.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Reefer Cargo,689.0,9534.0,850.0,11894.0,3172.0,43350.0,4048.0,55725.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Food Stuff,243.0,2510.0,278.0,3221.0,2143.0,26963.0,1922.0,20384.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Lead,122.0,3033.0,118.0,2816.0,1002.0,23979.0,797.0,19039.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Machinery,278.0,2608.0,281.0,2631.0,1958.0,19477.0,1647.0,14074.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Chemicals,139.0,2462.0,101.0,1769.0,1095.0,19360.0,1071.0,18301.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Flexible Carry Bags,139.0,1566.0,140.0,1399.0,958.0,9650.0,884.0,8726.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Cashew Kernels,151.0,2182.0,21.0,346.0,673.0,9252.0,256.0,3996.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Fish Oil,80.0,1406.0,29.0,622.0,418.0,8356.0,213.0,4409.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Plywood,65.0,1198.0,28.0,556.0,422.0,7928.0,207.0,3870.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Wood,35.0,831.0,38.0,823.0,280.0,6345.0,294.0,6830.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Cotton,111.0,609.0,86.0,391.0,1150.0,5535.0,988.0,4841.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Granite/Marble,0.0,0.0,2.0,53.0,123.0,3141.0,44.0,1136.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Printed Books/Newspaper,28.0,253.0,25.0,226.0,313.0,3021.0,189.0,1742.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Seafood,31.0,580.0,56.0,963.0,170.0,2994.0,106.0,1824.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Garments,12.0,73.0,7.0,55.0,209.0,1497.0,145.0,1425.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Personal Effects,16.0,156.0,2.0,25.0,138.0,1344.0,41.0,418.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Leaf Springs,4.0,95.0,19.0,296.0,46.0,1053.0,67.0,1412.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Fertilizer,0.0,0.0,0.0,0.0,76.0,848.0,2.0,26.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Bio Plate,6.0,34.0,31.0,284.0,90.0,606.0,143.0,1024.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Brake Drums,12.0,210.0,0.0,0.0,25.0,437.0,0.0,0.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Salt,1.0,25.0,0.0,0.0,12.0,281.0,40.0,942.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Wheat,0.0,0.0,0.0,0.0,9.0,232.0,1.0,26.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Spices,6.0,116.0,1.0,21.0,12.0,215.0,3.0,44.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Rice,3.0,70.0,0.0,0.0,6.0,144.0,54.0,1468.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Polypropylene,0.0,0.0,0.0,0.0,2.0,28.0,3.0,28.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Wax Candle,2.0,27.0,0.0,0.0,2.0,27.0,22.0,201.0,container traffic for trhe month of Nov. 2025.pdf
+2025-11,export,Others,455.0,6455.0,434.0,5008.0,3709.0,48554.0,3231.0,39731.0,container traffic for trhe month of Nov. 2025.pdf
+2025-10,import,Raw Cashew,1590.0,20711.0,1215.0,16262.0,25218.0,329133.0,17364.0,238860.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Tiles,1708.0,47580.0,1459.0,40649.0,9105.0,252425.0,9950.0,279159.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Salt,167.0,4628.0,176.0,4845.0,1105.0,30738.0,968.0,27098.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Wood,236.0,3865.0,220.0,3467.0,1315.0,23945.0,1862.0,29900.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Chemicals,52.0,992.0,179.0,3149.0,1343.0,20790.0,1972.0,29122.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Polypropylene,220.0,3053.0,8.0,113.0,1301.0,18172.0,743.0,10442.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Bentonite Powder/Lumps,94.0,2624.0,86.0,2413.0,603.0,16818.0,496.0,13912.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Lead,173.0,3738.0,164.0,3990.0,668.0,15701.0,765.0,18766.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Granite/Marble,36.0,979.0,64.0,1753.0,304.0,8361.0,385.0,10690.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Wheat,18.0,505.0,8.0,223.0,178.0,4927.0,169.0,4723.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Coffee,46.0,840.0,84.0,1297.0,255.0,4699.0,419.0,7482.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Food Stuff,48.0,520.0,33.0,428.0,381.0,3698.0,320.0,3770.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Ply wood,100.0,1410.0,8.0,80.0,191.0,2695.0,52.0,686.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Fertilizer,0.0,0.0,9.0,240.0,50.0,1332.0,14.0,369.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Machinery,39.0,205.0,7.0,48.0,237.0,1327.0,79.0,457.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Rice,18.0,500.0,6.0,167.0,42.0,1150.0,68.0,1910.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,News Print/Paper,0.0,0.0,22.0,250.0,65.0,802.0,320.0,3924.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,China Clay,0.0,0.0,0.0,0.0,12.0,335.0,6.0,167.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Reefer cargo,0.0,0.0,2.0,14.0,26.0,312.0,8.0,84.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Seafood,0.0,0.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Personal Effects,16.0,52.0,14.0,47.0,52.0,197.0,96.0,413.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Packing Materials,0.0,0.0,0.0,0.0,12.0,127.0,10.0,134.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Flexible Carry Bags,0.0,0.0,1.0,18.0,4.0,54.0,21.0,249.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Wax,0.0,0.0,4.0,50.0,4.0,51.0,12.0,160.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Cotton,0.0,0.0,0.0,0.0,1.0,23.0,4.0,43.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Garments,0.0,0.0,2.0,10.0,2.0,9.0,4.0,15.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Fish Meal,0.0,0.0,16.0,201.0,0.0,0.0,18.0,213.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,import,Others,635.0,10483.0,1101.0,14005.0,3364.0,61398.0,3821.0,64485.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Coffee,578.0,10237.0,620.0,11311.0,6172.0,114060.0,7625.0,145232.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Fish Meal,1342.0,20958.0,559.0,9554.0,4854.0,76469.0,3712.0,62040.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Gherkins / Cucumbers,295.0,5970.0,443.0,8756.0,2044.0,40747.0,2377.0,46774.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Reefer Cargo,698.0,9584.0,896.0,12421.0,2483.0,33816.0,3198.0,43832.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Food Stuff,265.0,3151.0,215.0,2252.0,1900.0,24453.0,1644.0,17163.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Lead,155.0,3770.0,85.0,2009.0,880.0,20946.0,679.0,16223.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Chemicals,109.0,2068.0,113.0,1941.0,956.0,16898.0,970.0,16532.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Machinery,250.0,2324.0,50.0,551.0,1680.0,16869.0,1366.0,11444.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Flexible Carry Bags,127.0,1252.0,121.0,1328.0,819.0,8085.0,744.0,7328.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Cashew Kernels,308.0,4051.0,23.0,364.0,522.0,7070.0,235.0,3650.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Fish Oil,43.0,895.0,41.0,838.0,338.0,6950.0,184.0,3787.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Plywood,50.0,976.0,20.0,309.0,357.0,6730.0,179.0,3314.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Wood,17.0,366.0,54.0,1224.0,245.0,5514.0,256.0,6007.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Cotton,70.0,384.0,72.0,542.0,1039.0,4927.0,902.0,4450.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Granite/Marble,8.0,203.0,7.0,180.0,123.0,3141.0,42.0,1083.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Printed Books/Newspaper,58.0,547.0,16.0,126.0,285.0,2768.0,164.0,1515.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Seafood,57.0,1089.0,18.0,348.0,139.0,2415.0,50.0,860.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Garments,17.0,132.0,29.0,209.0,197.0,1424.0,138.0,1370.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Personal Effects,14.0,127.0,4.0,29.0,122.0,1188.0,39.0,393.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Leaf Springs,5.0,120.0,9.0,209.0,42.0,957.0,48.0,1115.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Fertilizer,1.0,8.0,0.0,0.0,76.0,848.0,2.0,26.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Bio Plate,8.0,54.0,17.0,111.0,84.0,572.0,112.0,740.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Salt,5.0,121.0,6.0,141.0,11.0,256.0,40.0,942.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Wheat,0.0,0.0,0.0,0.0,9.0,232.0,1.0,26.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Brake Drums,7.0,122.0,0.0,0.0,13.0,227.0,0.0,0.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Spices,3.0,52.0,0.0,0.0,6.0,99.0,2.0,23.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Rice,0.0,0.0,1.0,26.0,3.0,73.0,54.0,1468.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Polypropylene,0.0,0.0,0.0,0.0,2.0,28.0,3.0,28.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Wax Candle,0.0,0.0,8.0,81.0,0.0,0.0,22.0,201.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-10,export,Others,483.0,6628.0,440.0,5097.0,3254.0,42098.0,2797.0,34722.0,container traffic for trhe month of Oct 2025_0.pdf
+2025-09,import,Raw Cashew,3509.0,45254.0,2867.0,39672.0,23628.0,308422.0,16149.0,222598.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Tiles,1014.0,27539.0,1506.0,42607.0,7397.0,204846.0,8491.0,238510.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Salt,107.0,2959.0,100.0,2841.0,938.0,26111.0,792.0,22253.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Wood,112.0,2111.0,413.0,5800.0,1079.0,20080.0,1642.0,26433.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Chemicals,129.0,2093.0,255.0,3556.0,1291.0,19799.0,1793.0,25973.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Polypropylene,196.0,2729.0,88.0,1213.0,1081.0,15119.0,735.0,10329.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Bentonite Powder/Lumps,108.0,3016.0,23.0,645.0,509.0,14195.0,410.0,11499.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Lead,90.0,2148.0,137.0,3270.0,495.0,11963.0,601.0,14777.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Granite/Marble,39.0,1072.0,45.0,1234.0,268.0,7382.0,321.0,8937.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Wheat,6.0,168.0,6.0,167.0,160.0,4422.0,161.0,4500.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Coffee,6.0,115.0,89.0,1652.0,209.0,3859.0,335.0,6184.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Food Stuff,14.0,137.0,38.0,454.0,333.0,3178.0,287.0,3342.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Fertilizer,0.0,0.0,0.0,0.0,50.0,1332.0,5.0,129.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Ply wood,0.0,0.0,11.0,152.0,91.0,1286.0,44.0,606.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Machinery,31.0,209.0,7.0,43.0,198.0,1122.0,72.0,410.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,News Print/Paper,1.0,18.0,40.0,480.0,65.0,802.0,298.0,3674.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Rice,6.0,164.0,2.0,56.0,24.0,650.0,62.0,1743.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,China Clay,0.0,0.0,0.0,0.0,12.0,335.0,6.0,167.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Reefer cargo,8.0,103.0,2.0,21.0,26.0,312.0,6.0,70.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Seafood,0.0,0.0,0.0,0.0,10.0,201.0,0.0,0.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Personal Effects,1.0,4.0,13.0,77.0,36.0,144.0,82.0,366.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Packing Materials,4.0,13.0,0.0,0.0,12.0,127.0,10.0,134.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Flexible Carry Bags,0.0,0.0,0.0,0.0,4.0,54.0,20.0,230.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Wax,0.0,0.0,0.0,0.0,4.0,51.0,8.0,110.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Cotton,0.0,0.0,0.0,0.0,1.0,23.0,4.0,43.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Garments,0.0,0.0,0.0,0.0,2.0,9.0,2.0,5.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Fish Meal,0.0,0.0,2.0,12.0,0.0,0.0,2.0,12.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,import,Others,213.0,3585.0,552.0,9657.0,2729.0,50915.0,2720.0,50480.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Coffee,794.0,14347.0,1181.0,22521.0,5594.0,103823.0,7005.0,133921.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Fish Meal,610.0,9521.0,573.0,9943.0,3512.0,55511.0,3153.0,52486.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Gherkins / Cucumbers,342.0,7164.0,558.0,11369.0,1749.0,34777.0,1934.0,38018.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Reefer Cargo,626.0,8708.0,581.0,8084.0,1785.0,24232.0,2302.0,31410.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Food Stuff,235.0,2639.0,298.0,3100.0,1635.0,21302.0,1429.0,14911.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Lead,130.0,3162.0,139.0,3324.0,725.0,17175.0,594.0,14214.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Chemicals,160.0,2757.0,146.0,2463.0,847.0,14830.0,857.0,14591.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Machinery,347.0,3084.0,130.0,1163.0,1430.0,14545.0,1316.0,10893.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Flexible Carry Bags,154.0,1521.0,148.0,1452.0,692.0,6833.0,623.0,6000.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Fish Oil,56.0,1172.0,19.0,381.0,295.0,6055.0,143.0,2949.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Plywood,29.0,453.0,24.0,480.0,307.0,5755.0,159.0,3005.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Wood,13.0,305.0,105.0,2543.0,228.0,5148.0,202.0,4783.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Cotton,161.0,668.0,141.0,823.0,969.0,4543.0,830.0,3908.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Cashew Kernels,110.0,1504.0,28.0,435.0,214.0,3019.0,212.0,3286.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Granite/Marble,35.0,879.0,5.0,105.0,115.0,2938.0,35.0,903.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Printed Books/Newspaper,46.0,477.0,33.0,304.0,227.0,2221.0,148.0,1390.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Seafood,6.0,118.0,17.0,289.0,82.0,1326.0,32.0,513.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Garments,5.0,59.0,12.0,131.0,180.0,1291.0,109.0,1161.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Personal Effects,12.0,98.0,9.0,158.0,108.0,1061.0,35.0,365.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Fertilizer,16.0,201.0,0.0,0.0,75.0,841.0,2.0,26.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Leaf Springs,7.0,160.0,5.0,118.0,37.0,838.0,39.0,907.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Bio Plate,11.0,75.0,26.0,187.0,76.0,518.0,95.0,629.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Wheat,0.0,0.0,0.0,0.0,9.0,232.0,1.0,26.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Salt,0.0,0.0,4.0,97.0,6.0,135.0,34.0,801.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Brake Drums,3.0,52.0,0.0,0.0,6.0,105.0,0.0,0.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Rice,0.0,0.0,9.0,226.0,3.0,73.0,53.0,1442.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Spices,0.0,0.0,0.0,0.0,3.0,47.0,2.0,23.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Polypropylene,1.0,7.0,1.0,9.0,2.0,28.0,3.0,28.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Wax Candle,0.0,0.0,14.0,119.0,0.0,0.0,14.0,119.0,container traffic for trhe month of Sept 2025.pdf
+2025-09,export,Others,550.0,6572.0,357.0,4345.0,2771.0,35470.0,2357.0,29625.0,container traffic for trhe month of Sept 2025.pdf
